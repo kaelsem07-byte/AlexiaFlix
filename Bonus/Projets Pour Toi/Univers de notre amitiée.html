@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>L'univers de notre amitiée</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+        canvas { display: block; }
+
+        .glass-ui {
+            background: rgba(30, 30, 45, 0.6);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        #pause-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+             -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 200;
+            cursor: pointer;
+        }
+        .pause-button {
+            font-size: 1.5em; padding: 15px 30px; margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .pause-button:hover { background-color: rgba(255, 255, 255, 0.9); color: black; }
+
+        #audio-control {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 150;
+            width: 50px; height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #gamification-container {
+            position: absolute;
+            top: 20px; right: 20px;
+            z-index: 100;
+        }
+        #gamification-panel {
+            padding: 15px;
+            width: 230px;
+        }
+        #toggle-gamification-btn { display: none; }
+        
+        #map-canvas {
+            width: 200px; height: 200px;
+            background-color: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+        #objectives-list { list-style-type: none; padding: 0; margin-top: 15px; }
+        #objectives-list h3 { margin-top:0; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; }
+        .objective-item { padding: 4px; transition: all 0.5s; }
+        .objective-item.found { text-decoration: line-through; color: #50c878; }
+        
+        #notification {
+            position: absolute;
+            top: 30px; left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            font-size: 1.2em;
+            z-index: 300;
+            opacity: 0;
+            transition: opacity 0.5s, top 0.5s;
+            pointer-events: none;
+        }
+        #notification.show { opacity: 1; top: 20px; }
+
+        #mobile-pause-btn {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            border: none;
+            cursor: pointer;
+            z-index: 101;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #cockpit-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 1;
+            transition: opacity 0.5s;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="grad" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="60%" style="stop-color:rgba(0,0,0,0)" /><stop offset="100%" style="stop-color:rgba(0,0,0,0.8)" /></radialGradient></defs><rect width="100%" height="100%" fill="url(%23grad)"/></svg>');
+        }
+        #cockpit-overlay.hidden {
+            opacity: 0;
+        }
+        .cockpit-frame {
+            position: absolute;
+            border: 2px solid rgba(0, 191, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5) inset;
+        }
+        .cockpit-top { top: 5%; left: 10%; width: 80%; height: 20%; border-top-left-radius: 100% 50%; border-top-right-radius: 100% 50%; border-bottom: none;}
+        .cockpit-bottom { bottom: 5%; left: 10%; width: 80%; height: 15%; border-bottom-left-radius: 100% 50%; border-bottom-right-radius: 100% 50%; border-top: none;}
+        
+        #toggle-cockpit-btn {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 1em;
+            border: 1px solid rgba(0, 191, 255, 0.5);
+            background-color: rgba(0, 191, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            pointer-events: all;
+            transition: background-color 0.3s;
+        }
+        #toggle-cockpit-btn:hover {
+            background-color: rgba(0, 191, 255, 0.5);
+        }
+
+        @media (max-width: 1024px) {
+            #gamification-panel {
+                position: absolute; top: 0; right: 0;
+                transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+                transform: translateX(calc(100% + 30px));
+                max-height: 80vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+            }
+            #gamification-panel.open { transform: translateX(0); }
+            #toggle-gamification-btn {
+                display: flex; justify-content: center; align-items: center; position: relative;
+                width: 50px; height: 50px; font-size: 1.5em; border: none; cursor: pointer; z-index: 101;
+            }
+        }
+        
+        .mobile-controls { display: none; }
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-controls { display: block; }
+            #mobile-pause-btn { display: flex; }
+            #joystick-base {
+                position: absolute; bottom: 40px; left: 40px;
+                width: 120px; height: 120px;
+                background-color: rgba(255, 255, 255, 0.1);
+                border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); z-index: 150;
+            }
+            #joystick-stick {
+                position: absolute; width: 60px; height: 60px;
+                background-color: rgba(255, 255, 255, 0.3);
+                border-radius: 50%; left: 30px; top: 30px;
+            }
+            #audio-control { bottom: 180px; }
+            #cockpit-overlay { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="pause-overlay">
+        <h1 id="title">L'univers de notre amitiée</h1>
+        <button id="playButton" class="pause-button">Jouer</button>
+        <button id="restartButton" class="pause-button" style="display: none;">Recommencer</button>
+    </div>
+    
+    <div id="cockpit-overlay">
+         <div class="cockpit-frame cockpit-top"></div>
+         <div class="cockpit-frame cockpit-bottom"></div>
+         <button id="toggle-cockpit-btn">Mode 360°</button>
+    </div>
+    
+    <div id="audio-control" class="glass-ui">🔊</div>
+    <div id="notification" class="glass-ui"></div>
+
+    <button id="mobile-pause-btn" class="glass-ui">❚❚</button>
+
+    <div id="gamification-container">
+        <button id="toggle-gamification-btn" class="glass-ui">🎯</button>
+        <div id="gamification-panel" class="glass-ui">
+            <canvas id="map-canvas" width="200" height="200"></canvas>
+            <div id="objectives-list">
+                 <h3>Trouvez tous les objets</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-controls">
+        <div id="joystick-base" style="display: none;">
+            <div id="joystick-stick"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { FlyControls } from 'three/addons/controls/FlyControls.js';
+        import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+
+        let isPaused = true;
+        let animationFrameId;
+
+        const synth = new Tone.AMSynth({
+            harmonicity: 1.5,
+            detune: 0,
+            oscillator: { type: "sine" },
+            envelope: { attack: 0.01, decay: 0.01, sustain: 1, release: 0.5 },
+            modulation: { type: "square" },
+            modulationEnvelope: { attack: 0.5, decay: 0, sustain: 1, release: 0.5 }
+        }).toDestination();
+        const reverb = new Tone.Reverb({ decay: 8, wet: 0.4 }).toDestination();
+        synth.connect(reverb);
+        const melody = ["C3", "G3", "Eb4", "Bb3", "F3", "C4"];
+        let noteIndex = 0;
+        const musicLoop = new Tone.Loop(time => {
+            let note = melody[noteIndex % melody.length];
+            synth.triggerAttackRelease(note, "1n", time);
+            noteIndex++;
+        }, "1m").start(0);
+        let musicStarted = false;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+        camera.position.set(0, 0, 150);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(-1, 1, 1);
+        scene.add(directionalLight);
+
+        const controls = new FlyControls(camera, renderer.domElement);
+        controls.movementSpeed = 100;
+        controls.domElement = renderer.domElement;
+        controls.rollSpeed = Math.PI / 12;
+        controls.autoForward = false;
+        controls.dragToLook = false;
+        
+        const worldBoundary = new THREE.Box3( new THREE.Vector3(-1800, -1800, -1800), new THREE.Vector3(1800, 1800, 1800) );
+
+        const discoverableObjects = [];
+        const DISCOVERY_RADIUS = 100;
+        const notificationElement = document.getElementById('notification');
+        const objectivesListElement = document.getElementById('objectives-list');
+        const mapCanvas = document.getElementById('map-canvas');
+        const mapCtx = mapCanvas.getContext('2d');
+        const MAP_SCALE = 0.05;
+
+        function initializeGamificationUI() {
+            discoverableObjects.forEach(obj => {
+                const item = document.createElement('div');
+                item.id = `obj-${obj.name.replace(/\s/g, '-')}`;
+                item.classList.add('objective-item');
+                item.textContent = `☐ ${obj.name}`;
+                objectivesListElement.appendChild(item);
+            });
+        }
+        
+        function showNotification(message) {
+            notificationElement.textContent = message;
+            notificationElement.classList.add('show');
+            setTimeout(() => {
+                notificationElement.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateObjectivesList(objectName) {
+            const sanitizedId = `obj-${objectName.replace(/\s/g, '-')}`;
+            const item = document.getElementById(sanitizedId);
+            if(item) {
+                item.classList.add('found');
+                item.textContent = `☑ ${objectName}`;
+            }
+        }
+        
+        function createTextSprite(message, fontSize = 40) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = `Bold ${fontSize}px Arial`;
+            const metrics = context.measureText(message);
+            canvas.width = metrics.width + 20;
+            canvas.height = fontSize + 20;
+            context.font = `Bold ${fontSize}px Arial`;
+            context.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            context.fillText(message, 10, fontSize + 5);
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(canvas.width/4, canvas.height/4, 1.0);
+            return sprite;
+        }
+        
+        function createPlanetTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1024; canvas.height = 512;
+            const context = canvas.getContext('2d');
+            context.fillStyle = '#4488ff'; context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = '#22aa44'; context.strokeStyle = '#1e8449'; context.lineWidth = 15;
+            const centerX = canvas.width / 2; const centerY = canvas.height / 2;
+            const startAngle = -Math.PI * 0.7; const endAngle = -Math.PI * 0.3;
+            context.beginPath(); context.arc(centerX, centerY + 100, 150, startAngle, endAngle); context.stroke();
+            context.beginPath(); context.arc(centerX, centerY + 100, 100, startAngle, endAngle); context.stroke();
+            context.beginPath(); context.arc(centerX, centerY + 100, 50, startAngle, endAngle); context.stroke();
+            context.beginPath(); context.arc(centerX, centerY + 80, 15, 0, Math.PI * 2); context.fill();
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function enterFullscreen(element) {
+            const request = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
+            if (request) {
+                return request.call(element);
+            }
+        }
+
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        for (let i = 0; i < 20000; i++) { starVertices.push((Math.random() - 0.5) * 4000, (Math.random() - 0.5) * 4000, (Math.random() - 0.5) * 4000); }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xffffff, size: 1.5 }));
+        scene.add(stars);
+        
+        let galaxy;
+
+        function createBackgroundScenery() {
+            const galaxyPoints = [], galaxyColors = [];
+            const colorCenter = new THREE.Color(0xffe58f), colorArm = new THREE.Color(0x94b2ff);
+            for (let i = 0; i < 50000; i++) {
+                const angle = Math.random() * Math.PI * 10, radius = Math.random() * 500 * (Math.random() < 0.8 ? 1 : 0.2);
+                const arm = Math.floor(Math.random() * 4), armAngle = (arm / 4) * Math.PI * 2, totalAngle = angle + armAngle + radius * 0.01;
+                const x = Math.cos(totalAngle) * radius, z = Math.sin(totalAngle) * radius, y = (Math.random() - 0.5) * 40;
+                galaxyPoints.push(x, y, z); const color = new THREE.Color().lerpColors(colorCenter, colorArm, radius / 500); galaxyColors.push(color.r, color.g, color.b);
+            }
+            const galaxyGeometry = new THREE.BufferGeometry();
+            galaxyGeometry.setAttribute('position', new THREE.Float32BufferAttribute(galaxyPoints, 3)); galaxyGeometry.setAttribute('color', new THREE.Float32BufferAttribute(galaxyColors, 3));
+            galaxy = new THREE.Points(galaxyGeometry, new THREE.PointsMaterial({ size: 2, vertexColors: true, blending: THREE.AdditiveBlending }));
+            galaxy.position.set(1000, 200, -1500);
+            scene.add(galaxy);
+
+            const nebulaPoints = [], nebulaColors = [];
+            const nebula1Color = new THREE.Color(0xff8888), nebula2Color = new THREE.Color(0x8888ff);
+            for (let i = 0; i < 5000; i++) { 
+                nebulaPoints.push(
+                    (Math.random() - 0.5) * 800 - 1200, 
+                    (Math.random() - 0.5) * 400 - 300, 
+                    (Math.random() - 0.5) * 800 - 1800
+                );
+                nebulaColors.push(nebula1Color.r, nebula1Color.g, nebula1Color.b);
+            }
+             for (let i = 0; i < 5000; i++) {
+                nebulaPoints.push(
+                    (Math.random() - 0.5) * 1000 + 500, 
+                    (Math.random() - 0.5) * 500 + 400, 
+                    (Math.random() - 0.5) * 1000 - 2000
+                );
+                nebulaColors.push(nebula2Color.r, nebula2Color.g, nebula2Color.b);
+            }
+            const nebulaGeometry = new THREE.BufferGeometry(); 
+            nebulaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(nebulaPoints, 3));
+            nebulaGeometry.setAttribute('color', new THREE.Float32BufferAttribute(nebulaColors, 3));
+            const mergedNebulae = new THREE.Points(nebulaGeometry, new THREE.PointsMaterial({ size: 15, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, sizeAttenuation: true, vertexColors: true }));
+            scene.add(mergedNebulae);
+            
+            const shootingStars = [];
+            function createShootingStars() { for (let i = 0; i < 3; i++) { const star = new THREE.Mesh(new THREE.BoxGeometry(20, 0.5, 0.5), new THREE.MeshBasicMaterial({ color: 0xffffff, emissive: 0xffffff })); resetShootingStar(star); shootingStars.push(star); scene.add(star); } }
+            function resetShootingStar(star) { star.position.set((Math.random() - 0.5) * 3000, (Math.random() - 0.5) * 3000, -2000); star.velocity = new THREE.Vector3((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, 50 + Math.random() * 50); star.lookAt(star.position.clone().add(star.velocity)); }
+            createShootingStars();
+            return { shootingStars, resetShootingStar };
+        }
+        const { shootingStars, resetShootingStar } = createBackgroundScenery();
+
+        const blackHoleGroup = new THREE.Group();
+        const blackHole = new THREE.Mesh(new THREE.SphereGeometry(15, 64, 64), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        const accretionDisk = new THREE.Mesh(new THREE.TorusGeometry(30, 8, 16, 100), new THREE.MeshBasicMaterial({ color: 0xffaa00, side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+        accretionDisk.rotation.x = Math.PI / 2.2;
+        blackHoleGroup.add(blackHole, accretionDisk, createTextSprite("Trou Noir", 40));
+        blackHoleGroup.children[2].position.y = 45;
+        blackHoleGroup.position.set(800, 200, -1000);
+        scene.add(blackHoleGroup);
+        discoverableObjects.push({ name: 'Trou Noir', group: blackHoleGroup, found: false });
+
+        const starGroup = new THREE.Group();
+        starGroup.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffffdd })), new THREE.PointLight(0xffffff, 3, 800), createTextSprite("Étoile Scintillante"));
+        starGroup.children[2].position.y = 15;
+        starGroup.position.set(-1000, -150, 800);
+        scene.add(starGroup);
+        discoverableObjects.push({ name: 'Étoile', group: starGroup, found: false });
+
+        const emerald = new THREE.Group();
+        emerald.add(new THREE.Mesh(new THREE.IcosahedronGeometry(5, 0), new THREE.MeshStandardMaterial({ color: 0x50c878, metalness: 0.4, roughness: 0.2, emissive: 0x105528 })), createTextSprite("Émeraude Spatiale"));
+        emerald.children[1].position.y = 10;
+        emerald.position.set(150, -200, -400);
+        scene.add(emerald);
+        discoverableObjects.push({ name: 'Émeraude', group: emerald, found: false });
+        
+        const sunglasses = new THREE.Group();
+        const lensMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        const frameMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeee });
+        sunglasses.add(new THREE.Mesh(new THREE.BoxGeometry(6, 4, 0.5), lensMaterial), new THREE.Mesh(new THREE.BoxGeometry(6, 4, 0.5), lensMaterial), new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 0.5), frameMaterial), new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 10), frameMaterial), new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 10), frameMaterial), createTextSprite("Lunettes de Soleil"));
+        sunglasses.children[0].position.x = -3.5; sunglasses.children[1].position.x = 3.5; sunglasses.children[3].position.set(-6.5, 0, 5); sunglasses.children[4].position.set(6.5, 0, 5); sunglasses.children[5].position.y = 8;
+        sunglasses.position.set(400, 50, 900);
+        sunglasses.rotation.y = -Math.PI / 4;
+        scene.add(sunglasses);
+        discoverableObjects.push({ name: 'Lunettes', group: sunglasses, found: false });
+
+        const ribbon = new THREE.Group();
+        const ribbonMaterial = new THREE.MeshStandardMaterial({ color: 0xffc0cb, metalness: 0.5, roughness: 0.4 });
+        const loopGeometry = new THREE.TorusGeometry(5, 1.5, 16, 100);
+        const leftLoop = new THREE.Mesh(loopGeometry, ribbonMaterial); leftLoop.scale.y = 0.5; leftLoop.rotation.z = Math.PI / 4; leftLoop.position.x = -4;
+        const rightLoop = new THREE.Mesh(loopGeometry, ribbonMaterial); rightLoop.scale.y = 0.5; rightLoop.rotation.z = -Math.PI / 4; rightLoop.position.x = 4;
+        const knot = new THREE.Mesh(new THREE.SphereGeometry(2, 16, 16), ribbonMaterial);
+        const tailGeometry = new THREE.BoxGeometry(3, 8, 0.5);
+        const leftTail = new THREE.Mesh(tailGeometry, ribbonMaterial); leftTail.position.set(-2, -5, 0); leftTail.rotation.z = -Math.PI / 8;
+        const rightTail = new THREE.Mesh(tailGeometry, ribbonMaterial); rightTail.position.set(2, -5, 0); rightTail.rotation.z = Math.PI / 8;
+        ribbon.add(leftLoop, rightLoop, knot, leftTail, rightTail, createTextSprite("Ruban Cosmique"));
+        ribbon.children[5].position.y = 12;
+        ribbon.position.set(-500, 300, -700);
+        ribbon.scale.set(1.5, 1.5, 1.5);
+        scene.add(ribbon);
+        discoverableObjects.push({ name: 'Ruban', group: ribbon, found: false });
+        
+        const kitten = new THREE.Group();
+        const furMaterial = new THREE.MeshStandardMaterial({ color: '#e67e22', roughness: 0.9 });
+        const kittenBodyParts = [ new THREE.Mesh(new THREE.BoxGeometry(6, 5, 5), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: '#2c3e50' })), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: '#2c3e50' })), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: '#ffb6c1' })), new THREE.Mesh(new THREE.BoxGeometry(1.5, 3, 1.5), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(1.5, 3, 1.5), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(5, 6, 9), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), furMaterial), new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), furMaterial), createTextSprite("Chaton Voxel") ];
+        kittenBodyParts[0].position.y = 3.5; kittenBodyParts[1].position.set(-1.5, 4, 2.5); kittenBodyParts[2].position.set(1.5, 4, 2.5); kittenBodyParts[3].position.set(0, 3, 2.5); kittenBodyParts[4].position.set(-2, 6.5, 0); kittenBodyParts[5].position.set(2, 6.5, 0); kittenBodyParts[7].position.set(-1.5, -4, 3); kittenBodyParts[8].position.set(1.5, -4, 3); kittenBodyParts[9].position.set(-1.5, -4, -3); kittenBodyParts[10].position.set(1.5, -4, -3); kittenBodyParts[11].position.set(0, 1, -5); kittenBodyParts[12].position.set(0, 2, -6); kittenBodyParts[13].position.set(0, 3, -7); kittenBodyParts[14].position.y = 12;
+        kitten.add(...kittenBodyParts);
+        kitten.position.set(600, -250, 300);
+        kitten.scale.set(2.5, 2.5, 2.5);
+        scene.add(kitten);
+        discoverableObjects.push({ name: 'Chaton', group: kitten, found: false });
+
+        const planet = new THREE.Group();
+        planet.add(new THREE.Mesh(new THREE.SphereGeometry(20, 64, 64), new THREE.MeshStandardMaterial({ map: createPlanetTexture(), roughness: 0.8 })), createTextSprite("Le monde merveilleux du numérique"));
+        planet.children[1].position.y = 28;
+        planet.position.set(0, 400, 1500);
+        scene.add(planet);
+        discoverableObjects.push({ name: 'Planète', group: planet, found: false });
+
+        const scepter = new THREE.Group();
+        const goldMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
+        const diamondMaterial = new THREE.MeshStandardMaterial({ color: 0xb9f2ff, metalness: 0.1, roughness: 0.1, transparent: true, opacity: 0.9, emissive: 0x88ccff, emissiveIntensity: 0.5 });
+        scepter.add(new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 30, 16), goldMaterial), new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), goldMaterial), new THREE.Mesh(new THREE.OctahedronGeometry(3, 0), diamondMaterial), createTextSprite("Sceptre Royal"));
+        scepter.children[1].position.y = 15; scepter.children[2].position.y = 18; scepter.children[3].position.y = 25;
+        scepter.position.set(-900, 0, -900);
+        scepter.rotation.z = Math.PI / 4; scepter.rotation.x = Math.PI / 6;
+        scene.add(scepter);
+        discoverableObjects.push({ name: 'Sceptre', group: scepter, found: false });
+
+        const heart = new THREE.Group();
+        const heartShape = new THREE.Shape();
+        heartShape.moveTo( 0, -5 ); heartShape.bezierCurveTo( 0, -5, -6, -15, -15, -15 ); heartShape.bezierCurveTo( -25, -15, -25, 5, -25, 5 ); heartShape.bezierCurveTo( -25, 20, 0, 30, 0, 40 ); heartShape.bezierCurveTo( 0, 30, 25, 20, 25, 5 ); heartShape.bezierCurveTo( 25, 5, 25, -15, 15, -15 ); heartShape.bezierCurveTo( 6, -15, 0, -5, 0, -5 );
+        const heartMesh = new THREE.Mesh(new THREE.ExtrudeGeometry( heartShape, { depth: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 } ), new THREE.MeshStandardMaterial( { color: 0xff69b4, metalness: 0.3, roughness: 0.4 } ));
+        heartMesh.rotation.x = Math.PI;
+        heart.add(heartMesh, createTextSprite("Cœur Rose"));
+        heart.children[1].position.y = 50;
+        heart.position.set(0, -200, -1000);
+        scene.add( heart );
+        discoverableObjects.push({ name: 'Cœur', group: heart, found: false });
+        
+        const instagramLogo = new THREE.Group();
+        const instaSize = 2;
+        const colors = { yellow: new THREE.MeshStandardMaterial({ color: 0xfde444, roughness: 0.7 }), orange: new THREE.MeshStandardMaterial({ color: 0xfb8c2c, roughness: 0.7 }), pink: new THREE.MeshStandardMaterial({ color: 0xd32e98, roughness: 0.7 }), purple: new THREE.MeshStandardMaterial({ color: 0x8234c8, roughness: 0.7 }), white: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 }), black: new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 0.7 }) };
+        const layout = [ "PPPPYYYYYPPPP", "PPOOOOYYYYYKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "POOOOOOYYYKKK", "PPOOOOYYYKKKK", "PPPPPPKKKKKKP", ];
+        for (let i = 0; i < layout.length; i++) { for (let j = 0; j < layout[i].length; j++) { const char = layout[i][j]; const colorMap = { 'P': colors.purple, 'Y': colors.yellow, 'O': colors.orange, 'K': colors.pink }; if (colorMap[char]) { const cube = new THREE.Mesh(new THREE.BoxGeometry(instaSize, instaSize, instaSize), colorMap[char]); cube.position.set((j - 6) * instaSize, (6 - i) * instaSize, 0); instagramLogo.add(cube); } } }
+        const cameraFrame = new THREE.Mesh(new THREE.BoxGeometry(instaSize * 7, instaSize * 7, instaSize), colors.white); cameraFrame.position.z = instaSize;
+        const cameraInnerBg = new THREE.Mesh(new THREE.BoxGeometry(instaSize * 5, instaSize * 5, instaSize), colors.purple); cameraInnerBg.position.z = instaSize * 1.1;
+        const lens = new THREE.Mesh(new THREE.CylinderGeometry(instaSize * 2, instaSize * 2, instaSize, 32), colors.black); lens.position.z = instaSize * 1.5; lens.rotation.x = Math.PI / 2;
+        const sensor = new THREE.Mesh(new THREE.CylinderGeometry(instaSize * 0.5, instaSize * 0.5, instaSize, 16), colors.black); sensor.position.set(instaSize * 2.5, instaSize * 2.5, instaSize * 1.5); sensor.rotation.x = Math.PI / 2;
+        instagramLogo.add(cameraFrame, cameraInnerBg, lens, sensor, createTextSprite("Logo Instagram"));
+        instagramLogo.children[instagramLogo.children.length - 1].position.y = 20;
+        instagramLogo.position.set(-700, -300, 1000);
+        instagramLogo.scale.set(1.5, 1.5, 1.5);
+        scene.add(instagramLogo);
+        discoverableObjects.push({ name: 'Instagram', group: instagramLogo, found: false });
+
+        const thermometer = new THREE.Group();
+        const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.8 });
+        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff4444, roughness: 0.5 });
+        const glassMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1, transparent: true, opacity: 0.4 });
+        const backPlate = new THREE.Mesh(new THREE.BoxGeometry(6, 30, 1), whiteMaterial);
+        const bulb = new THREE.Mesh(new THREE.SphereGeometry(4, 16, 16), redMaterial); bulb.position.y = -15;
+        const tube = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 25, 16), glassMaterial);
+        const liquidHeight = 10; const liquid = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, liquidHeight, 16), redMaterial); liquid.position.y = -15 + liquidHeight / 2;
+        const tickGeometry = new THREE.BoxGeometry(1, 0.2, 1); const blackMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const tick1 = new THREE.Mesh(tickGeometry, blackMaterial); tick1.position.set(3.5, -15 + liquidHeight, 0);
+        const tick2 = new THREE.Mesh(tickGeometry, blackMaterial); tick2.position.set(3.5, -15 + liquidHeight + 2, 0);
+        const label1 = createTextSprite("1°C", 20); label1.position.set(8, -15 + liquidHeight, 0);
+        const label2 = createTextSprite("2°C", 20); label2.position.set(8, -15 + liquidHeight + 2, 0);
+        thermometer.add(backPlate, bulb, tube, liquid, tick1, tick2, label1, label2, createTextSprite("Thermomètre"));
+        thermometer.children[thermometer.children.length - 1].position.y = 22;
+        thermometer.position.set(250, -350, -1200);
+        scene.add(thermometer);
+        discoverableObjects.push({ name: 'Thermomètre', group: thermometer, found: false });
+        
+        const netflixLogo = new THREE.Group();
+        const redMaterialNetflix = new THREE.MeshStandardMaterial({ color: '#E50914', roughness: 0.6 });
+        const netflixSize = 3;
+        const netflixBox = new THREE.BoxGeometry(netflixSize, netflixSize, netflixSize);
+        for(let i=0; i<9; i++) { netflixLogo.add(new THREE.Mesh(netflixBox, redMaterialNetflix).translateX(-netflixSize*2).translateY((i-4)*netflixSize)); }
+        for(let i=0; i<9; i++) { netflixLogo.add(new THREE.Mesh(netflixBox, redMaterialNetflix).translateX(netflixSize*2).translateY((i-4)*netflixSize)); }
+        for(let i=0; i<7; i++) { netflixLogo.add(new THREE.Mesh(netflixBox, redMaterialNetflix).translateX((-1+i*2/6-1)*netflixSize).translateY((3-i)*netflixSize)); }
+        netflixLogo.add(createTextSprite("Logo Netflix"));
+        netflixLogo.children[netflixLogo.children.length-1].position.y = 20;
+        netflixLogo.position.set(-1200, 400, 0);
+        netflixLogo.scale.set(1.5, 1.5, 1.5);
+        scene.add(netflixLogo);
+        discoverableObjects.push({ name: 'Netflix', group: netflixLogo, found: false });
+
+        const rocket = new THREE.Group();
+        const rocketBody = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 15, 16), new THREE.MeshStandardMaterial({color: 0xcccccc}));
+        const noseCone = new THREE.Mesh(new THREE.ConeGeometry(2, 5, 16), new THREE.MeshStandardMaterial({color: 0xff4444}));
+        noseCone.position.y = 10;
+        const fin1 = new THREE.Mesh(new THREE.BoxGeometry(1, 5, 8), new THREE.MeshStandardMaterial({color: 0xff4444}));
+        fin1.position.y = -5; fin1.rotation.y = Math.PI / 2;
+        const fin2 = new THREE.Mesh(new THREE.BoxGeometry(8, 5, 1), new THREE.MeshStandardMaterial({color: 0xff4444}));
+        fin2.position.y = -5;
+        const flame = new THREE.Mesh(new THREE.ConeGeometry(1.5, 5, 16), new THREE.MeshBasicMaterial({color: 0xffa500, transparent: true, opacity: 0.8}));
+        flame.position.y = -10; flame.rotation.x = Math.PI;
+        rocket.add(rocketBody, noseCone, fin1, fin2, flame, createTextSprite("Fusée de l'Amitié"));
+        rocket.children[5].position.y = 18;
+        scene.add(rocket);
+        discoverableObjects.push({ name: 'Fusée', group: rocket, found: false });
+
+        const pulsar = new THREE.Group();
+        const pulsarStar = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshBasicMaterial({color: 0xaaaaff, emissive: 0xaaaaff}));
+        const beamMaterial = new THREE.MeshBasicMaterial({color: 0xeeeeff, transparent: true, opacity: 0.3});
+        const beam1 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 2, 1000, 16), beamMaterial);
+        beam1.position.y = 500;
+        const beam2 = new THREE.Mesh(new THREE.CylinderGeometry(2, 0.5, 1000, 16), beamMaterial);
+        beam2.position.y = -500;
+        pulsar.add(pulsarStar, beam1, beam2, createTextSprite("Pulsar"));
+        pulsar.children[3].position.y = 15;
+        pulsar.position.set(-1500, 0, 1500);
+        scene.add(pulsar);
+        
+        let complimentPaper;
+        const complimentPrinter = new THREE.Group();
+        const printerBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.8 });
+        const printerBody = new THREE.Mesh(new THREE.BoxGeometry(15, 8, 12), printerBodyMaterial);
+        const printerSlot = new THREE.Mesh(new THREE.BoxGeometry(10, 1, 1), new THREE.MeshBasicMaterial({color: 0x333333}));
+        printerSlot.position.set(0, 3.5, 6);
+        
+        function createComplimentTexture() {
+            const compliments = ["Alexia est jolie", "Alexia est géniale"];
+            const compliment = compliments[Math.floor(Math.random() * compliments.length)];
+            const canvas = document.createElement('canvas');
+            canvas.width = 256; canvas.height = 350;
+            const context = canvas.getContext('2d');
+            context.fillStyle = 'white'; context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = 'black'; context.font = 'bold 32px Arial'; context.textAlign = 'center';
+            context.fillText(compliment, canvas.width / 2, 50);
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        const complimentPaperMaterial = new THREE.MeshBasicMaterial({ map: createComplimentTexture(), side: THREE.DoubleSide });
+        const complimentPaperGeometry = new THREE.PlaneGeometry(8, 11);
+        complimentPaper = new THREE.Mesh(complimentPaperGeometry, complimentPaperMaterial);
+        complimentPaper.position.set(0, 3.5, 0);
+        complimentPaper.rotation.x = -Math.PI / 8;
+
+        complimentPrinter.add(printerBody, printerSlot, complimentPaper, createTextSprite("Générateur de compliment"));
+        complimentPrinter.children[3].position.y = 10;
+        complimentPrinter.position.set(1000, -300, -800);
+        scene.add(complimentPrinter);
+        discoverableObjects.push({ name: 'Compliment', group: complimentPrinter, found: false });
+
+        let leftWing, rightWing;
+        {
+            const detailedDragon = new THREE.Group();
+            const petBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xADD8E6, roughness: 0.6 });
+            const petAccentMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.6 });
+            const dragonBody = new THREE.Mesh(new THREE.BoxGeometry(7, 6, 14), petBodyMaterial); dragonBody.position.y = -1;
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.5, 5, 8), petBodyMaterial); neck.position.set(0, 3, -5); neck.rotation.x = Math.PI / 4;
+            const dragonHead = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), petBodyMaterial); dragonHead.position.set(0, 6, -8);
+            const snout = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 3), petBodyMaterial); snout.position.set(0, 5, -11);
+            const leftHorn = new THREE.Mesh(new THREE.ConeGeometry(1, 5, 8), petAccentMaterial); leftHorn.position.set(-2, 9, -8); leftHorn.rotation.x = -Math.PI / 6;
+            const rightHorn = new THREE.Mesh(new THREE.ConeGeometry(1, 5, 8), petAccentMaterial); rightHorn.position.set(2, 9, -8); rightHorn.rotation.x = -Math.PI / 6;
+            const dragonLegGeometry = new THREE.BoxGeometry(2, 5, 2);
+            const dragonFrontLeftLeg = new THREE.Mesh(dragonLegGeometry, petBodyMaterial); dragonFrontLeftLeg.position.set(-3, -5, -4);
+            const dragonFrontRightLeg = new THREE.Mesh(dragonLegGeometry, petBodyMaterial); dragonFrontRightLeg.position.set(3, -5, -4);
+            const dragonBackLeftLeg = new THREE.Mesh(dragonLegGeometry, petBodyMaterial); dragonBackLeftLeg.position.set(-3, -5, 4);
+            const dragonBackRightLeg = new THREE.Mesh(dragonLegGeometry, petBodyMaterial); dragonBackRightLeg.position.set(3, -5, 4);
+            const tailGroup = new THREE.Group();
+            for(let i = 0; i < 5; i++) { const tailSegment = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2), petBodyMaterial); tailSegment.position.set(0, -1 - i * 0.5, 7 + i * 2); tailSegment.rotation.x = -Math.PI / 8 * i; tailGroup.add(tailSegment); }
+            leftWing = new THREE.Mesh(new THREE.BoxGeometry(12, 0.5, 4), petAccentMaterial); leftWing.position.set(-8, 3, 0); leftWing.rotation.z = Math.PI / 4;
+            rightWing = new THREE.Mesh(new THREE.BoxGeometry(12, 0.5, 4), petAccentMaterial); rightWing.position.set(8, 3, 0); rightWing.rotation.z = -Math.PI / 4;
+            detailedDragon.add(dragonBody, neck, dragonHead, snout, leftHorn, rightHorn, dragonFrontLeftLeg, dragonFrontRightLeg, dragonBackLeftLeg, dragonBackRightLeg, tailGroup, leftWing, rightWing);
+
+            const simpleDragon = new THREE.Mesh(
+                new THREE.BoxGeometry(10, 8, 18),
+                petBodyMaterial
+            );
+            
+            const lod = new THREE.LOD();
+            lod.addLevel(detailedDragon, 400);
+            lod.addLevel(simpleDragon, 1200);
+            
+            const dragonContainer = new THREE.Group();
+            dragonContainer.add(lod, createTextSprite("Dragon de Givre"));
+            dragonContainer.children[1].position.y = 15;
+            dragonContainer.position.set(1200, 0, 500);
+            dragonContainer.scale.set(2, 2, 2);
+            scene.add(dragonContainer);
+            discoverableObjects.push({ name: 'Dragon', group: dragonContainer, found: false });
+        }
+        
+        const pauseOverlay = document.getElementById('pause-overlay');
+        const playButton = document.getElementById('playButton');
+        const restartButton = document.getElementById('restartButton');
+        const audioButton = document.getElementById('audio-control');
+        const toggleGamificationBtn = document.getElementById('toggle-gamification-btn');
+        const gamificationPanel = document.getElementById('gamification-panel');
+        const mobilePauseBtn = document.getElementById('mobile-pause-btn');
+        const cockpitOverlay = document.getElementById('cockpit-overlay');
+        const toggleCockpitBtn = document.getElementById('toggle-cockpit-btn');
+        const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        function togglePause() {
+            isPaused = !isPaused;
+            if (isPaused) {
+                pauseOverlay.style.display = 'flex';
+                playButton.textContent = 'Reprendre';
+                restartButton.style.display = 'block';
+                clock.stop();
+                Tone.Transport.pause();
+                cancelAnimationFrame(animationFrameId);
+            } else {
+                pauseOverlay.style.display = 'none';
+                clock.start();
+                Tone.Transport.start();
+                animate();
+            }
+        }
+        
+        playButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(!musicStarted) {
+                Tone.start();
+                musicStarted = true;
+            }
+
+            if(playButton.textContent === 'Jouer') {
+                restartButton.style.display = 'block';
+                if (isMobile) {
+                    mobilePauseBtn.style.display = 'flex';
+                    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+                        screen.orientation.lock('landscape').catch(err => {
+                            console.log("Verrouillage en mode paysage non autorisé.", err);
+                        });
+                    }
+                }
+                const fullscreenPromise = enterFullscreen(document.documentElement);
+                if (fullscreenPromise) {
+                    fullscreenPromise.catch(err => {
+                        console.log(`Erreur lors du passage en plein écran: ${err.message} (${err.name})`);
+                    });
+                }
+            }
+            togglePause();
+        });
+        
+        toggleCockpitBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cockpitOverlay.classList.toggle('hidden');
+            const isHidden = cockpitOverlay.classList.contains('hidden');
+            e.target.textContent = isHidden ? 'Afficher Cockpit' : 'Mode 360°';
+        });
+
+        mobilePauseBtn.addEventListener('click', (e) => {
+             e.stopPropagation();
+             togglePause();
+        });
+        
+        toggleGamificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            gamificationPanel.classList.toggle('open');
+        });
+        
+        gamificationPanel.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+        gamificationPanel.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+
+        restartButton.addEventListener('click', (e) => { e.stopPropagation(); window.location.reload(); });
+        audioButton.addEventListener('click', () => { Tone.Destination.mute = !Tone.Destination.mute; audioButton.textContent = Tone.Destination.mute ? '🔇' : '🔊'; });
+        document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && playButton.textContent !== 'Jouer') { togglePause(); } });
+        
+        const joystickBase = document.getElementById('joystick-base');
+        const joystickStick = document.getElementById('joystick-stick');
+        let lookTouch = { id: -1, lastX: 0, lastY: 0 };
+        let moveTouch = { id: -1, startX: 0, startY: 0 };
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            for (let touch of e.changedTouches) {
+                if (touch.clientX < window.innerWidth / 2 && moveTouch.id === -1) {
+                    moveTouch.id = touch.identifier;
+                    moveTouch.startX = touch.clientX;
+                    moveTouch.startY = touch.clientY;
+                    joystickBase.style.display = 'block';
+                    joystickBase.style.left = `${touch.clientX - 60}px`;
+                    joystickBase.style.top = `${touch.clientY - 60}px`;
+                } else if (touch.clientX >= window.innerWidth / 2 && lookTouch.id === -1) {
+                    lookTouch.id = touch.identifier;
+                    lookTouch.lastX = touch.clientX;
+                    lookTouch.lastY = touch.clientY;
+                }
+            }
+        }
+        function handleTouchMove(e) {
+            e.preventDefault();
+            for (let touch of e.changedTouches) {
+                if (touch.identifier === moveTouch.id) {
+                    const dx = touch.clientX - moveTouch.startX, dy = touch.clientY - moveTouch.startY;
+                    const angle = Math.atan2(dy, dx), distance = Math.min(60, Math.hypot(dx, dy));
+                    joystickStick.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    const deadzone = 15;
+                    controls.moveState.forward = dy > deadzone ? 1 : (dy < -deadzone ? -1 : 0);
+                    controls.moveState.left = dx > deadzone ? 1 : (dx < -deadzone ? -1 : 0);
+                } else if (touch.identifier === lookTouch.id) {
+                    const dx = touch.clientX - lookTouch.lastX, dy = touch.clientY - lookTouch.lastY;
+                    controls.moveState.pitch = -dy * 0.005;
+                    controls.moveState.yaw = -dx * 0.005;
+                    lookTouch.lastX = touch.clientX;
+                    lookTouch.lastY = touch.clientY;
+                }
+            }
+        }
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            for (let touch of e.changedTouches) {
+                if (touch.identifier === moveTouch.id) {
+                    moveTouch.id = -1;
+                    controls.moveState.forward = 0; controls.moveState.left = 0;
+                    joystickBase.style.display = 'none';
+                    joystickStick.style.transform = 'translate(0px, 0px)';
+                } else if (touch.identifier === lookTouch.id) {
+                    lookTouch.id = -1;
+                    controls.moveState.pitch = 0;
+                    controls.moveState.yaw = 0;
+                }
+            }
+        }
+        renderer.domElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+        renderer.domElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+        renderer.domElement.addEventListener('touchend', handleTouchEnd, { passive: false });
+        renderer.domElement.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+        function checkDiscoveries() {
+            discoverableObjects.forEach(obj => {
+                if (!obj.found) {
+                    const distance = camera.position.distanceTo(obj.group.position);
+                    if (distance < DISCOVERY_RADIUS) {
+                        obj.found = true;
+                        showNotification(`Vous avez trouvé : ${obj.name} !`);
+                        updateObjectivesList(obj.name);
+                    }
+                }
+            });
+        }
+        function drawMap() {
+            const mapSize = 200;
+            mapCtx.clearRect(0, 0, mapSize, mapSize);
+            mapCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            mapCtx.beginPath();
+            mapCtx.arc(mapSize / 2, mapSize / 2, mapSize / 2 - 2, 0, Math.PI * 2);
+            mapCtx.fill();
+            
+            mapCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            mapCtx.beginPath(); mapCtx.moveTo(mapSize/2, 0); mapCtx.lineTo(mapSize/2, mapSize); mapCtx.stroke();
+            mapCtx.beginPath(); mapCtx.moveTo(0, mapSize/2); mapCtx.lineTo(mapSize, mapSize/2); mapCtx.stroke();
+            const playerX = mapSize / 2, playerY = mapSize / 2;
+            mapCtx.fillStyle = 'white';
+            mapCtx.beginPath(); mapCtx.arc(playerX, playerY, 3, 0, Math.PI * 2); mapCtx.fill();
+            const cameraDirection = new THREE.Vector3();
+            camera.getWorldDirection(cameraDirection);
+            const angle = Math.atan2(cameraDirection.x, cameraDirection.z);
+            mapCtx.save();
+            mapCtx.translate(playerX, playerY);
+            mapCtx.rotate(-angle);
+            mapCtx.beginPath(); mapCtx.moveTo(0, -8); mapCtx.lineTo(-4, 0); mapCtx.lineTo(4, 0); mapCtx.closePath(); mapCtx.fill();
+            mapCtx.restore();
+
+            discoverableObjects.forEach(obj => {
+                const dx = obj.group.position.x - camera.position.x;
+                const dz = obj.group.position.z - camera.position.z;
+                const rotatedX = dx * Math.cos(angle) - dz * Math.sin(angle);
+                const rotatedZ = dx * Math.sin(angle) + dz * Math.cos(angle);
+                const mapX = playerX + rotatedZ * MAP_SCALE;
+                const mapY = playerY + rotatedX * MAP_SCALE;
+                if (Math.hypot(mapX - playerX, mapY - playerY) < mapSize/2 - 5) {
+                    mapCtx.fillStyle = obj.found ? '#50c878' : '#e74c3c';
+                    mapCtx.beginPath(); mapCtx.arc(mapX, mapY, 3, 0, Math.PI * 2); mapCtx.fill();
+                }
+            });
+        }
+
+        const clock = new THREE.Clock();
+        let lastPrintTime = 0;
+        const PRINT_INTERVAL = 8;
+        let rocketAngle = 0;
+        
+        function animate() {
+            if (isPaused) return;
+            animationFrameId = requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            const elapsedTime = clock.getElapsedTime();
+            controls.update(delta);
+            camera.position.clamp(worldBoundary.min, worldBoundary.max);
+            
+            discoverableObjects.forEach(obj => {
+                if (obj.group.children[0] instanceof THREE.LOD) {
+                    obj.group.children[0].update(camera);
+                }
+            });
+
+            checkDiscoveries();
+            if(window.innerWidth > 1024 || gamificationPanel.classList.contains('open')) {
+                 drawMap();
+            }
+
+            if (elapsedTime - lastPrintTime > PRINT_INTERVAL) {
+                lastPrintTime = elapsedTime;
+                complimentPaper.position.z = 0;
+                complimentPaper.material.map.dispose();
+                complimentPaper.material.map = createComplimentTexture();
+            }
+             if (complimentPaper.position.z < 6) {
+                complimentPaper.position.z += 0.05;
+            }
+
+            accretionDisk.rotation.z += 0.005;
+            emerald.rotation.x += 0.01; emerald.rotation.y += 0.015;
+            sunglasses.rotation.y += 0.005; sunglasses.rotation.z += 0.002;
+            ribbon.rotation.y += 0.01; ribbon.rotation.x += 0.005;
+            kitten.rotation.y += 0.008;
+            planet.rotation.y += 0.002;
+            scepter.rotation.y += 0.008;
+            heart.rotation.y += 0.01;
+            discoverableObjects.find(d => d.name === 'Dragon').group.rotation.y += 0.007;
+            instagramLogo.rotation.y += 0.01;
+            thermometer.rotation.y += 0.01;
+            netflixLogo.rotation.y -= 0.009;
+            pulsar.rotation.y += 0.1;
+            complimentPrinter.rotation.y += 0.005;
+
+            const rocketSlowdownRadius = 800;
+            const distanceToRocket = camera.position.distanceTo(rocket.position);
+            let rocketSpeed = 0.1;
+            if (distanceToRocket < rocketSlowdownRadius) {
+                rocketSpeed = 0.015;
+            }
+            rocketAngle += rocketSpeed * delta;
+
+            const rocketOrbitRadius = 1600;
+            const rocketX = Math.cos(rocketAngle) * rocketOrbitRadius;
+            const rocketZ = Math.sin(rocketAngle) * rocketOrbitRadius;
+            const rocketY = Math.sin(rocketAngle * 0.5) * 200;
+            rocket.position.set(rocketX, rocketY, rocketZ);
+            
+            const nextAngle = rocketAngle + 0.01;
+            const nextX = Math.cos(nextAngle) * rocketOrbitRadius;
+            const nextZ = Math.sin(nextAngle) * rocketOrbitRadius;
+            const nextY = Math.sin(nextAngle * 0.5) * 200;
+            rocket.lookAt(nextX, nextY, nextZ);
+
+
+            const wingAngle = Math.sin(elapsedTime * 3) * 0.4;
+            leftWing.rotation.z = Math.PI / 4 + wingAngle;
+            rightWing.rotation.z = -Math.PI / 4 - wingAngle;
+            const twinkle = Math.abs(Math.sin(elapsedTime * 2)) * 0.1 + 0.95;
+            starGroup.scale.set(twinkle, twinkle, twinkle);
+            galaxy.rotation.y += 0.0005;
+            shootingStars.forEach(s => { s.position.add(s.velocity); if (s.position.z > 2000) { resetShootingStar(s); } });
+            
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+        
+        initializeGamificationUI();
+        renderer.render(scene, camera);
+
+    </script>
+</body>
+</html>

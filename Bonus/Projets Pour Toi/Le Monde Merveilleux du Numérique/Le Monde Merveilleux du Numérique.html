@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les BFF et le Monde Merveilleux du Numérique</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for fantasy and general text -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #1a202c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .fantasy-font {
+            font-family: 'Cinzel Decorative', serif;
+        }
+
+        .background-kingdom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("Kingdom.png");
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) brightness(0.7);
+            z-index: -1;
+        }
+
+        .book-container {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            margin: 5vh auto;
+            background-color: #f7e6c4;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-image: url("Parchemin.png");
+            background-size: cover;
+            background-blend-mode: multiply;
+        }
+
+        .book-page {
+            padding: 2rem;
+            overflow-y: auto;
+            color: #4a2c0f;
+            line-height: 1.6;
+            text-align: justify;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 70px);
+            box-sizing: border-box;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .book-page.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background-color: rgba(247, 230, 196, 0.8);
+            border-top: 1px solid #d7c49e;
+            border-radius: 0 0 1rem 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 3;
+        }
+
+        .nav-button {
+            background-color: #8b5f3a;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-button:hover {
+            background-color: #6a4a2b;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            .book-container {
+                width: 95%;
+                height: 85vh;
+                margin: 2.5vh auto;
+            }
+            .book-page {
+                padding: 1.5rem;
+                height: calc(100% - 60px);
+            }
+            .nav-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .book-page {
+                padding: 1rem;
+                font-size: 0.9rem;
+                height: calc(100% - 50px);
+            }
+            .nav-button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio tag for background music -->
+    <audio id="background-music" src="Music.mp3" loop preload="auto"></audio>
+
+    <!-- Background image of the fantasy kingdom -->
+    <div class="background-kingdom"></div>
+
+    <!-- Main container for the interactive book -->
+    <div class="book-container">
+        <!-- Page 0: Title Page -->
+        <div id="page-0" class="book-page active">
+            <h1 class="text-4xl font-bold text-center mb-6 fantasy-font">Le Conte des Âmes Liées et du Royaume Numérique</h1>
+            <h2 class="text-2xl font-semibold text-center mb-8 fantasy-font">Une Légende Ancienne, Écrite par le Destin</h2>
+            <p class="mb-4">Il était une fois, dans un royaume lointain où la magie se mêlait aux murmures du vent, une histoire extraordinaire allait s'écrire. Une histoire d'amitié pure, de courage inébranlable et de découvertes merveilleuses, même au cœur d'un monde touché par les mystères du Numérique.</p>
+            <p>Préparez-vous, cher lecteur, à tourner la page et à plonger au cœur de cette fable enchantée...</p>
+        </div>
+
+        <!-- Page 1: Part 1 of the story -->
+        <div id="page-1" class="book-page">
+            <h2 class="text-2xl font-semibold mb-4 fantasy-font">Partie 1: La Rencontre Étoilée</h2>
+            <p class="mb-4">Au cœur d'une forêt profonde et mystérieuse, où les arbres murmuraient des secrets anciens, errait un jeune homme nommé Ethan. Son cœur était lourd d'une solitude si immense que chaque larme qu'il versait se transformait en un ruisseau invisible, s'écoulant silencieusement à travers les bois.</p>
+            <p>Loin de cette mélancolie, dans un royaume enchanteur baigné de lumière dorée, régnait la belle reine Alexia. Son destin, marqué par le souffle sombre d'un dragon autrefois nommé Sylvain, portait encore l'écho de cette épreuve sur son château. Un jour, par un merveilleux caprice du destin, Alexia aperçut une rivière scintillante s'approcher de ses remparts. Intriguée par cet éclat inattendu, elle en chercha la source et découvrit, à sa grande surprise, que cette eau n'était autre que l'accumulation des pleurs d'Ethan. Patiente et infiniment bienveillante, elle resta là, telle une étoile filante attendant d'être vue, offrant sans le savoir une lueur d'espoir au cœur solitaire.</p>
+        </div>
+
+        <!-- Page 2: Part 2 of the story -->
+        <div id="page-2" class="book-page">
+            <h2 class="text-2xl font-semibold mb-4 fantasy-font">Partie 2: Le Chemin vers une Amitié Pure</h2>
+            <p class="mb-4">Un amour ardent et dévorant naquit dans le cœur d'Ethan pour la reine Alexia. Pourtant, la reine, gardienne de son propre cœur, ne semblait pas réceptive à cette flamme romantique. Ethan déploya des trésors d'efforts, des gestes grandioses et des paroles douces pour tenter de conquérir son affection. Mais au fil du temps, une vérité plus profonde lui apparut, claire comme l'eau de source : pour ne point la perdre, il ne fallait point la contraindre à l'aimer, mais plutôt œuvrer pour son bien-être, quitte à transcender ses propres désirs amoureux.</p>
+            <p>Guidé par cette nouvelle sagesse, il chercha conseil auprès d'un grand chamane, dont la réputation résonnait à travers les vallées. Le sage lui confia de puissantes potions magiques, des élixirs aux vertus curatives. Grâce à ces dons, Ethan put enfin apaiser les tourments de son âme, cicatriser ses blessures et forger un lien d'une nature nouvelle, non plus dicté par la passion, mais par la pureté d'une amitié naissante.</p>
+        </div>
+
+        <!-- Page 3: Part 3 of the story -->
+        <div id="page-3" class="book-page">
+            <h2 class="text-2xl font-semibold mb-4 fantasy-font">Partie 3: La Bande des Braves Compagnons</h2>
+            <p class="mb-4">À partir de ce jour béni, la bande d'Alexia et d'Ethan fut enfin au complet. Ils étaient désormais quatre âmes unies dans une quête commune : la noble reine Alexia, le valeureux Ethan, le sage et fidèle chat Oliver, dont les yeux félins veillaient sur eux, et le dévoué chien Rocky, dont l'énergie débordante ne connaissait aucune limite.</p>
+            <p class="mb-4">Ensemble, ils prirent la route pour affronter la méchante sorcière, une figure redoutable qui, hélas, se révéla être la propre grand-mère d'Alexia. Ses sorts maléfiques avaient jeté une ombre funeste sur le royaume et infligé de profondes blessures à la reine. Avec un courage sans faille, les quatre compagnons s'entraidaient sans relâche, unissant leurs forces pour contrer ses sombres enchantements.</p>
+            <p>La sorcière, dans sa perfidie, ne cessait d'envoyer ses sbires à l'attaque : tantôt des gobelins hideux aux rires stridents, tantôt des créatures au cœur noir, prenant l'apparence de porcs sous forme humaine, dont la vilenie était insupportable ! Mais Alexia, dotée d'une force et d'une résilience inébranlables face à ces assauts, se renforçait à chaque épreuve, devenant plus lumineuse encore.</p>
+            <p>De son côté, Ethan comprenait enfin les profondes séquelles de son séjour dans la Forêt Sombre. L'amitié qu'il partageait avec Alexia le comblait d'une joie si pure qu'il n'hésitait pas à organiser chaque jour de grands feux d'artifice, des gerbes de lumière éclatantes qui montaient vers le ciel étoilé, pour lui rappeler la splendeur de leur lien précieux.</p>
+        </div>
+
+        <!-- Page 4: Part 4 of the story -->
+        <div id="page-4" class="book-page">
+            <h2 class="text-2xl font-semibold mb-4 fantasy-font">Partie 4: Les Nuances du Cœur et le Voyage Continu</h2>
+            <p class="mb-4">Pourtant, le peuple du royaume, toujours enclin aux murmures et aux doutes, remettait en question la véritable sincérité d'Ethan. Certains chuchotaient qu'il était encore prisonnier de son amour passé, d'autres émettaient des doutes sur la pureté de son intention. Alexia, toujours à l'écoute des voix de son peuple, prit en compte ces revendications et invita Ethan à la rejoindre dans le grand jardin royal, sous l'ombre des arbres centenaires, afin qu'il puisse s'expliquer.</p>
+            <p class="mb-4">Avec une clarté sincère, Ethan expliqua que son amour d'antan envers Alexia était bel et bien dépassé, s'étant transformé en une affection d'une autre nature. Cependant, il ne verrait aucune opposition à tisser un nouveau lien, sur de nouvelles bases amoureuses, si la reine Alexia y consentait de son plein gré. Mais il souligna avec force que, sans son consentement pur et entier, cette idée ne lui effleurerait même pas l'esprit.</p>
+            <p class="mb-4">Cette nuance délicate, portée par les pressions du peuple, apporta de grands nuages dans le royaume, assombrissant l'éclat habituel des jours. Alexia partagea à Ethan sa volonté de prendre le temps nécessaire pour assimiler toutes ces informations complexes, comme on démêle les fils d'une tapisserie enchantée.</p>
+            <p>Ethan, fidèle à son engagement et à la noblesse de son cœur, rappela à Alexia que peu importaient ses besoins, et même si la flamme de l'amour romantique s'était éteinte, il lui voulait son bien et acceptait toutes ses décisions avec respect. C'est ainsi qu'il prit son fier cheval, prêt à de nouvelles aventures de son côté, mais le cœur rempli d'une amitié inébranlable, un trésor plus précieux que l'or.</p>
+            <p>Ils se firent tous deux la promesse solennelle de se revoir un jour, que ce soit d'ici quelques jours, semaines, ou années, voire même dans une autre vie. Car ils savaient, au plus profond de leurs âmes, que leur lien spécial les réunirait toujours, tel un fil d'argent tissé par le destin. Cette histoire n'a donc pas de fin, mais une succession d'aventures à venir, et peut être mise à jour à tout moment, comme un grimoire éternel.</p>
+        </div>
+
+        <!-- Page 5: Part 5 of the story -->
+        <div id="page-5" class="book-page">
+            <h2 class="text-2xl font-semibold mb-4 fantasy-font">Partie 5: Le Retour de la Confiance et la Force de l'Amitié</h2>
+            <p class="mb-4">Après une période de profonde réflexion, Alexia, guidée par sa sagesse innée et son intuition lumineuse, comprit la sincérité des paroles d'Ethan. Les sombres nuages qui avaient un temps assombri le royaume se dissipèrent enfin, laissant place à un ciel d'une clarté retrouvée, plus éclatant que jamais. Elle réalisa alors que la véritable force de leur lien ne résidait point dans les attentes d'un amour romantique, mais dans la profondeur d'une amitié inébranlable, bâtie sur le respect mutuel et une confiance absolue, un trésor bien plus rare.</p>
+            <p class="mb-4">Ethan, de son côté, avait poursuivi son chemin, explorant de nouveaux horizons et découvrant des merveilles insoupçonnées, mais toujours avec une pensée tendre pour Alexia. Un jour, le destin, tel un magicien invisible, les réunit à nouveau, non pas par hasard, mais par la force indomptable de leur connexion. Les retrouvailles furent empreintes d'une joie simple et profonde, comme la mélodie d'une harpe enchantée. Ils se retrouvèrent tels qu'ils s'étaient promis, leurs cœurs battant à l'unisson d'une amitié purifiée et renforcée, scellée pour l'éternité.</p>
+            <p class="mb-4">Aujourd'hui, Ethan et Alexia sont de nouveau amis, plus proches et plus complices que jamais. Ethan n'a jamais été aussi comblé d'avoir en Alexia une personne digne de confiance avec qui partager ses pensées les plus profondes et ses aspirations les plus folles. Leur amitié est devenue un pilier solide, un havre de paix où chacun peut être soi-même, sans masque ni jugement, sans attente autre que la pureté de leur lien.</p>
+            <p class="mb-4">Pourtant, le chemin de leurs aventures n'était pas toujours pavé de roses enchantées. De nouvelles figures, parfois inattendues, firent leur apparition, apportant avec elles leur lot de déceptions et d'épreuves. Mais à chaque fois, l'équipe que formaient Ethan, Alexia, le fidèle Oliver et le vaillant Rocky se serrait les coudes, leur lien indéfectible étant leur plus grande force. Et comme par magie, au détour d'un sentier sinueux ou au cœur d'une forêt enchantée, ils découvraient de nouveaux chatons, de petits êtres doux et réconfortants, aux yeux étincelants, qui venaient illuminer leurs cœurs et leur rappeler la beauté simple et pure de la vie. Ces rencontres inattendues, ces petites boules de poils ronronnantes, étaient comme des talismans protecteurs, leur insufflant une énergie nouvelle et la certitude que, malgré les obstacles, leur équipe était toujours aussi forte. Ils continuent d'affronter les défis du royaume ensemble, non plus comme de simples compagnons, mais comme des âmes sœurs unies par un fil d'argent que nul ne saurait briser, prouvant que l'amitié peut être la forme d'amour la plus pure et la plus durable. Leurs aventures continuent, tissant de nouveaux chapitres dans le grand livre de leur histoire, toujours prêts à être mis à jour, car leur lien est une source inépuisable de merveilles et de légendes.</p>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="navigation-buttons">
+            <button id="prev-button" class="nav-button">Précédent</button>
+            <button id="next-button" class="nav-button">Suivant</button>
+        </div>
+    </div>
+
+    <script>
+        const pages = document.querySelectorAll('.book-page');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const backgroundMusic = document.getElementById('background-music');
+        let currentPageIndex = 0;
+        let musicPlayedOnce = false; // Flag to ensure music plays only on first interaction
+
+        function showPage(index) {
+            pages.forEach((page, i) => {
+                if (i === index) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            updateButtons();
+        }
+
+        function updateButtons() {
+            prevButton.disabled = currentPageIndex === 0;
+            nextButton.disabled = currentPageIndex === pages.length - 1;
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                showPage(currentPageIndex);
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            // Attempt to play music only on the very first interaction with the next button
+            if (!musicPlayedOnce) {
+                backgroundMusic.play().catch(error => {
+                    console.log("Autoplay was prevented. User interaction required to play music.", error);
+                    // You could add a small visual cue here to tell the user to click to play music
+                });
+                musicPlayedOnce = true;
+            }
+
+            if (currentPageIndex < pages.length - 1) {
+                currentPageIndex++;
+                showPage(currentPageIndex);
+            }
+        });
+
+        // Initial setup: show the first page when the script loads
+        showPage(currentPageIndex);
+    </script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlexiaFlix</title>
+    <link rel="icon" href="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.ico" type="image/x-icon">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Police Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Style de base */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #0c0c0c;
+            color: #f1f1f1;
+        }
+
+        /* Style Glassmorphism */
+        .glass-effect {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Style pour la barre de défilement des carrousels */
+        .carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .carousel::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .carousel::-webkit-scrollbar-thumb {
+            background: rgba(229, 9, 20, 0.7);
+            border-radius: 10px;
+        }
+        .carousel::-webkit-scrollbar-thumb:hover {
+            background: #E50914;
+        }
+
+        /* Effet de zoom sur les cartes */
+        .item-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .item-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.5);
+        }
+        
+        /* Transition pour le toast d'erreur */
+        #error-toast {
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Style pour les onglets de navigation */
+        .nav-tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-tab:hover {
+            color: #E50914;
+        }
+        .nav-tab.active {
+            color: #E50914;
+            border-bottom-color: #E50914;
+        }
+        
+        /* Style pour la modale de détails et le Hero Banner */
+        .hero-section {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            padding: 2rem;
+        }
+        .hero-background {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center top; /* Aligner l'image en haut */
+        }
+        .hero-background::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 100%;
+            background: linear-gradient(to top, #0c0c0c 5%, transparent 50%);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        .play-button {
+            background-color: #fff;
+            color: #000;
+        }
+        .play-button:hover {
+            background-color: rgba(255,255,255,0.8);
+        }
+        .info-button {
+            background-color: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+        .info-button:hover {
+             background-color: rgba(109, 109, 110, 0.5);
+        }
+        
+        #details-modal-content {
+            background-color: #181818;
+            max-height: 90vh;
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <!-- En-tête -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect">
+        <div class="container mx-auto flex justify-between items-center gap-4">
+            <div class="flex items-center gap-8">
+                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-8">
+                <nav class="flex items-center gap-4 text-gray-300 font-medium">
+                    <span id="tab-series" class="nav-tab active" onclick="switchTab('series')">Séries</span>
+                    <span id="tab-bonus" class="nav-tab" onclick="switchTab('bonus')">Bonus</span>
+                </nav>
+            </div>
+            <div class="relative w-full max-w-xs" id="search-container">
+                <input type="text" id="search-input" placeholder="Rechercher une série..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-1.5 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+                <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <p class="text-sm text-gray-300 hidden md:block">Alexia Originals - TOUDOUM</p>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="pt-20 container mx-auto px-4">
+        <!-- Section "Mes Séries" -->
+        <section id="series-section">
+             <!-- Le Hero Banner et les carrousels de séries seront injectés ici -->
+        </section>
+
+        <!-- Section "Bonus" (initialement cachée) -->
+        <section id="bonus-section" class="hidden">
+             <!-- Les carrousels de bonus seront injectés ici -->
+        </section>
+    </main>
+
+    <!-- Modale pour les détails de la série -->
+    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-80 z-[60] hidden items-center justify-center p-4">
+        <div id="details-modal-content" class="rounded-lg w-full max-w-4xl overflow-y-auto relative">
+             <button onclick="closeDetailsModal()" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-colors z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div id="details-hero" class="hero-section h-[60vh]">
+                <div id="modal-bg" class="hero-background"></div>
+                <div class="hero-content">
+                    <h2 id="modal-title" class="text-5xl font-bold mb-4"></h2>
+                    <div id="modal-actions" class="flex items-center gap-4">
+                        <!-- Bouton de lecture sera injecté ici -->
+                    </div>
+                </div>
+            </div>
+            <div class="p-8">
+                 <p id="modal-description" class="text-gray-300 mb-6"></p>
+                 <div id="seasons-container">
+                    <!-- Les saisons et épisodes seront injectés ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour le lecteur vidéo -->
+    <div id="player-modal" class="fixed inset-0 bg-black z-[70] hidden flex-col items-center justify-center">
+         <div class="w-full max-w-6xl mx-auto flex justify-between items-center px-4 py-2">
+            <h3 id="player-title" class="text-lg font-semibold text-gray-200"></h3>
+            <button onclick="closePlayerModal()" class="text-white hover:text-red-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="w-full h-full flex items-center justify-center p-4">
+            <video id="video-player" controls autoplay class="w-full max-h-full">
+                Votre navigateur ne supporte pas le lecteur vidéo.
+            </video>
+        </div>
+    </div>
+    
+    <!-- Modale pour la visionneuse d'images -->
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex-col items-center justify-center p-4">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-red-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg">
+    </div>
+
+    <!-- Notification Toast pour les erreurs -->
+    <div id="error-toast" class="fixed bottom-5 right-5 bg-red-800 text-white py-3 px-5 rounded-lg shadow-lg z-[80] hidden opacity-0">
+        <!-- Le contenu sera injecté par JavaScript -->
+    </div>
+
+    <script>
+        // --- BASE DE DONNÉES ---
+        const seriesData = [
+            {
+                id: 'ahs',
+                title: 'American Horror Story',
+                poster: 'Web/Images/AHS/AHS - Poster.jpeg',
+                landscape: 'Web/Images/AHS/AHS - Landscape.jpeg',
+                description: 'Une série d\'anthologie où chaque saison explore une histoire d\'horreur différente, avec des personnages et des lieux uniques mais un casting récurrent.',
+                seasons: [
+                     { season: 1, episodes: [
+                        { number: 1, title: "La Maison de l'horreur", video: "AHS/S1/Ahs - S1 - Ep1.mp4" },
+                        { number: 2, title: "Intrus", video: "AHS/S1/Ahs - S1 - Ep2.mp4" },
+                        { number: 3, title: "La Maison de l'horreur", video: "AHS/S1/Ahs - S1 - Ep3.mp4" },
+                        { number: 4, title: "Halloween (partie 1)", video: "AHS/S1/Ahs - S1 - Ep4.mp4" },
+                        { number: 5, title: "Halloween (partie 2)", video: "AHS/S1/Ahs - S1 - Ep5.mp4" },
+                        { number: 6, title: "Le cochon tueur", video: "AHS/S1/Ahs - S1 - Ep6.mp4" },
+                        { number: 7, title: "Portes ouvertes", video: "AHS/S1/Ahs - S1 - Ep7.mp4" },
+                        { number: 8, title: "L'homme en latex", video: "AHS/S1/Ahs - S1 - Ep8.mp4" },
+                        { number: 9, title: "Le Dahlia noir", video: "AHS/S1/Ahs - S1 - Ep9.mp4" },
+                        { number: 10, title: "L'heure des comptes", video: "AHS/S1/Ahs - S1 - Ep10.mp4" },
+                        { number: 11, title: "La naissance", video: "AHS/S1/Ahs - S1 - Ep11.mp4" },
+                        { number: 12, title: "Trois ans plus tard", video: "AHS/S1/Ahs - S1 - Ep12.mp4" }
+                    ]},
+                ]
+            },
+            {
+                id: 'daryldixon',
+                title: 'The Walking Dead: Daryl Dixon',
+                poster: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - poster.jpg',
+                landscape: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - Landscape.jpg',
+                description: 'Daryl Dixon se réveille en France et peine à comprendre comment il y est arrivé et pourquoi. Tout en cherchant un moyen de rentrer chez lui, il découvre un pays brisé mais résilient.',
+                seasons: [
+                    { season: 1, episodes: [
+                        { number: 1, title: "L'âme perdue", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 1.mp4" },
+                        { number: 2, title: "Alouette", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 2.mp4" },
+                        { number: 3, title: "Paris sera toujours Paris", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 3.mp4" },
+                        { number: 4, title: "La Dame de Fer", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 4.mp4" },
+                        { number: 5, title: "Deux amours", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 5.mp4" },
+                        { number: 6, title: "Le retour", video: "TWD/TWD - Daryl Dixon/Saison 1/TWD - Daryl Dixon - S1 EP 6.mp4" }
+                    ]},
+                ]
+            },
+            {
+                id: 'deadcity',
+                title: 'The Walking Dead: Dead City',
+                poster: 'Web/Images/TWD/Dead City/Dead City - Poster.jpg',
+                landscape: 'Web/Images/TWD/Dead City/Dead City - Landscape.jpg',
+                description: 'Maggie et Negan voyagent dans un Manhattan post-apocalyptique coupé depuis longtemps du continent, à la recherche de Hershel, le fils kidnappé de Maggie.',
+                seasons: [ { season: 1, episodes: 6 }, { season: 2, episodes: 8 } ]
+            },
+             {
+                id: 'feartwd',
+                title: 'Fear The Walking Dead',
+                poster: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Poster.jpg',
+                landscape: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Landscape.jpg',
+                description: 'Spin-off de The Walking Dead, cette série explore le début de l\'apocalypse zombie à travers les yeux d\'une famille recomposée à Los Angeles.',
+                seasons: [ { season: 1, episodes: 6 }, { season: 2, episodes: 10 }, { season: 3, episodes: 16 }, { season: 4, episodes: 16 }, { season: 5, episodes: 16 }, { season: 6, episodes: 16 }, { season: 7, episodes: 16 }, { season: 8, episodes: 12 } ]
+            },
+            {
+                id: 'talesoftwd',
+                title: 'Tales of the Walking Dead',
+                poster: 'Web/Images/TWD/Tales Of The Walking Dead/Tales Of The Walking Dead Poster.jpg',
+                landscape: 'Web/Images/TWD/Tales Of The Walking Dead/Tales Of the Walking Dead - Landscape.jpeg',
+                description: 'Une série d\'anthologie explorant des histoires de personnages nouveaux et existants dans l\'univers de The Walking Dead...',
+                seasons: [ { season: 1, episodes: 4 } ]
+            },
+            {
+                id: 'theoneswholive',
+                title: 'The Walking Dead: The Ones Who Live',
+                poster: 'Web/Images/TWD/The One Who Live/The One Who Live - Poster.jpg',
+                landscape: 'Web/Images/TWD/The One Who Live/The One Who Live - Landscape.jpg',
+                description: 'L\'histoire d\'amour épique entre Rick Grimes et Michonne, transformée par un monde changé...',
+                seasons: [ { season: 1, episodes: 6 } ]
+            },
+            {
+                id: 'worldbeyond',
+                title: 'The Walking Dead: World Beyond',
+                poster: 'Web/Images/TWD/World Beyond/World Beyond - Poster.jpeg',
+                landscape: 'Web/Images/TWD/World Beyond/World Beyond - Landscape.jpg',
+                description: 'Un groupe d\'adolescents, la première génération à avoir grandi dans l\'apocalypse, quitte la sécurité de leur communauté...',
+                seasons: [ { season: 1, episodes: 10 }, { season: 2, episodes: 10 } ]
+            },
+        ];
+
+        const bonusData = {
+            "Vidéos Drôles": [
+                { title: "Cute WIWIWI TURTLE", type: "video", path: "Bonus/Cute WIWIWI TURTLE.mp4", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=WIWIWI" },
+                { title: "Oliver Jaloux", type: "video", path: "Bonus/Oliver Jaloux.mp4", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=Oliver" },
+                { title: "TORTLE", type: "video", path: "Bonus/TORTLE.mp4", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=TORTLE" },
+            ],
+            "Images & Créations IA": [
+                { title: "You, a cat queen.", type: "image", path: "Bonus/Images et Vidéos IA/You, a cat queen..jpg", thumbnail: "Bonus/Images et Vidéos IA/You, a cat queen..jpg" },
+                { title: "Alexia - Cat with our butterfly", type: "image", path: "Bonus/Images et Vidéos IA/Alexia - Cat with our butterfly.jpg", thumbnail: "Bonus/Images et Vidéos IA/Alexia - Cat with our butterfly.jpg" },
+                { title: "Alexia en chat", type: "image", path: "Bonus/Images et Vidéos IA/Alexia en chat.jpg", thumbnail: "Bonus/Images et Vidéos IA/Alexia en chat.jpg" },
+                { title: "Comprendra qui pourra", type: "image", path: "Bonus/Images et Vidéos IA/Comprendra qui pourra.jpg", thumbnail: "Bonus/Images et Vidéos IA/Comprendra qui pourra.jpg" },
+                { title: "Nous contre le monde", type: "video", path: "Bonus/Images et Vidéos IA/Nous contre le monde.mp4", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=Contre+le+monde" },
+                { title: "Ta jumelle", type: "image", path: "Bonus/Images et Vidéos IA/Ta jumelle.jpg", thumbnail: "Bonus/Images et Vidéos IA/Ta jumelle.jpg" },
+                { title: "Tireur Malgré Lui - Molière", type: "image", path: "Bonus/Images et Vidéos IA/Tireur Malgré Lui - Molière.jpg", thumbnail: "Bonus/Images et Vidéos IA/Tireur Malgré Lui - Molière.jpg" },
+                { title: "Tout pour mettre ma BFF en SafePlace", type: "image", path: "Bonus/Images et Vidéos IA/Tout pour mettre ma BFF en SafePlace.jpg", thumbnail: "Bonus/Images et Vidéos IA/Tout pour mettre ma BFF en SafePlace.jpg" },
+                { title: "Tu es assez forte pour rivaliser avec un trou noir", type: "image", path: "Bonus/Images et Vidéos IA/Tu es assez forte pour rivaliser avec un trou noir.jpg", thumbnail: "Bonus/Images et Vidéos IA/Tu es assez forte pour rivaliser avec un trou noir.jpg" },
+            ],
+            "Projets Pour Toi": [
+                { title: "Le Monde Merveilleux du Numérique", type: "project_html", path: "Bonus/Projets Pour Toi/Le Monde Merveilleux du Numérique/Le Monde Merveilleux du Numérique.html", thumbnail: "Bonus/Projets Pour Toi/Le Monde Merveilleux du Numérique/Kingdom.png" },
+                { title: "Vidéo : Les BFF", type: "video", path: "Bonus/Projets Pour Toi/Le Monde Merveilleux du Numérique/Les BFF et le monde merveilleux du Numérique.mp4", thumbnail: "Bonus/Projets Pour Toi/Le Monde Merveilleux du Numérique/Parchemin.png" },
+                { title: "Lettre pour Alexia", type: "project", path: "Bonus/Projets Pour Toi/Letter To Alexia/Letter to Alexia - Paper.jpg", thumbnail: "Bonus/Projets Pour Toi/Letter To Alexia/Letter to Alexia - Screen.jpg" },
+                { title: "Univers de notre amitié", type: "project_html", path: "Bonus/Projets Pour Toi/Univers de notre amitiée.html", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=Notre+Univers" },
+                { title: "Vidéo pour Alexia", type: "video", path: "Bonus/Projets Pour Toi/Video for Alexia.mp4", thumbnail: "https://placehold.co/600x400/1a1a1a/ffffff?text=Pour+Toi" },
+            ]
+        };
+        
+        // --- LOGIQUE DE L'APPLICATION ---
+        
+        const seriesSection = document.getElementById('series-section');
+        const bonusSection = document.getElementById('bonus-section');
+        const detailsModal = document.getElementById('details-modal');
+        const playerModal = document.getElementById('player-modal');
+        const imageModal = document.getElementById('image-modal');
+        const searchInput = document.getElementById('search-input');
+        const errorToast = document.getElementById('error-toast');
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSeriesPage();
+            renderBonusPage();
+        });
+
+        searchInput.addEventListener('keyup', renderSeriesPage);
+
+        function switchTab(tabName) {
+            const seriesTab = document.getElementById('tab-series');
+            const bonusTab = document.getElementById('tab-bonus');
+            const searchContainer = document.getElementById('search-container');
+
+            if (tabName === 'series') {
+                seriesSection.classList.remove('hidden');
+                bonusSection.classList.add('hidden');
+                seriesTab.classList.add('active');
+                bonusTab.classList.remove('active');
+                searchContainer.classList.remove('hidden');
+            } else {
+                seriesSection.classList.add('hidden');
+                bonusSection.classList.remove('hidden');
+                seriesTab.classList.remove('active');
+                bonusTab.classList.add('active');
+                searchContainer.classList.add('hidden');
+            }
+        }
+        
+        function renderSeriesPage() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredSeries = seriesData.filter(series => series.title.toLowerCase().includes(searchTerm));
+            
+            if (filteredSeries.length === 0) {
+                 seriesSection.innerHTML = `<p class="text-gray-400 mt-10">Aucune série ne correspond à votre recherche.</p>`;
+                 return;
+            }
+
+            const heroSeries = filteredSeries[0];
+            const firstEpisode = heroSeries.seasons[0]?.episodes[0];
+            
+            let heroHtml = `
+                <div class="hero-section h-[65vh] mb-10">
+                    <div class="hero-background" style="background-image: url('${heroSeries.landscape}')"></div>
+                    <div class="hero-content max-w-2xl">
+                        <h2 class="text-6xl font-bold mb-4">${heroSeries.title}</h2>
+                        <p class="text-gray-200 mb-6">${heroSeries.description}</p>
+                        <div class="flex items-center gap-4">
+                            ${firstEpisode ? `<button class="action-button play-button" onclick="playVideo({ src: '${firstEpisode.video}'}, '${heroSeries.title} - S01E01')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
+                            <button class="action-button info-button" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            let carouselHtml = `
+                <h2 class="text-3xl font-bold mb-6 text-gray-100">Toutes les séries</h2>
+                <div id="series-carousel" class="carousel flex overflow-x-auto space-x-4 pb-4"></div>
+            `;
+            
+            seriesSection.innerHTML = heroHtml + carouselHtml;
+            
+            const seriesCarousel = document.getElementById('series-carousel');
+            filteredSeries.forEach(series => {
+                const card = document.createElement('div');
+                card.className = 'flex-shrink-0 w-48 md:w-64 cursor-pointer item-card rounded-lg overflow-hidden';
+                card.onclick = () => openDetailsModal(series.id);
+                card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https.placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
+                seriesCarousel.appendChild(card);
+            });
+        }
+
+        function renderBonusPage() {
+            bonusSection.innerHTML = '';
+            for (const category in bonusData) {
+                let carouselHtml = `
+                    <h2 class="text-3xl font-bold mb-6 mt-6 text-gray-100">${category}</h2>
+                    <div class="carousel flex overflow-x-auto space-x-4 pb-4">
+                `;
+                bonusData[category].forEach(item => {
+                     carouselHtml += `
+                        <div class="flex-shrink-0 w-64 cursor-pointer item-card rounded-lg overflow-hidden" onclick="handleBonusClick('${category}', '${item.title}')">
+                            <img src="${item.thumbnail}" alt="${item.title}" class="w-full h-36 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0c0c0c/f1f1f1?text=${encodeURIComponent(item.title)}';">
+                            <div class="p-3 bg-gray-800">
+                                <h3 class="font-semibold text-center truncate">${item.title}</h3>
+                            </div>
+                        </div>
+                    `;
+                });
+                carouselHtml += '</div>';
+                bonusSection.innerHTML += carouselHtml;
+            }
+        }
+        
+        function handleBonusClick(category, title) {
+            const item = bonusData[category].find(i => i.title === title);
+            if (!item) return;
+
+            switch (item.type) {
+                case 'video':
+                    playVideo({ src: item.path }, item.title);
+                    break;
+                case 'image':
+                case 'project': // Les projets qui sont des images s'ouvrent aussi dans la visionneuse
+                    openImageModal(item.path);
+                    break;
+                case 'project_html': // Type spécifique pour les fichiers html
+                    window.open(item.path, '_blank');
+                    break;
+                default:
+                    showErrorToast("Type de contenu non supporté.");
+            }
+        }
+        
+        // J'ai dû recréer les données détaillées pour les séries TWD manquantes.
+        // C'est une simplification pour l'exemple. Vous devriez remplir les vrais titres.
+        function generateEpisodeList(pathPrefix, count) {
+            let episodes = [];
+            for (let i = 1; i <= count; i++) {
+                // Essayer de deviner le nom du fichier basé sur les modèles
+                let fileName = `${pathPrefix} - S1 EP ${i}.mp4`; // Simplification
+                if (pathPrefix.includes("Dead City")) fileName = `${pathPrefix} - EP ${i}.mp4`;
+                if (pathPrefix.includes("The Ones Who Live")) fileName = `${pathPrefix} - EP ${i}.mp4`;
+                episodes.push({ number: i, title: `Épisode ${i}`, video: fileName });
+            }
+            return episodes;
+        }
+
+        function openDetailsModal(seriesId) {
+            const series = seriesData.find(s => s.id === seriesId);
+            if (!series) return;
+
+            document.getElementById('modal-bg').style.backgroundImage = `url('${series.landscape}')`;
+            document.getElementById('modal-title').textContent = series.title;
+            document.getElementById('modal-description').textContent = series.description;
+            
+            const firstEpisode = series.seasons[0]?.episodes[0];
+            const modalActions = document.getElementById('modal-actions');
+            if(firstEpisode) {
+                modalActions.innerHTML = `<button class="action-button play-button" onclick="playVideo({ src: '${firstEpisode.video}'}, '${series.title} - S01E01')"><i class="fas fa-play mr-2"></i> Lecture</button>`;
+            } else {
+                 modalActions.innerHTML = '';
+            }
+
+            const seasonsContainer = document.getElementById('seasons-container');
+            seasonsContainer.innerHTML = '';
+
+            series.seasons.forEach(seasonData => {
+                 // Si les épisodes ne sont pas listés, on les génère (pour les séries restaurées)
+                let episodes = seasonData.episodes;
+                if(typeof seasonData.episodes === 'number') {
+                     // Cette partie est une rustine pour générer les listes d'épisodes manquantes
+                     // Vous devrez adapter les noms de fichiers si mon modèle est incorrect
+                    let path;
+                    if (series.id === 'deadcity') path = `TWD/TWD - Dead City/Saison ${seasonData.season}/TWD Dead City`;
+                    // ... ajouter les autres chemins ici
+                    episodes = generateEpisodeList(path, seasonData.episodes);
+                }
+
+                if (!episodes) return;
+
+                let seasonHtml = `
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3>
+                        <ul class="space-y-3">
+                `;
+                episodes.sort((a, b) => a.number - b.number).forEach(ep => {
+                    seasonHtml += `
+                        <li onclick="playVideo({ src: '${ep.video}'}, '${series.title} - S${String(seasonData.season).padStart(2, '0')}E${String(ep.number).padStart(2, '0')}')" 
+                            class="p-3 bg-gray-900 rounded-md hover:bg-gray-800 cursor-pointer transition-colors flex items-center gap-4">
+                            <span class="text-xl font-bold text-gray-500">${ep.number}</span>
+                            <div class="flex-grow">
+                                <p class="font-semibold">${ep.title || `Épisode ${ep.number}`}</p>
+                            </div>
+                            <i class="fas fa-play text-gray-400"></i>
+                        </li>
+                    `;
+                });
+                seasonHtml += '</ul></div>';
+                seasonsContainer.innerHTML += seasonHtml;
+            });
+
+            detailsModal.classList.remove('hidden');
+            detailsModal.classList.add('flex');
+        }
+
+        function closeDetailsModal() {
+            detailsModal.classList.add('hidden');
+            detailsModal.classList.remove('flex');
+        }
+
+        function playVideo(source, title) {
+            closeDetailsModal();
+            document.getElementById('player-title').textContent = title;
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.src = source.src;
+            playerModal.classList.remove('hidden');
+            playerModal.classList.add('flex');
+            videoPlayer.play().catch(e => console.error("Erreur de lecture auto:", e));
+        }
+
+        function closePlayerModal() {
+            const videoPlayer = document.getElementById('video-player');
+            videoPlayer.pause();
+            videoPlayer.src = '';
+            playerModal.classList.add('hidden');
+            playerModal.classList.remove('flex');
+        }
+        
+        function openImageModal(src) {
+            document.getElementById('image-viewer').src = src;
+            imageModal.classList.remove('hidden');
+            imageModal.classList.add('flex');
+        }
+        
+        function closeImageModal() {
+            imageModal.classList.add('hidden');
+            imageModal.classList.remove('flex');
+            document.getElementById('image-viewer').src = '';
+        }
+
+    </script>
+</body>
+</html>
+
+
