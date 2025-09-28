@@ -30,7 +30,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Style pour la barre de défilement des carrousels */
+        /* Style pour la barre de défilement des carrousels (Bonus) */
         .carousel::-webkit-scrollbar {
             height: 8px;
         }
@@ -77,13 +77,12 @@
             align-items: flex-end;
             border-radius: 0.5rem;
             overflow: hidden;
-            padding: 2rem;
         }
         .hero-background {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
-            background-position: center top; /* Aligner l'image en haut */
+            background-position: center top;
         }
         .hero-background::after {
             content: '';
@@ -100,7 +99,6 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem 1.5rem;
             border-radius: 0.25rem;
             font-weight: 600;
             transition: background-color 0.3s;
@@ -124,25 +122,29 @@
             background-color: #181818;
             max-height: 90vh;
         }
+        
+        #toast {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-black text-white">
 
     <!-- En-tête -->
     <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect">
-        <div class="container mx-auto flex justify-between items-center gap-4">
-            <div class="flex items-center gap-8">
-                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-8">
-                <nav class="flex items-center gap-4 text-gray-300 font-medium">
+        <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-8">
+                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-6 sm:h-8">
+                <nav class="flex items-center gap-1 sm:gap-4 text-gray-300 font-medium text-sm sm:text-base">
                     <span id="tab-series" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                     <span id="tab-bonus" class="nav-tab" onclick="switchTab('bonus')">Bonus</span>
                 </nav>
             </div>
-            <div class="relative w-full max-w-xs" id="search-container">
-                <input type="text" id="search-input" placeholder="Rechercher une série..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-1.5 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
-                <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <div class="relative w-full max-w-[150px] sm:max-w-xs" id="search-container">
+                <input type="text" id="search-input" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-1.5 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+                <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
-            <p class="text-sm text-gray-300 hidden md:block">Alexia Originals - TOUDOUM</p>
+            <p class="text-xs text-gray-300 hidden sm:block">Alexia Originals - TOUDOUM</p>
         </div>
     </header>
 
@@ -150,7 +152,7 @@
     <main class="pt-20 container mx-auto px-4">
         <!-- Section "Mes Séries" -->
         <section id="series-section">
-             <!-- Le Hero Banner et les carrousels de séries seront injectés ici -->
+             <!-- Le Hero Banner et la gallerie de séries seront injectés ici -->
         </section>
 
         <!-- Section "Bonus" (initialement cachée) -->
@@ -165,17 +167,17 @@
              <button onclick="closeDetailsModal()" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-colors z-20">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-            <div id="details-hero" class="hero-section h-[60vh]">
+            <div id="details-hero" class="hero-section h-[40vh] sm:h-[50vh] md:h-[60vh]">
                 <div id="modal-bg" class="hero-background"></div>
                 <div class="hero-content">
-                    <h2 id="modal-title" class="text-5xl font-bold mb-4"></h2>
+                    <h2 id="modal-title" class="text-3xl sm:text-5xl font-bold mb-4"></h2>
                     <div id="modal-actions" class="flex items-center gap-4">
                         <!-- Bouton de lecture sera injecté ici -->
                     </div>
                 </div>
             </div>
-            <div class="p-8">
-                 <p id="modal-description" class="text-gray-300 mb-6"></p>
+            <div class="p-4 sm:p-8">
+                 <p id="modal-description" class="text-gray-300 mb-6 text-sm sm:text-base"></p>
                  <div id="seasons-container">
                     <!-- Les saisons et épisodes seront injectés ici -->
                 </div>
@@ -189,6 +191,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
         <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg">
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-blue-800 text-white py-3 px-5 rounded-lg shadow-lg z-[80] hidden opacity-0 translate-y-4">
     </div>
 
     <script>
@@ -260,9 +266,14 @@
                         { number: 12, title: "Le dernier spectacle", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERywgUwXSz5KjS_ZhHHOEIABtxesHbjmBYdGRviJcp8xmw?e=tkaFE0" },
                         { number: 13, title: "Le rideau tombe", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESns0r1XrnZNtZk8PrjLu1oBN8BCQORQa6OQHJgNa5ENAw?e=pUJFbe" }
                     ]},
-                     { season: 5, episodes: [
-                        { number: 1, title: "L'Hôtel Cortez", video: "" }, // En cours
-                    ]},
+                     { season: 5, episodes: [ { number: 1, title: "L'Hôtel Cortez", video: "" } ]},
+                     { season: 6, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 7, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 8, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 9, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 10, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 11, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
+                     { season: 12, episodes: [ { number: 1, title: "Épisode 1", video: "" } ]},
                 ]
             },
             // --- Restauration des autres séries ---
@@ -274,6 +285,8 @@
                 description: 'Daryl Dixon se réveille en France et peine à comprendre comment il y est arrivé et pourquoi. Tout en cherchant un moyen de rentrer chez lui, il découvre un pays brisé mais résilient.',
                 seasons: [
                     { season: 1, episodes: [ { number: 1, title: "L'âme perdue", video: "" } ] },
+                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 3, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
                 ]
             },
             {
@@ -282,7 +295,10 @@
                 poster: 'Web/Images/TWD/Dead City/Dead City - Poster.jpg',
                 landscape: 'Web/Images/TWD/Dead City/Dead City - Landscape.jpg',
                 description: 'Maggie et Negan voyagent dans un Manhattan post-apocalyptique coupé depuis longtemps du continent, à la recherche de Hershel, le fils kidnappé de Maggie.',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                ]
             },
              {
                 id: 'feartwd',
@@ -290,7 +306,16 @@
                 poster: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Poster.jpg',
                 landscape: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Landscape.jpg',
                 description: 'Spin-off de The Walking Dead, cette série explore le début de l\'apocalypse zombie à travers les yeux d\'une famille recomposée à Los Angeles.',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 3, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 4, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 5, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 6, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 7, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 8, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                ]
             },
             {
                 id: 'talesoftwd',
@@ -314,7 +339,10 @@
                 poster: 'Web/Images/TWD/World Beyond/World Beyond - Poster.jpeg',
                 landscape: 'Web/Images/TWD/World Beyond/World Beyond - Landscape.jpg',
                 description: 'Un groupe d\'adolescents, la première génération à avoir grandi dans l\'apocalypse, quitte la sécurité de leur communauté...',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
+                ]
             },
         ];
 
@@ -328,6 +356,8 @@
         const detailsModal = document.getElementById('details-modal');
         const imageModal = document.getElementById('image-modal');
         const searchInput = document.getElementById('search-input');
+        const toast = document.getElementById('toast');
+        let toastTimeout;
         
         document.addEventListener('DOMContentLoaded', () => {
             renderSeriesPage();
@@ -358,52 +388,46 @@
         
         function renderSeriesPage() {
             const searchTerm = searchInput.value.toLowerCase();
-            
-            // FILTRE : Ne garde que les séries qui ont au moins un épisode avec un lien vidéo valide.
-            const availableSeries = seriesData.filter(series => 
-                series.seasons.some(season => season.episodes.some(ep => ep.video))
-            );
-
-            const filteredSeries = availableSeries.filter(series => series.title.toLowerCase().includes(searchTerm));
+            const filteredSeries = seriesData.filter(series => series.title.toLowerCase().includes(searchTerm));
             
             if (filteredSeries.length === 0) {
-                 seriesSection.innerHTML = `<p class="text-gray-400 mt-10">Aucune série disponible ou ne correspond à votre recherche.</p>`;
+                 seriesSection.innerHTML = `<p class="text-gray-400 mt-10">Aucune série ne correspond à votre recherche.</p>`;
                  return;
             }
 
             const heroSeries = filteredSeries[0];
             const firstEpisode = heroSeries.seasons
                 .flatMap(s => s.episodes)
-                .find(ep => ep.video); // Trouve le tout premier épisode disponible
+                .find(ep => ep.video); 
             
             let heroHtml = `
-                <div class="hero-section h-[65vh] mb-10">
+                <div class="hero-section h-[50vh] sm:h-[60vh] md:h-[65vh] p-4 sm:p-8 mb-10">
                     <div class="hero-background" style="background-image: url('${heroSeries.landscape}')"></div>
                     <div class="hero-content max-w-2xl">
-                        <h2 class="text-6xl font-bold mb-4">${heroSeries.title}</h2>
-                        <p class="text-gray-200 mb-6">${heroSeries.description}</p>
-                        <div class="flex items-center gap-4">
-                            ${(firstEpisode) ? `<button class="action-button play-button" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
-                            <button class="action-button info-button" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
+                        <h2 class="text-4xl sm:text-6xl font-bold mb-4">${heroSeries.title}</h2>
+                        <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
+                        <div class="flex items-center gap-2 sm:gap-4">
+                            ${(firstEpisode) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
+                            <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
                         </div>
                     </div>
                 </div>
             `;
             
-            let carouselHtml = `
-                <h2 class="text-3xl font-bold mb-6 text-gray-100">Toutes les séries</h2>
-                <div id="series-carousel" class="carousel flex overflow-x-auto space-x-4 pb-4"></div>
+            let galleryHtml = `
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100">Toutes les séries</h2>
+                <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
-            seriesSection.innerHTML = heroHtml + carouselHtml;
+            seriesSection.innerHTML = heroHtml + galleryHtml;
             
-            const seriesCarousel = document.getElementById('series-carousel');
+            const seriesGallery = document.getElementById('series-gallery');
             filteredSeries.forEach(series => {
                 const card = document.createElement('div');
-                card.className = 'flex-shrink-0 w-48 md-w-64 cursor-pointer item-card rounded-lg overflow-hidden';
+                card.className = 'cursor-pointer item-card rounded-lg overflow-hidden';
                 card.onclick = () => openDetailsModal(series.id);
                 card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https.placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
-                seriesCarousel.appendChild(card);
+                seriesGallery.appendChild(card);
             });
         }
 
@@ -413,7 +437,10 @@
         
         function handleBonusClick(event, category, title) {
             const item = bonusData[category].find(i => i.title === title);
-            if (!item || !item.path) return;
+            if (!item || !item.path) {
+                showToast("Bientôt disponible !");
+                return;
+            };
 
             switch (item.type) {
                 case 'video':
@@ -443,7 +470,7 @@
             
             const modalActions = document.getElementById('modal-actions');
             if(firstEpisode) {
-                modalActions.innerHTML = `<button class="action-button play-button" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>`;
+                modalActions.innerHTML = `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>`;
             } else {
                  modalActions.innerHTML = '';
             }
@@ -452,25 +479,26 @@
             seasonsContainer.innerHTML = '';
 
             series.seasons.forEach(seasonData => {
-                // FILTRE : Ne garde que les épisodes de la saison qui ont un lien
-                const availableEpisodes = seasonData.episodes.filter(ep => ep.video);
-
-                // Si la saison n'a aucun épisode disponible, on ne l'affiche pas du tout
-                if (availableEpisodes.length === 0) return;
+                let episodes = seasonData.episodes;
+                if (!episodes) return;
 
                 let seasonHtml = `
                     <div class="mb-6">
-                        <h3 class="text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3>
+                        <h3 class="text-lg sm:text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3>
                         <ul class="space-y-3">
                 `;
-                availableEpisodes.sort((a, b) => a.number - b.number).forEach(ep => {
+                episodes.sort((a, b) => a.number - b.number).forEach(ep => {
+                    const isDisabled = !ep.video;
+                    const liClass = isDisabled ? "p-3 bg-gray-900 rounded-md opacity-50 flex items-center gap-4 cursor-pointer" : "p-3 bg-gray-900 rounded-md hover:bg-gray-800 cursor-pointer transition-colors flex items-center gap-4";
+                    const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                    
                     seasonHtml += `
-                        <li onclick="openVideoLink('${ep.video}')" class="p-3 bg-gray-900 rounded-md hover:bg-gray-800 cursor-pointer transition-colors flex items-center gap-4">
-                            <span class="text-xl font-bold text-gray-500">${ep.number}</span>
+                        <li ${onClickAction} class="${liClass}">
+                            <span class="text-lg sm:text-xl font-bold text-gray-500">${ep.number}</span>
                             <div class="flex-grow">
-                                <p class="font-semibold">${ep.title || `Épisode ${ep.number}`}</p>
+                                <p class="font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p>
                             </div>
-                            <i class="fas fa-play text-gray-400"></i>
+                            <i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400"></i>
                         </li>
                     `;
                 });
@@ -503,6 +531,20 @@
             imageModal.classList.add('hidden');
             imageModal.classList.remove('flex');
             document.getElementById('image-viewer').src = '';
+        }
+
+        function showToast(message) {
+            clearTimeout(toastTimeout);
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-4');
+            }, 10);
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 3000);
         }
 
     </script>
