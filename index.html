@@ -15,62 +15,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        /* Style de base */
+        /* --- CONFIGURATION GÉNÉRALE --- */
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #0c0c0c;
             color: #f1f1f1;
+            overflow-x: hidden; /* Empêche les barres de défilement horizontales causées par les animations */
         }
 
-        /* Style Glassmorphism */
+        /* --- EFFETS VISUELS & STYLES --- */
         .glass-effect {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Style pour la barre de défilement des carrousels (Bonus) */
-        .carousel::-webkit-scrollbar {
-            height: 8px;
-        }
-        .carousel::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        .carousel::-webkit-scrollbar-thumb {
-            background: rgba(229, 9, 20, 0.7);
-            border-radius: 10px;
-        }
-        .carousel::-webkit-scrollbar-thumb:hover {
-            background: #E50914;
+            background: rgba(12, 12, 12, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background-color 0.3s ease;
         }
 
-        /* Effet de zoom sur les cartes */
+        .carousel::-webkit-scrollbar { height: 8px; }
+        .carousel::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .carousel::-webkit-scrollbar-thumb { background: rgba(229, 9, 20, 0.7); border-radius: 10px; }
+        .carousel::-webkit-scrollbar-thumb:hover { background: #E50914; }
+
+        /* Effet 3D sur les cartes d'affiches */
         .item-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+            will-change: transform; /* Optimisation des performances */
         }
         .item-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(229, 9, 20, 0.5);
+            transform: scale(1.08) perspective(1000px) rotateY(5deg) rotateX(2deg);
+            box-shadow: 0 10px 40px rgba(229, 9, 20, 0.6);
         }
-        
-        /* Style pour les onglets de navigation */
+        .item-card img {
+             border-radius: 0.5rem; /* Coins arrondis pour un look plus doux */
+        }
+
+        /* Onglets de navigation */
         .nav-tab {
             cursor: pointer;
             padding: 0.5rem 1rem;
-            border-bottom: 2px solid transparent;
-            transition: color 0.3s, border-color 0.3s;
+            position: relative;
+            transition: color 0.3s ease;
         }
-        .nav-tab:hover {
-            color: #E50914;
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: #E50914;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
-        .nav-tab.active {
-            color: #E50914;
-            border-bottom-color: #E50914;
+        .nav-tab:hover { color: #fff; }
+        .nav-tab.active { color: #E50914; font-weight: 600; }
+        .nav-tab.active::after, .nav-tab:hover::after {
+            width: 100%;
         }
-        
-        /* Style pour la modale de détails et le Hero Banner */
+
+        /* --- SECTION HERO --- */
         .hero-section {
             position: relative;
             display: flex;
@@ -83,49 +91,84 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             background-position: center top;
+            transition: transform 0.3s ease-out;
+        }
+        .hero-section:hover .hero-background {
+            transform: scale(1.05); /* Effet de zoom subtil */
         }
         .hero-background::after {
             content: '';
             position: absolute;
             bottom: 0; left: 0; right: 0;
             height: 100%;
-            background: linear-gradient(to top, #0c0c0c 5%, transparent 50%);
+            background: linear-gradient(to top, #0c0c0c 10%, transparent 60%);
         }
         .hero-content {
-            position: relative;
-            z-index: 1;
+            position: relative; z-index: 1;
         }
+        
+        /* Boutons d'action */
         .action-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 0.25rem;
+            border-radius: 0.375rem; /* 6px */
             font-weight: 600;
-            transition: background-color 0.3s;
+            transform: scale(1);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .play-button {
-            background-color: #fff;
-            color: #000;
+        .action-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
-        .play-button:hover {
-            background-color: rgba(255,255,255,0.8);
+        .action-button:active { /* Effet tactile */
+            transform: scale(0.98);
         }
-        .info-button {
-            background-color: rgba(109, 109, 110, 0.7);
-            color: white;
+
+        .play-button { background-color: #fff; color: #000; }
+        .play-button:hover { background-color: rgba(255,255,255,0.9); }
+        .info-button { background-color: rgba(109, 109, 110, 0.7); color: white; }
+        .info-button:hover { background-color: rgba(109, 109, 110, 0.6); }
+
+        /* --- MODALES --- */
+        #details-modal, #image-modal {
+             transition: opacity 0.3s ease;
         }
-        .info-button:hover {
-             background-color: rgba(109, 109, 110, 0.5);
-        }
-        
         #details-modal-content {
-            background-color: #181818;
+            background-color: #141414;
             max-height: 90vh;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        #details-modal.flex #details-modal-content {
+            transform: scale(1);
         }
         
+        /* Notification Toast */
         #toast {
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
+
+        /* --- ANIMATIONS D'ENTRÉE --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .hero-content > * {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        .hero-content h2 { animation-delay: 0.2s; }
+        .hero-content p { animation-delay: 0.4s; }
+        .hero-content div { animation-delay: 0.6s; }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -134,7 +177,7 @@
     <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect">
         <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-8">
-                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-6 sm:h-8">
+                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-6 sm:h-8 transition-transform duration-300 hover:scale-110">
                 <nav class="flex items-center gap-1 sm:gap-4 text-gray-300 font-medium text-sm sm:text-base">
                     <span id="tab-series" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                     <span id="tab-bonus" class="nav-tab" onclick="switchTab('bonus')">Bonus</span>
@@ -142,14 +185,14 @@
             </div>
             <div class="relative w-full max-w-[150px] sm:max-w-xs" id="search-container">
                 <input type="text" id="search-input" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-1.5 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
-                <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
             </div>
             <p class="text-xs text-gray-300 hidden sm:block">Alexia Originals - TOUDOUM</p>
         </div>
     </header>
 
     <!-- Contenu principal -->
-    <main class="pt-20 container mx-auto px-4">
+    <main class="pt-24 container mx-auto px-4">
         <!-- Section "Mes Séries" -->
         <section id="series-section">
              <!-- Le Hero Banner et la gallerie de séries seront injectés ici -->
@@ -164,12 +207,12 @@
     <!-- Modale pour les détails de la série -->
     <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-80 z-[60] hidden items-center justify-center p-4">
         <div id="details-modal-content" class="rounded-lg w-full max-w-4xl overflow-y-auto relative">
-             <button onclick="closeDetailsModal()" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-colors z-20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+             <button onclick="closeDetailsModal()" class="absolute top-3 right-3 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-all duration-300 hover:scale-110 z-20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <div id="details-hero" class="hero-section h-[40vh] sm:h-[50vh] md:h-[60vh]">
                 <div id="modal-bg" class="hero-background"></div>
-                <div class="hero-content">
+                <div class="hero-content p-4 sm:p-8">
                     <h2 id="modal-title" class="text-3xl sm:text-5xl font-bold mb-4"></h2>
                     <div id="modal-actions" class="flex items-center gap-4">
                         <!-- Bouton de lecture sera injecté ici -->
@@ -194,7 +237,7 @@
     </div>
     
     <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-blue-800 text-white py-3 px-5 rounded-lg shadow-lg z-[80] hidden opacity-0 translate-y-4">
+    <div id="toast" class="fixed bottom-5 right-5 bg-red-700 text-white py-3 px-5 rounded-lg shadow-2xl z-[80] hidden opacity-0 translate-y-4 font-semibold">
     </div>
 
     <script>
@@ -451,6 +494,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderSeriesPage();
             renderBonusPage();
+            initInteractiveAnimations();
         });
 
         searchInput.addEventListener('keyup', renderSeriesPage);
@@ -504,45 +548,27 @@
             `;
             
             let galleryHtml = `
-                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100">Toutes les séries</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Toutes les séries</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
             seriesSection.innerHTML = heroHtml + galleryHtml;
             
             const seriesGallery = document.getElementById('series-gallery');
-            filteredSeries.forEach(series => {
+            filteredSeries.forEach((series, index) => {
                 const card = document.createElement('div');
-                card.className = 'cursor-pointer item-card rounded-lg overflow-hidden';
+                card.className = 'cursor-pointer item-card rounded-lg overflow-hidden fade-in-up';
+                card.style.animationDelay = `${index * 50}ms`; // Stagger animation
                 card.onclick = () => openDetailsModal(series.id);
                 card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https.placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
                 seriesGallery.appendChild(card);
             });
+            // Ré-appliquer les animations interactives après le rendu
+            initInteractiveAnimations();
         }
 
         function renderBonusPage() {
              bonusSection.innerHTML = '<p class="text-gray-400 mt-10">Section en construction.</p>';
-        }
-        
-        function handleBonusClick(event, category, title) {
-            const item = bonusData[category].find(i => i.title === title);
-            if (!item || !item.path) {
-                showToast("Bientôt disponible !");
-                return;
-            };
-
-            switch (item.type) {
-                case 'video':
-                    openVideoLink(item.path);
-                    break;
-                case 'image':
-                    openImageModal(item.path);
-                    break;
-                case 'project_html':
-                    event.preventDefault();
-                    window.open(item.path, '_blank');
-                    break;
-            }
         }
 
         function openDetailsModal(seriesId) {
@@ -553,47 +579,33 @@
             document.getElementById('modal-title').textContent = series.title;
             document.getElementById('modal-description').textContent = series.description;
             
-            const firstEpisode = series.seasons
-                .flatMap(s => s.episodes)
-                .find(ep => ep.video);
+            const firstEpisode = series.seasons.flatMap(s => s.episodes).find(ep => ep.video);
             
             const modalActions = document.getElementById('modal-actions');
-            if(firstEpisode) {
-                modalActions.innerHTML = `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>`;
-            } else {
-                 modalActions.innerHTML = '';
-            }
+            modalActions.innerHTML = firstEpisode ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
 
             const seasonsContainer = document.getElementById('seasons-container');
-            seasonsContainer.innerHTML = '';
-
-            series.seasons.forEach(seasonData => {
-                let episodes = seasonData.episodes;
-                if (!episodes) return;
-
-                let seasonHtml = `
+            seasonsContainer.innerHTML = series.seasons.map(seasonData => {
+                if (!seasonData.episodes) return '';
+                const episodesHtml = seasonData.episodes
+                    .sort((a, b) => a.number - b.number)
+                    .map(ep => {
+                        const isDisabled = !ep.video;
+                        const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
+                        const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                        return `
+                            <li ${onClickAction} class="${liClass}">
+                                <span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span>
+                                <p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p>
+                                <i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i>
+                            </li>`;
+                    }).join('');
+                return `
                     <div class="mb-6">
                         <h3 class="text-lg sm:text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3>
-                        <ul class="space-y-3">
-                `;
-                episodes.sort((a, b) => a.number - b.number).forEach(ep => {
-                    const isDisabled = !ep.video;
-                    const liClass = isDisabled ? "p-3 bg-gray-900 rounded-md opacity-50 flex items-center gap-4 cursor-pointer" : "p-3 bg-gray-900 rounded-md hover:bg-gray-800 cursor-pointer transition-colors flex items-center gap-4";
-                    const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
-                    
-                    seasonHtml += `
-                        <li ${onClickAction} class="${liClass}">
-                            <span class="text-lg sm:text-xl font-bold text-gray-500">${ep.number}</span>
-                            <div class="flex-grow">
-                                <p class="font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p>
-                            </div>
-                            <i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400"></i>
-                        </li>
-                    `;
-                });
-                seasonHtml += '</ul></div>';
-                seasonsContainer.innerHTML += seasonHtml;
-            });
+                        <ul class="space-y-3">${episodesHtml}</ul>
+                    </div>`;
+            }).join('');
 
             detailsModal.classList.remove('hidden');
             detailsModal.classList.add('flex');
@@ -605,9 +617,7 @@
         }
 
         function openVideoLink(url) {
-            if (url) {
-                window.open(url, '_blank');
-            }
+            if (url) window.open(url, '_blank');
         }
         
         function openImageModal(src) {
@@ -632,11 +642,31 @@
 
             toastTimeout = setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => toast.classList.add('hidden'), 300);
+                setTimeout(() => toast.classList.add('hidden'), 400);
             }, 3000);
         }
 
+        // --- NOUVELLES ANIMATIONS INTERACTIVES ---
+        function initInteractiveAnimations() {
+            const cards = document.querySelectorAll('.item-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 20; // Ajuster le diviseur pour plus/moins d'effet
+                    const rotateY = (centerX - x) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.08)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                });
+            });
+        }
     </script>
 </body>
 </html>
-
