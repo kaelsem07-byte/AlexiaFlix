@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AlexiaFlix</title>
     <link rel="icon" href="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.ico" type="image/x-icon">
     <!-- Tailwind CSS -->
@@ -22,6 +22,10 @@
             background-color: #0c0c0c;
             color: #f1f1f1;
             overflow-x: hidden;
+            /* Ajout des safe-areas pour le corps du site */
+            padding-top: env(safe-area-inset-top);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
         }
 
         .alexiaflix-title {
@@ -226,12 +230,12 @@
     <!-- Interface Mobile -->
     <div class="sm:hidden">
         <!-- Titre en haut -->
-        <header class="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-center glass-effect" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+        <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center glass-effect" style="padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top)); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
             <h1 class="alexiaflix-title text-2xl">AlexiaFlix</h1>
         </header>
 
         <!-- Barre de navigation et recherche en bas -->
-        <div class="fixed bottom-0 left-0 right-0 z-50 p-3 glass-effect" style="border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <div class="fixed bottom-0 left-0 right-0 z-50 glass-effect" style="padding: 0.75rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255, 255, 255, 0.08);">
             <nav class="flex items-center justify-around mb-3 text-gray-300 font-medium text-sm">
                 <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                 <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
@@ -245,7 +249,7 @@
     </div>
 
 
-    <main class="pt-24 pb-28 sm:pb-4 container mx-auto px-4">
+    <main class="pt-24 pb-40 sm:pt-24 sm:pb-4 container mx-auto px-4">
         <section id="series-section" class="section-pane"></section>
         <section id="bonus-section" class="section-pane hidden"></section>
     </main>
@@ -546,7 +550,7 @@
             const prompt = document.getElementById('fullscreen-prompt');
             prompt.addEventListener('click', enterApp);
 
-            const handleSearch = () => {
+            const handleSearch = (event) => {
                 const value = event.target.value;
                 searchInput.value = value;
                 searchInputMobile.value = value;
@@ -579,7 +583,6 @@
             // Desktop elements
             const seriesTab = document.getElementById('tab-series');
             const bonusTab = document.getElementById('tab-bonus');
-            const searchContainer = document.getElementById('search-container');
             
             // Mobile elements
             const seriesTabMobile = document.getElementById('tab-series-mobile');
@@ -598,9 +601,8 @@
             seriesTabMobile.classList.toggle('active', isSeries);
             bonusTabMobile.classList.toggle('active', !isSeries);
 
-            // Toggle search visibility on both desktop and mobile
-            searchContainer.classList.toggle('hidden', !isSeries);
-            searchContainerMobile.parentElement.classList.toggle('hidden', !isSeries);
+            // Toggle search visibility
+            searchContainerMobile.classList.toggle('hidden', !isSeries);
         }
         
         function renderSeriesPage() {
@@ -641,8 +643,9 @@
                 </div>
             `;
             
+            const title = searchTerm ? 'Résultats de la recherche' : 'Toutes les séries';
             seriesSection.innerHTML = heroHtml + `
-                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Résultats de la recherche</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">${title}</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
