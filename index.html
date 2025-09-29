@@ -16,21 +16,33 @@
 
     <style>
         /* --- CONFIGURATION GÉNÉRALE --- */
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #0c0c0c;
             color: #f1f1f1;
-            overflow-x: hidden; /* Empêche les barres de défilement horizontales causées par les animations */
+            overflow-x: hidden;
         }
+
+        /* --- ÉCRAN D'ACCUEIL --- */
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+            animation: blob 8s infinite ease-in-out;
+        }
+        .animation-delay-2000 { animation-delay: -2s; }
+        .animation-delay-4000 { animation-delay: -4s; }
+
 
         /* --- EFFETS VISUELS & STYLES --- */
         .glass-effect {
-            background: rgba(12, 12, 12, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(12, 12, 12, 0.6);
+            backdrop-filter: blur(16px) saturate(120%);
+            -webkit-backdrop-filter: blur(16px) saturate(120%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: background-color 0.3s ease;
         }
@@ -40,140 +52,152 @@
         .carousel::-webkit-scrollbar-thumb { background: rgba(229, 9, 20, 0.7); border-radius: 10px; }
         .carousel::-webkit-scrollbar-thumb:hover { background: #E50914; }
 
-        /* Effet 3D sur les cartes d'affiches */
         .item-card {
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
-            transform-style: preserve-3d;
-            will-change: transform; /* Optimisation des performances */
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+            will-change: transform;
         }
-        .item-card:hover {
-            transform: scale(1.08) perspective(1000px) rotateY(5deg) rotateX(2deg);
-            box-shadow: 0 10px 40px rgba(229, 9, 20, 0.6);
+        @media (hover: hover) {
+            .item-card:hover {
+                transform: scale(1.06) translateY(-8px);
+                box-shadow: 0 15px 40px rgba(229, 9, 20, 0.5);
+            }
         }
-        .item-card img {
-             border-radius: 0.5rem; /* Coins arrondis pour un look plus doux */
+        .item-card:active {
+            transform: scale(1.02) translateY(0);
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
+            transition-duration: 0.1s;
         }
+        .item-card img { border-radius: 0.5rem; }
 
-        /* Onglets de navigation */
         .nav-tab {
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            position: relative;
-            transition: color 0.3s ease;
+            cursor: pointer; padding: 0.5rem 1rem; position: relative; transition: color 0.3s ease;
         }
         .nav-tab::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background-color: #E50914;
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
+            content: ''; position: absolute; bottom: -2px; left: 50%; width: 0; height: 2px;
+            background-color: #E50914; transition: all 0.3s ease; transform: translateX(-50%);
         }
         .nav-tab:hover { color: #fff; }
         .nav-tab.active { color: #E50914; font-weight: 600; }
-        .nav-tab.active::after, .nav-tab:hover::after {
-            width: 100%;
-        }
+        .nav-tab.active::after, .nav-tab:hover::after { width: 100%; }
 
-        /* --- SECTION HERO --- */
-        .hero-section {
+        .hero-wrapper {
             position: relative;
-            display: flex;
-            align-items: flex-end;
-            border-radius: 0.5rem;
-            overflow: hidden;
+            z-index: 1;
         }
-        .hero-background {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-size: cover;
-            background-position: center top;
-            transition: transform 0.3s ease-out;
-        }
-        .hero-section:hover .hero-background {
-            transform: scale(1.05); /* Effet de zoom subtil */
-        }
-        .hero-background::after {
+        .hero-wrapper::before {
             content: '';
             position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 100%;
-            background: linear-gradient(to top, #0c0c0c 10%, transparent 60%);
-        }
-        .hero-content {
-            position: relative; z-index: 1;
-        }
-        
-        /* Boutons d'action */
-        .action-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.375rem; /* 6px */
-            font-weight: 600;
-            transform: scale(1);
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .action-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        .action-button:active { /* Effet tactile */
-            transform: scale(0.98);
+            top: 50%; left: 50%;
+            width: 110%; height: 110%;
+            background: radial-gradient(circle at center, var(--hero-tint-color, transparent) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            filter: blur(80px);
+            opacity: 0.5;
+            z-index: -1;
+            transition: background 0.5s ease-in-out;
+            will-change: background;
         }
 
+        .hero-section {
+            position: relative; display: flex; align-items: flex-end;
+            border-radius: 0.75rem; overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .hero-background {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover; background-position: center top;
+            transition: transform 0.4s ease-out;
+        }
+        .hero-section:hover .hero-background { transform: scale(1.03); }
+        
+        .hero-background::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 100%;
+            background: linear-gradient(to top, #0c0c0c 15%, rgba(12, 12, 12, 0.7) 40%, transparent 70%);
+        }
+        
+        .hero-content { position: relative; z-index: 3; }
+        
+        .action-button {
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 0.375rem; font-weight: 600;
+            transform: scale(1); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .action-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .action-button:active { transform: scale(0.98); }
         .play-button { background-color: #fff; color: #000; }
         .play-button:hover { background-color: rgba(255,255,255,0.9); }
         .info-button { background-color: rgba(109, 109, 110, 0.7); color: white; }
         .info-button:hover { background-color: rgba(109, 109, 110, 0.6); }
 
-        /* --- MODALES --- */
-        #details-modal, #image-modal {
-             transition: opacity 0.3s ease;
+        /* --- MODALES AMÉLIORÉES --- */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 60;
+            display: flex; align-items: center; justify-content: center;
+            background-color: rgba(0,0,0,0.8);
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-in-out;
         }
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         #details-modal-content {
-            background-color: #141414;
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             max-height: 90vh;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 10px 50px rgba(0,0,0,0.5);
             transform: scale(0.95);
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        #details-modal.flex #details-modal-content {
+        .modal-overlay.visible #details-modal-content {
             transform: scale(1);
         }
         
-        /* Notification Toast */
-        #toast {
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
+        #toast { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
 
-        /* --- ANIMATIONS D'ENTRÉE --- */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .fade-in-up {
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-        }
-        .hero-content > * {
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-        }
+        .fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease forwards; }
+        .hero-content > * { opacity: 0; animation: fadeInUp 0.8s ease forwards; }
         .hero-content h2 { animation-delay: 0.2s; }
         .hero-content p { animation-delay: 0.4s; }
         .hero-content div { animation-delay: 0.6s; }
+
+        main.container { display: grid; grid-template-columns: 1fr; }
+        .section-pane {
+            grid-column: 1 / -1; grid-row: 1 / -1;
+            transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
+        }
+        .section-pane.hidden { opacity: 0; transform: scale(0.97); pointer-events: none; }
     </style>
 </head>
 <body class="bg-black text-white">
 
-    <!-- En-tête -->
+    <div id="fullscreen-prompt" class="fixed inset-0 bg-black z-[100] flex items-center justify-center transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden">
+        <!-- Fond animé flou -->
+        <div class="absolute w-full h-full blur-3xl opacity-40">
+            <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-screen animate-blob"></div>
+            <div class="absolute top-0 -right-4 w-72 h-72 bg-red-500 rounded-full mix-blend-screen animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen animate-blob animation-delay-4000"></div>
+        </div>
+    
+        <!-- Contenu -->
+        <div class="relative text-center">
+            <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-12 sm:h-16 mx-auto mb-6">
+            <p class="text-lg sm:text-xl text-white/80 animate-pulse">Appuyez n'importe où</p>
+        </div>
+    </div>
+
     <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect">
         <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-8">
@@ -191,21 +215,12 @@
         </div>
     </header>
 
-    <!-- Contenu principal -->
     <main class="pt-24 container mx-auto px-4">
-        <!-- Section "Mes Séries" -->
-        <section id="series-section">
-             <!-- Le Hero Banner et la gallerie de séries seront injectés ici -->
-        </section>
-
-        <!-- Section "Bonus" (initialement cachée) -->
-        <section id="bonus-section" class="hidden">
-             <!-- Les carrousels de bonus seront injectés ici -->
-        </section>
+        <section id="series-section" class="section-pane"></section>
+        <section id="bonus-section" class="section-pane hidden"></section>
     </main>
 
-    <!-- Modale pour les détails de la série -->
-    <div id="details-modal" class="fixed inset-0 bg-black bg-opacity-80 z-[60] hidden items-center justify-center p-4">
+    <div id="details-modal" class="modal-overlay">
         <div id="details-modal-content" class="rounded-lg w-full max-w-4xl overflow-y-auto relative">
              <button onclick="closeDetailsModal()" class="absolute top-3 right-3 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-all duration-300 hover:scale-110 z-20">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -214,31 +229,24 @@
                 <div id="modal-bg" class="hero-background"></div>
                 <div class="hero-content p-4 sm:p-8">
                     <h2 id="modal-title" class="text-3xl sm:text-5xl font-bold mb-4"></h2>
-                    <div id="modal-actions" class="flex items-center gap-4">
-                        <!-- Bouton de lecture sera injecté ici -->
-                    </div>
+                    <div id="modal-actions" class="flex items-center gap-4"></div>
                 </div>
             </div>
             <div class="p-4 sm:p-8">
                  <p id="modal-description" class="text-gray-300 mb-6 text-sm sm:text-base"></p>
-                 <div id="seasons-container">
-                    <!-- Les saisons et épisodes seront injectés ici -->
-                </div>
+                 <div id="seasons-container"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modale pour la visionneuse d'images -->
-    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-90 z-[70] hidden flex-col items-center justify-center p-4">
+    <div id="image-modal" class="modal-overlay">
+        <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg transition-transform duration-300">
         <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-red-600 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
-        <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg">
     </div>
     
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-red-700 text-white py-3 px-5 rounded-lg shadow-2xl z-[80] hidden opacity-0 translate-y-4 font-semibold">
-    </div>
+    <div id="toast" class="fixed bottom-5 right-5 bg-red-700 text-white py-3 px-5 rounded-lg shadow-2xl z-[80] hidden opacity-0 translate-y-4 font-semibold"></div>
 
     <script>
         // --- BASE DE DONNÉES ---
@@ -249,6 +257,7 @@
                 poster: 'Web/Images/AHS/AHS - Poster.jpeg',
                 landscape: 'Web/Images/AHS/AHS - Landscape.jpeg',
                 description: 'Une série d\'anthologie où chaque saison explore une histoire d\'horreur différente, avec des personnages et des lieux uniques mais un casting récurrent.',
+                tintColor: '#990000', // Couleur thématique pour AHS
                 seasons: [
                      { season: 1, episodes: [
                         { number: 1, title: "La Maison de l'horreur", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETSM_6vATalOuuvYlhQIaGkBTxPBrarbcG3GfqP1R0WTVA?e=YXa0D4" },
@@ -408,18 +417,14 @@
                      ]},
                 ]
             },
-            // --- Restauration des autres séries ---
             {
                 id: 'daryldixon',
                 title: 'The Walking Dead: Daryl Dixon',
                 poster: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - poster.jpg',
                 landscape: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - Landscape.jpg',
                 description: 'Daryl Dixon se réveille en France et peine à comprendre comment il y est arrivé et pourquoi. Tout en cherchant un moyen de rentrer chez lui, il découvre un pays brisé mais résilient.',
-                seasons: [
-                    { season: 1, episodes: [ { number: 1, title: "L'âme perdue", video: "" } ] },
-                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 3, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                ]
+                tintColor: '#3d5a57',
+                seasons: [ { season: 1, episodes: [ { number: 1, title: "L'âme perdue", video: "" } ] } ]
             },
             {
                 id: 'deadcity',
@@ -427,10 +432,8 @@
                 poster: 'Web/Images/TWD/Dead City/Dead City - Poster.jpg',
                 landscape: 'Web/Images/TWD/Dead City/Dead City - Landscape.jpg',
                 description: 'Maggie et Negan voyagent dans un Manhattan post-apocalyptique coupé depuis longtemps du continent, à la recherche de Hershel, le fils kidnappé de Maggie.',
-                seasons: [ 
-                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                ]
+                tintColor: '#c9a456',
+                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
             },
              {
                 id: 'feartwd',
@@ -438,16 +441,8 @@
                 poster: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Poster.jpg',
                 landscape: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Landscape.jpg',
                 description: 'Spin-off de The Walking Dead, cette série explore le début de l\'apocalypse zombie à travers les yeux d\'une famille recomposée à Los Angeles.',
-                seasons: [ 
-                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 3, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 4, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 5, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 6, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 7, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 8, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                ]
+                tintColor: '#d18c58',
+                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
             },
             {
                 id: 'talesoftwd',
@@ -455,6 +450,7 @@
                 poster: 'Web/Images/TWD/Tales Of The Walking Dead/Tales Of The Walking Dead Poster.jpg',
                 landscape: 'Web/Images/TWD/Tales Of The Walking Dead/Tales Of the Walking Dead - Landscape.jpeg',
                 description: 'Une série d\'anthologie explorant des histoires de personnages nouveaux et existants dans l\'univers de The Walking Dead...',
+                tintColor: '#7895a1',
                 seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
             },
             {
@@ -463,6 +459,7 @@
                 poster: 'Web/Images/TWD/The One Who Live/The One Who Live - Poster.jpg',
                 landscape: 'Web/Images/TWD/The One Who Live/The One Who Live - Landscape.jpg',
                 description: 'L\'histoire d\'amour épique entre Rick Grimes et Michonne, transformée par un monde changé...',
+                tintColor: '#536177',
                 seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
             },
             {
@@ -471,18 +468,13 @@
                 poster: 'Web/Images/TWD/World Beyond/World Beyond - Poster.jpeg',
                 landscape: 'Web/Images/TWD/World Beyond/World Beyond - Landscape.jpg',
                 description: 'Un groupe d\'adolescents, la première génération à avoir grandi dans l\'apocalypse, quitte la sécurité de leur communauté...',
-                seasons: [ 
-                    { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                    { season: 2, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] },
-                ]
+                tintColor: '#4f6c58',
+                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
             },
         ];
 
-        const bonusData = {
-            // ... (à remplir avec les liens OneDrive pour les vidéos)
-        };
+        const bonusData = {};
         
-        // --- LOGIQUE DE L'APPLICATION ---
         const seriesSection = document.getElementById('series-section');
         const bonusSection = document.getElementById('bonus-section');
         const detailsModal = document.getElementById('details-modal');
@@ -494,8 +486,27 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderSeriesPage();
             renderBonusPage();
-            initInteractiveAnimations();
+
+            const prompt = document.getElementById('fullscreen-prompt');
+            prompt.addEventListener('click', enterApp);
         });
+
+        function enterApp() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+            
+            const prompt = document.getElementById('fullscreen-prompt');
+            prompt.style.opacity = '0';
+            setTimeout(() => {
+                prompt.style.display = 'none';
+            }, 500);
+        }
 
         searchInput.addEventListener('keyup', renderSeriesPage);
 
@@ -503,20 +514,12 @@
             const seriesTab = document.getElementById('tab-series');
             const bonusTab = document.getElementById('tab-bonus');
             const searchContainer = document.getElementById('search-container');
-
-            if (tabName === 'series') {
-                seriesSection.classList.remove('hidden');
-                bonusSection.classList.add('hidden');
-                seriesTab.classList.add('active');
-                bonusTab.classList.remove('active');
-                searchContainer.classList.remove('hidden');
-            } else {
-                seriesSection.classList.add('hidden');
-                bonusSection.classList.remove('hidden');
-                seriesTab.classList.remove('active');
-                bonusTab.classList.add('active');
-                searchContainer.classList.add('hidden');
-            }
+            const isSeries = tabName === 'series';
+            seriesSection.classList.toggle('hidden', !isSeries);
+            bonusSection.classList.toggle('hidden', isSeries);
+            seriesTab.classList.toggle('active', isSeries);
+            bonusTab.classList.toggle('active', !isSeries);
+            searchContainer.classList.toggle('hidden', !isSeries);
         }
         
         function renderSeriesPage() {
@@ -529,42 +532,43 @@
             }
 
             const heroSeries = filteredSeries[0];
-            const firstEpisode = heroSeries.seasons
-                .flatMap(s => s.episodes)
-                .find(ep => ep.video); 
+            const firstEpisode = heroSeries.seasons.flatMap(s => s.episodes).find(ep => ep.video); 
             
             let heroHtml = `
-                <div class="hero-section h-[50vh] sm:h-[60vh] md:h-[65vh] p-4 sm:p-8 mb-10">
-                    <div class="hero-background" style="background-image: url('${heroSeries.landscape}')"></div>
-                    <div class="hero-content max-w-2xl">
-                        <h2 class="text-4xl sm:text-6xl font-bold mb-4">${heroSeries.title}</h2>
-                        <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
-                        <div class="flex items-center gap-2 sm:gap-4">
-                            ${(firstEpisode) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
-                            <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
+                <div class="hero-wrapper mb-10">
+                    <div class="hero-section h-[60vh] sm:h-[70vh] md:h-[80vh] p-4 sm:p-8">
+                        <div class="hero-background"></div>
+                        <div class="hero-content max-w-2xl">
+                            <h2 class="text-4xl sm:text-6xl font-bold mb-4">${heroSeries.title}</h2>
+                            <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
+                            <div class="flex items-center gap-2 sm:gap-4">
+                                ${(firstEpisode) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
+                                <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
             
-            let galleryHtml = `
+            seriesSection.innerHTML = heroHtml + `
                 <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Toutes les séries</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
-            seriesSection.innerHTML = heroHtml + galleryHtml;
+            const heroWrapper = seriesSection.querySelector('.hero-wrapper');
+            const heroBackground = seriesSection.querySelector('.hero-background');
+            heroBackground.style.backgroundImage = `url('${heroSeries.landscape}')`;
+            heroWrapper.style.setProperty('--hero-tint-color', heroSeries.tintColor || 'transparent');
             
             const seriesGallery = document.getElementById('series-gallery');
             filteredSeries.forEach((series, index) => {
                 const card = document.createElement('div');
                 card.className = 'cursor-pointer item-card rounded-lg overflow-hidden fade-in-up';
-                card.style.animationDelay = `${index * 50}ms`; // Stagger animation
+                card.style.animationDelay = `${index * 50}ms`;
                 card.onclick = () => openDetailsModal(series.id);
                 card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https.placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
                 seriesGallery.appendChild(card);
             });
-            // Ré-appliquer les animations interactives après le rendu
-            initInteractiveAnimations();
         }
 
         function renderBonusPage() {
@@ -580,92 +584,43 @@
             document.getElementById('modal-description').textContent = series.description;
             
             const firstEpisode = series.seasons.flatMap(s => s.episodes).find(ep => ep.video);
-            
             const modalActions = document.getElementById('modal-actions');
             modalActions.innerHTML = firstEpisode ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
 
             const seasonsContainer = document.getElementById('seasons-container');
             seasonsContainer.innerHTML = series.seasons.map(seasonData => {
                 if (!seasonData.episodes) return '';
-                const episodesHtml = seasonData.episodes
-                    .sort((a, b) => a.number - b.number)
-                    .map(ep => {
-                        const isDisabled = !ep.video;
-                        const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
-                        const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
-                        return `
-                            <li ${onClickAction} class="${liClass}">
-                                <span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span>
-                                <p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p>
-                                <i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i>
-                            </li>`;
-                    }).join('');
-                return `
-                    <div class="mb-6">
-                        <h3 class="text-lg sm:text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3>
-                        <ul class="space-y-3">${episodesHtml}</ul>
-                    </div>`;
+                const episodesHtml = seasonData.episodes.sort((a, b) => a.number - b.number).map(ep => {
+                    const isDisabled = !ep.video;
+                    const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
+                    const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                    return `<li ${onClickAction} class="${liClass}"><span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span><p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p><i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i></li>`;
+                }).join('');
+                return `<div class="mb-6"><h3 class="text-lg sm:text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3><ul class="space-y-3">${episodesHtml}</ul></div>`;
             }).join('');
 
-            detailsModal.classList.remove('hidden');
-            detailsModal.classList.add('flex');
+            detailsModal.classList.add('visible');
         }
 
-        function closeDetailsModal() {
-            detailsModal.classList.add('hidden');
-            detailsModal.classList.remove('flex');
-        }
-
-        function openVideoLink(url) {
-            if (url) window.open(url, '_blank');
-        }
-        
+        function closeDetailsModal() { detailsModal.classList.remove('visible'); }
+        function openVideoLink(url) { if (url) window.open(url, '_blank'); }
         function openImageModal(src) {
             document.getElementById('image-viewer').src = src;
-            imageModal.classList.remove('hidden');
-            imageModal.classList.add('flex');
+            imageModal.classList.add('visible');
         }
-        
         function closeImageModal() {
-            imageModal.classList.add('hidden');
-            imageModal.classList.remove('flex');
+            imageModal.classList.remove('visible');
             document.getElementById('image-viewer').src = '';
         }
-
         function showToast(message) {
             clearTimeout(toastTimeout);
             toast.textContent = message;
             toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-y-4');
-            }, 10);
-
+            setTimeout(() => { toast.classList.remove('opacity-0', 'translate-y-4'); }, 10);
             toastTimeout = setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4');
                 setTimeout(() => toast.classList.add('hidden'), 400);
             }, 3000);
-        }
-
-        // --- NOUVELLES ANIMATIONS INTERACTIVES ---
-        function initInteractiveAnimations() {
-            const cards = document.querySelectorAll('.item-card');
-            cards.forEach(card => {
-                card.addEventListener('mousemove', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = (y - centerY) / 20; // Ajuster le diviseur pour plus/moins d'effet
-                    const rotateY = (centerX - x) / 20;
-                    
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.08)`;
-                });
-
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-                });
-            });
         }
     </script>
 </body>
