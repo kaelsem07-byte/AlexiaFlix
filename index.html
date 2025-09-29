@@ -10,7 +10,7 @@
     <!-- Police Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -22,6 +22,12 @@
             background-color: #0c0c0c;
             color: #f1f1f1;
             overflow-x: hidden;
+        }
+
+        .alexiaflix-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #E50914;
         }
 
         /* --- ÉCRAN D'ACCUEIL --- */
@@ -40,7 +46,7 @@
 
         /* --- EFFETS VISUELS & STYLES --- */
         .glass-effect {
-            background: rgba(12, 12, 12, 0.6);
+            background: rgba(12, 12, 12, 0.8);
             backdrop-filter: blur(16px) saturate(120%);
             -webkit-backdrop-filter: blur(16px) saturate(120%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -198,7 +204,8 @@
         </div>
     </div>
 
-    <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect">
+    <!-- En-tête pour ordinateur -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect hidden sm:flex">
         <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
             <div class="flex items-center gap-2 sm:gap-8">
                 <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-6 sm:h-8 transition-transform duration-300 hover:scale-110">
@@ -216,7 +223,29 @@
         </div>
     </header>
 
-    <main class="pt-24 container mx-auto px-4">
+    <!-- Interface Mobile -->
+    <div class="sm:hidden">
+        <!-- Titre en haut -->
+        <header class="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-center glass-effect" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+            <h1 class="alexiaflix-title text-2xl">AlexiaFlix</h1>
+        </header>
+
+        <!-- Barre de navigation et recherche en bas -->
+        <div class="fixed bottom-0 left-0 right-0 z-50 p-3 glass-effect" style="border-top: 1px solid rgba(255, 255, 255, 0.08);">
+            <nav class="flex items-center justify-around mb-3 text-gray-300 font-medium text-sm">
+                <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
+                <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
+                <a href="https://gemini.google.com/gem/1qy3O1Ooif_cWfN-hybybkpL07GC24DuW?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-tab">Cat-GPT</a>
+            </nav>
+            <div class="relative w-full" id="search-container-mobile">
+                <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+                <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <main class="pt-24 pb-28 sm:pb-4 container mx-auto px-4">
         <section id="series-section" class="section-pane"></section>
         <section id="bonus-section" class="section-pane hidden"></section>
     </main>
@@ -255,6 +284,7 @@
             {
                 id: 'ahs',
                 title: 'American Horror Story',
+                abbreviation: 'ahs',
                 poster: 'Web/Images/AHS/AHS - Poster.jpeg',
                 landscape: 'Web/Images/AHS/AHS - Landscape.jpeg',
                 description: 'Une série d\'anthologie où chaque saison explore une histoire d\'horreur différente, avec des personnages et des lieux uniques mais un casting récurrent.',
@@ -421,6 +451,7 @@
             {
                 id: 'daryldixon',
                 title: 'The Walking Dead: Daryl Dixon',
+                abbreviation: 'twd daryl dixon dd',
                 poster: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - poster.jpg',
                 landscape: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - Landscape.jpg',
                 description: 'Daryl Dixon se réveille en France et peine à comprendre comment il y est arrivé et pourquoi. Tout en cherchant un moyen de rentrer chez lui, il découvre un pays brisé mais résilient.',
@@ -430,6 +461,7 @@
             {
                 id: 'deadcity',
                 title: 'The Walking Dead: Dead City',
+                abbreviation: 'twd dead city dc',
                 poster: 'Web/Images/TWD/Dead City/Dead City - Poster.jpg',
                 landscape: 'Web/Images/TWD/Dead City/Dead City - Landscape.jpg',
                 description: 'Maggie et Negan voyagent dans un Manhattan post-apocalyptique coupé depuis longtemps du continent, à la recherche de Hershel, le fils kidnappé de Maggie.',
@@ -439,6 +471,7 @@
              {
                 id: 'feartwd',
                 title: 'Fear The Walking Dead',
+                abbreviation: 'ftwd fear twd',
                 poster: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Poster.jpg',
                 landscape: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Landscape.jpg',
                 description: 'Spin-off de The Walking Dead, cette série explore le début de l\'apocalypse zombie à travers les yeux d\'une famille recomposée à Los Angeles.',
@@ -448,6 +481,7 @@
             {
                 id: 'talesoftwd',
                 title: 'Tales of the Walking Dead',
+                abbreviation: 'tales twd',
                 poster: 'Web/Images/TWD/Tales Of The Walking Dead/Tales Of The Walking Dead Poster.jpg',
                 landscape: 'Web/Images/TWD/Tales Of the Walking Dead/Tales Of the Walking Dead - Landscape.jpeg',
                 description: 'Une série d\'anthologie explorant des histoires de personnages nouveaux et existants dans l\'univers de The Walking Dead...',
@@ -457,6 +491,7 @@
             {
                 id: 'theoneswholive',
                 title: 'The Walking Dead: The Ones Who Live',
+                abbreviation: 'twd towl the ones who live',
                 poster: 'Web/Images/TWD/The One Who Live/The One Who Live - Poster.jpg',
                 landscape: 'Web/Images/TWD/The One Who Live/The One Who Live - Landscape.jpg',
                 description: 'L\'histoire d\'amour épique entre Rick Grimes et Michonne, transformée par un monde changé...',
@@ -466,6 +501,7 @@
             {
                 id: 'worldbeyond',
                 title: 'The Walking Dead: World Beyond',
+                abbreviation: 'twd wb world beyond',
                 poster: 'Web/Images/TWD/World Beyond/World Beyond - Poster.jpeg',
                 landscape: 'Web/Images/TWD/World Beyond/World Beyond - Landscape.jpg',
                 description: 'Un groupe d\'adolescents, la première génération à avoir grandi dans l\'apocalypse, quitte la sécurité de leur communauté...',
@@ -481,16 +517,46 @@
         const detailsModal = document.getElementById('details-modal');
         const imageModal = document.getElementById('image-modal');
         const searchInput = document.getElementById('search-input');
+        const searchInputMobile = document.getElementById('search-input-mobile');
         const toast = document.getElementById('toast');
         let toastTimeout;
         
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Pre-processing for Smart Search ---
+            seriesData.forEach(series => {
+                let tags = `${series.title.toLowerCase()} ${series.abbreviation ? series.abbreviation.toLowerCase() : ''}`;
+                series.seasons.forEach(season => {
+                    season.episodes.forEach(episode => {
+                        const s = season.season;
+                        const e = episode.number;
+                        const episodeTitle = episode.title || '';
+                        tags += ` ${episodeTitle.toLowerCase()}`;
+                        tags += ` s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e}`; // e.g., s1e1, s01e1, s1e01, s01e01
+                        tags += ` saison ${s} episode ${e}`; // e.g., saison 1 episode 1
+                        tags += ` ep${e}s${s}`; // e.g., ep1s1
+                    });
+                });
+                series.searchTags = tags; // Add the generated string to the series object
+            });
+
+
             renderSeriesPage();
             renderBonusPage();
 
             const prompt = document.getElementById('fullscreen-prompt');
             prompt.addEventListener('click', enterApp);
+
+            const handleSearch = () => {
+                const value = event.target.value;
+                searchInput.value = value;
+                searchInputMobile.value = value;
+                renderSeriesPage();
+            };
+
+            searchInput.addEventListener('input', handleSearch);
+            searchInputMobile.addEventListener('input', handleSearch);
         });
+
 
         function enterApp() {
             const elem = document.documentElement;
@@ -509,26 +575,50 @@
             }, 500);
         }
 
-        searchInput.addEventListener('keyup', renderSeriesPage);
-
         function switchTab(tabName) {
+            // Desktop elements
             const seriesTab = document.getElementById('tab-series');
             const bonusTab = document.getElementById('tab-bonus');
             const searchContainer = document.getElementById('search-container');
+            
+            // Mobile elements
+            const seriesTabMobile = document.getElementById('tab-series-mobile');
+            const bonusTabMobile = document.getElementById('tab-bonus-mobile');
+            const searchContainerMobile = document.getElementById('search-container-mobile');
+
             const isSeries = tabName === 'series';
+
+            // Toggle content sections visibility
             seriesSection.classList.toggle('hidden', !isSeries);
             bonusSection.classList.toggle('hidden', isSeries);
+
+            // Update active state for all tabs
             seriesTab.classList.toggle('active', isSeries);
             bonusTab.classList.toggle('active', !isSeries);
+            seriesTabMobile.classList.toggle('active', isSeries);
+            bonusTabMobile.classList.toggle('active', !isSeries);
+
+            // Toggle search visibility on both desktop and mobile
             searchContainer.classList.toggle('hidden', !isSeries);
+            searchContainerMobile.parentElement.classList.toggle('hidden', !isSeries);
         }
         
         function renderSeriesPage() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const filteredSeries = seriesData.filter(series => series.title.toLowerCase().includes(searchTerm));
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            let filteredSeries;
+
+            if (!searchTerm) {
+                filteredSeries = seriesData;
+            } else {
+                const searchKeywords = searchTerm.split(' ').filter(Boolean);
+                filteredSeries = seriesData.filter(series => {
+                    return searchKeywords.every(keyword => series.searchTags.includes(keyword));
+                });
+            }
             
             if (filteredSeries.length === 0) {
-                 seriesSection.innerHTML = `<p class="text-gray-400 mt-10">Aucune série ne correspond à votre recherche.</p>`;
+                 seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucune série ne correspond à "${searchInput.value}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche.</p></div>`;
                  return;
             }
 
@@ -552,7 +642,7 @@
             `;
             
             seriesSection.innerHTML = heroHtml + `
-                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Toutes les séries</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Résultats de la recherche</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
