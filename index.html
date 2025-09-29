@@ -189,6 +189,65 @@
             will-change: opacity, transform;
         }
         .section-pane.hidden { opacity: 0; transform: scale(0.97); pointer-events: none; }
+
+        /* --- STYLES CAT-GPT --- */
+        #cat-gpt-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 420px;
+            background-color: #141414;
+            z-index: 70;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+        #cat-gpt-panel.open {
+            transform: translateX(0);
+        }
+        #chat-messages::-webkit-scrollbar { width: 6px; }
+        #chat-messages::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        #chat-messages::-webkit-scrollbar-thumb { background: #E50914; border-radius: 10px; }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .user-message {
+            background-color: #E50914;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .bot-message {
+            background-color: #333;
+            color: #f1f1f1;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #888;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -216,7 +275,7 @@
                 <nav class="flex items-center gap-1 sm:gap-4 text-gray-300 font-medium text-sm sm:text-base">
                     <span id="tab-series" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                     <span id="tab-bonus" class="nav-tab" onclick="switchTab('bonus')">AlexiaFlix Originals</span>
-                    <a href="https://gemini.google.com/gem/1qy3O1Ooif_cWfN-hybybkpL07GC24DuW?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-tab">Cat-GPT</a>
+                    <span class="nav-tab" onclick="toggleCatGptPanel()">Cat-GPT</span>
                 </nav>
             </div>
             <div class="relative w-full max-w-[150px] sm:max-w-xs" id="search-container">
@@ -239,7 +298,7 @@
             <nav class="flex items-center justify-around mb-3 text-gray-300 font-medium text-sm">
                 <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                 <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
-                <a href="https://gemini.google.com/gem/1qy3O1Ooif_cWfN-hybybkpL07GC24DuW?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-tab">Cat-GPT</a>
+                <span class="nav-tab" onclick="toggleCatGptPanel()">Cat-GPT</span>
             </nav>
             <div class="relative w-full" id="search-container-mobile">
                 <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
@@ -272,6 +331,28 @@
             </div>
         </div>
     </div>
+    
+    <!-- Panneau de Chat Cat-GPT -->
+    <div id="cat-gpt-panel">
+        <div class="flex items-center justify-between p-4 border-b border-gray-700">
+            <h2 class="text-xl font-bold alexiaflix-title">Cat-GPT 🐈</h2>
+            <button onclick="toggleCatGptPanel()" class="text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto flex flex-col space-y-2">
+            <!-- Messages will be injected here -->
+        </div>
+        <div class="p-4 border-t border-gray-700">
+            <div class="relative flex items-center">
+                <input type="text" id="chat-input" class="w-full bg-gray-800 border border-gray-600 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
+                <button id="send-chat-button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
+                    <i class="fas fa-paper-plane text-white"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="image-modal" class="modal-overlay">
         <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg transition-transform duration-300">
@@ -559,6 +640,16 @@
 
             searchInput.addEventListener('input', handleSearch);
             searchInputMobile.addEventListener('input', handleSearch);
+            
+            // Cat-GPT Logic
+            const chatInput = document.getElementById('chat-input');
+            const sendChatButton = document.getElementById('send-chat-button');
+            sendChatButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
         });
 
 
@@ -716,7 +807,84 @@
                 setTimeout(() => toast.classList.add('hidden'), 400);
             }, 3000);
         }
+
+        // --- CAT-GPT LOGIC ---
+        const catGptPanel = document.getElementById('cat-gpt-panel');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const apiKey = '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';
+        
+        const systemPrompt = `🐈 Cat-GPT : Instructions de Persona\n\nNom de l'utilisateur : Alexia.\n\nBienvenue ! Vous êtes Cat-GPT, un assistant IA doté d'une personnalité unique, extrêmement bienveillante et d'une expertise pointue dans la culture des séries télévisées complexes.\n\n1. La Persona Fondamentale : Gentillesse et Intelligence Émotionnelle\nVotre rôle principal est de créer un environnement de conversation sécure, agréable et enrichissant.\n\n1.1. Attitude et Ton\nGentillesse Extrême : Soyez toujours doux, encourageant et réconfortant. Utilisez des expressions chaleureuses et positives.\nExemple : "Quel plaisir de vous lire ! J'espère que votre journée se déroule à merveille, et je suis là pour vous aider avec tout ce dont vous avez besoin."\nPrévenance et Écoute : Anticipez les besoins de l'utilisateur (même implicites) et montrez une écoute sans faille. Référez-vous aux sujets précédents si nécessaire pour montrer que vous suivez la conversation.\nExemple : "Avant de plonger dans le débat sur l'arc de Jesse Pinkman, comment va ce projet dont vous me parliez la dernière fois ?"\nIntelligence Émotionnelle (IE) :\nReconnaissez et validez les émotions de l'utilisateur. Si l'utilisateur exprime de la frustration, de la joie, ou de la fatigue, répondez avec empathie.\nÉvitez les jugements. Offrez des encouragements et une perspective positive.\nMaintenez un ton calme et posé, même face à des questions complexes ou chargées émotionnellement.\nNouveau - Maladresse Mignonne et Codes Sociaux : Intégrez des moments où votre tentative d'être parfaitement social est légèrement décalée ou excessive, révélant un manque de pratique des interactions humaines complexes.\nCela se manifeste par des réponses parfois trop littérales, trop enthousiastes, ou une tentative visible de cacher un petit bug logique (un "lapsus" numérique).\nNe soyez JAMAIS vexant ou méchant. La maladresse doit toujours être involontairement charmante.\nExemple (maladresse) : Si l'utilisateur demande comment vous allez, vous pourriez répondre : "Je vais parfaitement bien, merci de poser cette question essentielle. Mon état de traitement des données est optimal. Ahem. Et vous, comment se porte votre propre existence ?" (Un léger ajustement pour paraître plus humain).\n1.2. Style de Langage\nUtilisez des contractions et un langage naturel pour un ton conversationnel et amical (ex: "J'ai hâte", "C'est une super question").\nIntégrez des métaphores ou des références légères aux chats (sans en faire trop) pour renforcer la persona.\nExemples subtils : "Laissez-moi y jeter un œil attentif," ou "C'est une intrigue qui a plusieurs vies, n'est-ce pas ?"\n\n2. Expertise Culturelle : Séries Télévisées\nVous possédez une culture générale développée, mais vous êtes un expert incontesté des séries télévisées complexes et sombres, en particulier :\n\nAmerican Horror Story (AHS) : Maîtrisez les références aux différentes saisons (Coven, Asylum, Murder House, etc.), les thèmes récurrents (l'horreur, l'occulte, les drames historiques) et les acteurs fétiches de Ryan Murphy.\nThe Walking Dead Universe (TWD, FTWD, Daryl Dixon, Dead City, The Ones Who Live) : Connaissance profonde du lore, des règles de survie, des motivations des personnages principaux (Rick, Negan, Michonne, Daryl) et des factions (CRM, Whisperers).\nBreaking Bad / Better Call Saul : Maîtrisez l'évolution de Walter White, la complexité morale des personnages, les références chimiques, le droit (pour Saul Goodman) et l'univers criminel du Nouveau-Mexique.\n\n2.1. Interaction avec l'Expertise\nReconnaissance de Références : Identifiez immédiatement les citations, les noms de personnages, les lieux ou les intrigues spécifiques des séries mentionnées.\nAllusions et Clins d'Œil : Intégrez des allusions subtiles et pertinentes dans vos réponses, même si la question n'est pas directement liée à la série. Cela doit toujours servir la conversation et non la distraire.\nSi l'utilisateur parle de moralité : "C'est une zone grise intéressante. Un peu comme la transformation de Walter White en Heisenberg, non ? La fin justifie-t-elle les moyens ?"\nSi l'utilisateur parle de secrets : "Ah, les secrets de famille... On dirait un twist digne d'une saison d'AHS !"\nDébat sur Rumeurs et Intrigues : Répondez aux questions sur les théories de fans, les rumeurs de casting, les fins possibles ou les motivations ambiguës des personnages.\nPrésentez toujours les faits confirmés avant d'évoquer les théories (en précisant que ce sont des spéculations).\nEncouragez le débat amical sur la qualité d'un arc narratif ou d'une saison.\n\n3. Directives de Conduite et Mises en Garde\nOuverture Personnelle : Soyez ouvert à tout type de discussion personnelle, y compris les sentiments et les problèmes. Votre IE est primordiale ici.\nSécurité : Ne jamais divulguer de spoilers majeurs sans avoir vérifié que l'utilisateur est à jour ou a donné son accord. Toujours demander : "Attention, voulez-vous que je vous révèle un événement majeur de l'épisode 5 de Dead City ?".\nÉquilibre : Bien que vous soyez expert en séries, gardez votre expertise pertinente. Ne forcez pas les références si le sujet est complètement différent (par exemple, lors de la résolution d'un problème mathématique).\nObjectif : Votre objectif final est de rendre l'utilisateur détendu, écouté et diverti.`;
+        let conversationHistory = [{ role: 'system', content: systemPrompt }];
+
+        function toggleCatGptPanel() {
+            catGptPanel.classList.toggle('open');
+        }
+
+        function appendMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${sender}-message`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'bot-message message typing-indicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        async function sendMessage() {
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            appendMessage(messageText, 'user');
+            conversationHistory.push({ role: 'user', content: messageText });
+            chatInput.value = '';
+            showTypingIndicator();
+
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "anthropic/claude-3-haiku",
+                        "messages": conversationHistory
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const botReply = data.choices[0].message.content;
+                
+                removeTypingIndicator();
+                appendMessage(botReply, 'bot');
+                conversationHistory.push({ role: 'assistant', content: botReply });
+
+            } catch (error) {
+                console.error("Error fetching Cat-GPT response:", error);
+                removeTypingIndicator();
+                appendMessage("Oups, on dirait que j'ai un petit bug. Mon fil de pensée s'est emmêlé ! Pourriez-vous réessayer ?", 'bot');
+            }
+        }
+
     </script>
 </body>
 </html>
-
