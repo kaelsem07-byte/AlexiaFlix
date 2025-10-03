@@ -4,7 +4,7 @@
 
 // Le nom du cache. Il est important de le versionner.
 // Si vous modifiez des fichiers (CSS, JS, images), incrémentez la version (ex: 'v2').
-const CACHE_NAME = 'alexiaflix-cache-v1';
+const CACHE_NAME = 'alexiaflix-cache-v2';
 
 // Liste des fichiers essentiels de l'application (l' "App Shell").
 // Ces fichiers seront mis en cache dès l'installation du Service Worker.
