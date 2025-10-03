@@ -275,6 +275,41 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1.0); }
         }
+
+        /* --- Nouveaux styles pour les saisons dans la modale --- */
+        .season-chips-container::-webkit-scrollbar { height: 4px; }
+        .season-chips-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        .season-chips-container::-webkit-scrollbar-thumb { background: rgba(229, 9, 20, 0.7); border-radius: 10px; }
+
+        .season-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb; /* text-gray-200 */
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .season-chip:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .season-chip.active {
+            background-color: #E50914;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
+        }
+
+        @keyframes fadeInList {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .episodes-list {
+            animation: fadeInList 0.4s ease;
+        }
     </style>
 </head>
 <body class="bg-black text-white">
@@ -546,7 +581,7 @@
                         { number: 7, title: "Take Me to Your Leader", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYMHPPX3UH5LidZhKpGJUGkBeAFUSd2IVdrVK53w3za5Dg?e=qMIZ22" },
                         { number: 8, title: "Inside", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVaFTwxmptJBhoYtDmb5UFYBdC--h8UBTuHWH8p6x8x67Q?e=dGXcYT" },
                         { number: 9, title: "Blue Moon", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVpcnzHj4TNLjCVPu1O_2ZABUfRdZ4FLml6Jx-PdKbOQ-w?e=PeiQwz" },
-                        { number: 10, title: "The Future Perfect", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdK3JEP6ukhDvL5NLEIS0bgBVkw0y_rUPOARRwxQl72-sw?e=7q72VY" }
+                        { number: 10, "title": "The Future Perfect", "video": "https://1drv.ms/v/c/BA618C3B1504032B/EdK3JEP6ukhDvL5NLEIS0bgBVkw0y_rUPOARRwxQl72-sw?e=7q72VY" }
                      ]},
                      { season: 11, episodes: [
                         { number: 1, title: "Something's Coming", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYbr7Og5-o9KpxscoNro8lEBe8F_Y4t7zl9JoDoRfCbrrg?e=MbPypo" },
@@ -581,7 +616,28 @@
                 landscape: 'Web/Images/TWD/Daryl Dixon/Daryl Dixon - Landscape.jpg',
                 description: 'Daryl Dixon se réveille en France et peine à comprendre comment il y est arrivé et pourquoi. Tout en cherchant un moyen de rentrer chez lui, il découvre un pays brisé mais résilient.',
                 tintColor: '#3d5a57',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "L'âme perdue", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ 
+                        { number: 1, title: "L'âme perdue", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfqfwZ2ZsapLtWUYh2KxvWABvNkkE_GXeGTu3K8FO12J5Q?e=rEldPf" },
+                        { number: 2, title: "Alouette", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQ2ovsbGRcRBp6hTKOhgrEQB3FKP_H8tsf04H7GeORFp6Q?e=IMf4VM" },
+                        { number: 3, title: "Paris sera toujours Paris", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYRIwOgSC41KndtFgXYgB0cBoHRals19bEnbzbByopCBLw?e=XRo5Zy" },
+                        { number: 4, title: "La Dame de Fer", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfwWaxMfPRBMokd-8zO5UV8BtMI08mXAeXmG0lJREIHgwQ?e=grYx3S" },
+                        { number: 5, title: "Deux Amours", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERyzMPeR0W9NtSIwuUdZtNYBc37OGZlkJx-pELWOb98tbw?e=yj7xcQ" },
+                        { number: 6, title: "Rentrer à la maison", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVn-4-fOaB1Ju9XEvos7BtoBruRkwv3HZtWZ1041rVM4mA?e=aq12b9" }
+                    ] },
+                    { season: 2, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZsc2ejlr3FLq8Yk67DuSIYBaST_LxS-Rae0S1btstCdgg?e=LPxKpk" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZGOwOYPdE1Au900j0jB_1sBebnZfT3qUY6-fDnBcdBmIA?e=Us9YXQ" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZDRcn57D3tMmN3Pj-uxBYMBtBrCnIv1_OoudcSjvGfgKg?e=PbeAB8" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EbtMLmEOX6pJpmmDiEl2kpYBW42v3f__txNhENPP4RKpeA?e=RuCUnn" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ET8zjMmiXH9GqE0fjr9fA3sBLx2aplTMacle74uaY7UnPQ?e=cKc9ug" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXNu3QYJhaJDqISUjzkWItYBDrbqryvX5MgTw84bDK34WA?e=kGalIG" }
+                    ] },
+                    { season: 3, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EX-O3phZGlpMp5YN93uvqksBoYwxD2fapXogzeQ9y2oXTg?e=V1DFqT" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWculCq1WhxGiin8XVmuZLoBSlJ0xdq0B3Gbm-RuheblXw?e=7qoMDT" }
+                    ] }
+                ]
             },
             {
                 id: 'deadcity',
@@ -591,7 +647,26 @@
                 landscape: 'Web/Images/TWD/Dead City/Dead City - Landscape.jpg',
                 description: 'Maggie et Negan voyagent dans un Manhattan post-apocalyptique coupé depuis longtemps du continent, à la recherche de Hershel, le fils kidnappé de Maggie.',
                 tintColor: '#c9a456',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ 
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQ0VkRa1KBFEkSTbJGI7HUYBht2tnYINNJda-Bka0weIJQ?e=d32nsc" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZvpqCDp0H5PhyP-sLvFjpoBtyZmjUJPipvKBrZCzy7rDw?e=KBEXfm" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWKbeje6Rh1Hmuj2lTUyIbAB2XwgMYYfsW_Eqt8FosvzQA?e=4Cbxqz" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERaY4_8lyKpBtlKDQsa3Q5QB0C4hqczh5nrPbvzDw7PK5g?e=UulWel" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERjiHVkXAXZPg0VdDfawiQABJlNke0Vi-W1TbMoZNqvDlg?e=2no6Cs" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EUbZmUzsDQlAicikvRKXKIoBaqKn3KP7pbG9sHH18IR2lQ?e=mQ2ifC" }
+                    ] },
+                    { season: 2, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdUhEzZBHZdIg_1oChWpPAMB90x81ubJQ-gHPIIayti9QA?e=KvkV8M" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdaN_UQF2qFBp4krJB0PoJIBTOnqfLNjrc3AveNve0dsAg?e=KO1zMS" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYmDxujRRUxCrcdO0A0RjsMBSqJDVOxrNSVcd_-3X-zHZw?e=VKpAfE" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EV_tMA1fljVKsrIv4FQ7gpIB-gAoC4GJfx4wPDOtAU9fHg?e=m4DNJe" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVmFRATl0YhDh2eOMzRxNZYBzS483AI19wNMxw9KsIdHSw?e=JOY4U7" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETceSYQSLjZJn06-pkdQSDsBt1pAm0Qxmz7sHnF4TxUjEA?e=IBibPb" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXFuzodIEGlIvUyDg_b-8_4B24cCXBf2Y2B5bgcx-GRdnQ?e=B49NaN" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcLJAxAIMrpLvqIbePWE0cQBrwox5DE6nzj_w16guy5RsA?e=Uh0pn8" }
+                    ] }
+                ]
             },
              {
                 id: 'feartwd',
@@ -611,7 +686,12 @@
                 landscape: 'Web/Images/TWD/Tales Of the Walking Dead/Tales Of the Walking Dead - Landscape.jpeg',
                 description: 'Une série d\'anthologie explorant des histoires de personnages nouveaux et existants dans l\'univers de The Walking Dead...',
                 tintColor: '#7895a1',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ { season: 1, episodes: [ 
+                    { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfQox2N2AeZCt5-K-JNjJwIBgbaESNPh664857DduiDF2A?e=Og2mHt" },
+                    { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETzqEOuhxrJGvdoE5QHCEdsBmPAgxtfNCTqne_rao7Bu8Q?e=hv04nX" },
+                    { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/Edsu6gWzwVNBut63yIemNOMBsa9ycBeOmRzlL8YntrWHcg?e=aE8MTS" },
+                    { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EeSW4TelBbRHulXY0-jLMYMB-43uzx5RBLUdWjuXJf-xGQ?e=YpvH6j" }
+                ] } ]
             },
             {
                 id: 'theoneswholive',
@@ -621,7 +701,14 @@
                 landscape: 'Web/Images/TWD/The One Who Live/The One Who Live - Landscape.jpg',
                 description: 'L\'histoire d\'amour épique entre Rick Grimes et Michonne, transformée par un monde changé...',
                 tintColor: '#536177',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ { season: 1, episodes: [ 
+                    { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZ6jJPJJyLpEjHbfthbOr74BdRIOFLjWYVCWGsivso05gA?e=6xp8SL" },
+                    { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ed7vYpytstpMlK6DvxAKoJsBqxIVoNtl-ZmnzrcPsks5MA?e=W35YdN" },
+                    { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETgBzHw9GldDlmSN9XCeyKwBscNWFgCGyWKNhizrWLcjRQ?e=SVu4dU" },
+                    { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZhVBVuVOWdJpDHQAIyaA2gBs_Cv3PYZke8MRhf_fJrM7Q?e=qpcqAO" },
+                    { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVA57hkMDQlNkz4P8d1F_30BNrj-1a4SStwfyxxSGfA02w?e=W1NoF5" },
+                    { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EeSMj16mgJdLkvln7BDc8o0B4M4wDbVFJ3xNQZt1Uq1xHQ?e=g0iTXb" }
+                ] } ]
             },
             {
                 id: 'worldbeyond',
@@ -631,7 +718,32 @@
                 landscape: 'Web/Images/TWD/World Beyond/World Beyond - Landscape.jpg',
                 description: 'Un groupe d\'adolescents, la première génération à avoir grandi dans l\'apocalypse, quitte la sécurité de leur communauté...',
                 tintColor: '#4f6c58',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ 
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYF2duvzdxhDhcYnTYPXKxEBeN8LsYVswCNqK_sC_OOsLQ?e=xT9Amb" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ee1IIgarav5CgwfF4Qux3UMBum2NCGMQ4dkfBuopoRuEiQ?e=6gb4rE" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZHWVa71PvVLsszVpm8V9eMBG_V3NE6yBsJ7jwfzjOzvDQ?e=xndTPs" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcuvxFydC0JNoBRuRbJQhcwBsXNrM0_GHpU5ApRwcOCN4g?e=0eBP7P" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EW_f274F3SxDmaBIwdfMmdEBsR6Ep8u1knXAl1wZ4G56Dw?e=6lL85k" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERBV8wlTAHFKvWKypSmjYK4BeujvO8CJNxUlCcHtcASuzQ?e=L2qsYB" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQeWin2uQa9Hs2JZvxL8IqwBjKqUk2xhuJ41oN4w2fFc0Q?e=t9ZJJF" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ee0zIELe0ddBlcvBFvMzXm8BWdNI6hoQbVjB2SyGfHLOag?e=xmEAJ3" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ee-L0veNDRdKlsEMNECcznMB3ZC9-HDInqyCHuAhq_paew?e=hhn2Lr" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYuKa5Swo_xNhxspqGIappkBIZk8y31iFzBDNnHfs48NlA?e=86cgcF" }
+                    ] },
+                    { season: 2, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EekyNzKdP7BJoaZGqXbsYA0BJEpj7tCN_6t7vtKHA80iOA?e=FFyUJn" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXBUxmZz4NdNme97F8TCgVYBRH6FLZ6n0iOdGtHLFdTV3Q?e=NOnE6b" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EY48xvNw1zRNur66KpQroYEBaHAqyN9J_IUobff0QlH_pA?e=eUlut8" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETnGxyBVRuBEm1g3itLDFD8B8zxspwTt0lCAfmZTEuy8tQ?e=9gm3mL" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETm2H_1lF3xClqUlSmIKtUgBQJ8b7LJUj2IvNKZ6LK12_g?e=mLqs4Q" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQnfk_aSlfRKhEtCuGpCU6EBSRejOw90qG0ZqIMLjcPNSA?e=W1SWmn" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWXIVqxNfXJIlbYT6uUGz78BYfiTSyvxbvcGd8V3gAV7Lg?e=tKNUBF" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQW45GX8a6pEofkWbygygU8B9ZHyrZupquFqZ28ke063qA?e=sXd54G" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EaEzC7JAPIJCopFDx089hkEBAqbr93sYhMS8uj3PnX9lfA?e=W5iCrB" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/ER3oLeciVG1BtI9yC-MeVfgBu0-fmB33NzIyDDEnfmwc7g?e=pHNI6B" }
+                    ] }
+                ]
             },
         ];
 
@@ -673,6 +785,7 @@
 
             const handleSearch = (event) => {
                 const value = event.target.value;
+                // Sync both inputs
                 searchInput.value = value;
                 searchInputMobile.value = value;
                 renderSeriesPage();
@@ -736,32 +849,21 @@
             searchContainerMobile.classList.toggle('hidden', !isSeries);
         }
         
-        function renderSeriesPage() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            let filteredSeries;
+        // --- NEW SEARCH & RENDER LOGIC ---
 
-            if (!searchTerm) {
-                filteredSeries = seriesData;
-            } else {
-                const searchKeywords = searchTerm.split(' ').filter(Boolean);
-                filteredSeries = seriesData.filter(series => {
-                    return searchKeywords.every(keyword => series.searchTags.includes(keyword));
-                });
-            }
-            
-            if (filteredSeries.length === 0) {
-                 seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucune série ne correspond à "${searchInput.value}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche.</p></div>`;
+        function renderDefaultSeriesView(seriesToShow, searchTerm = '') {
+            if (seriesToShow.length === 0) {
+                 seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucune série ne correspond à "${searchTerm}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche.</p></div>`;
                  return;
             }
 
-            const heroSeries = filteredSeries[0];
+            const heroSeries = seriesToShow[0];
             const firstEpisode = heroSeries.seasons.flatMap(s => s.episodes).find(ep => ep.video); 
             
             let heroHtml = `
                 <div class="hero-wrapper mb-10">
                     <div class="hero-section h-[60vh] sm:h-[70vh] md:h-[80vh] p-4 sm:p-8">
-                        <div class="hero-background"></div>
+                        <div class="hero-background" style="background-image: url('${heroSeries.landscape}')"></div>
                         <div class="hero-content max-w-2xl">
                             <h2 class="text-4xl sm:text-6xl font-bold mb-4">${heroSeries.title}</h2>
                             <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
@@ -774,19 +876,16 @@
                 </div>
             `;
             
-            const title = searchTerm ? 'Résultats de la recherche' : 'Toutes les séries';
+            const title = searchTerm ? `Séries correspondantes à "${searchTerm}"` : 'Toutes les séries';
             seriesSection.innerHTML = heroHtml + `
                 <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">${title}</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
-            const heroWrapper = seriesSection.querySelector('.hero-wrapper');
-            const heroBackground = seriesSection.querySelector('.hero-background');
-            heroBackground.style.backgroundImage = `url('${heroSeries.landscape}')`;
-            heroWrapper.style.setProperty('--hero-tint-color', heroSeries.tintColor || 'transparent');
+            seriesSection.querySelector('.hero-wrapper').style.setProperty('--hero-tint-color', heroSeries.tintColor || 'transparent');
             
             const seriesGallery = document.getElementById('series-gallery');
-            filteredSeries.forEach((series, index) => {
+            seriesToShow.forEach((series, index) => {
                 const card = document.createElement('div');
                 card.className = 'cursor-pointer item-card rounded-lg overflow-hidden fade-in-up';
                 card.style.animationDelay = `${index * 50}ms`;
@@ -795,6 +894,88 @@
                 seriesGallery.appendChild(card);
             });
         }
+
+        function renderEpisodeResultsView(episodes, searchTerm) {
+            const resultsHtml = episodes.map((ep, index) => {
+                const isDisabled = !ep.video;
+                const clickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                return `
+                    <div class="group flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-transparent hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 cursor-pointer fade-in-up" style="animation-delay: ${index * 50}ms;" ${clickAction}>
+                        <img src="${ep.seriesPoster}" alt="${ep.seriesTitle}" class="w-16 h-24 object-cover rounded-md flex-shrink-0" onerror="this.onerror=null;this.src='https.placehold.co/128x192/0c0c0c/f1f1f1?text=Image';">
+                        <div class="flex-grow overflow-hidden">
+                            <p class="text-gray-400 text-sm font-medium truncate">${ep.seriesTitle}</p>
+                            <h4 class="text-white font-bold text-lg truncate">${ep.episodeTitle}</h4>
+                            <p class="text-gray-300 text-sm">Saison ${ep.seasonNumber}, Épisode ${ep.episodeNumber}</p>
+                        </div>
+                        <div class="flex-shrink-0 text-3xl transition-transform duration-200 group-hover:scale-110">
+                           <i class="fas ${isDisabled ? 'fa-lock text-gray-500' : 'fa-play-circle text-white'}"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            seriesSection.innerHTML = `
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Épisodes pour "${searchTerm}"</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${resultsHtml}
+                </div>
+            `;
+        }
+
+        function renderSeriesPage() {
+            const searchTerm = (searchInput.value || searchInputMobile.value).toLowerCase().trim();
+
+            if (!searchTerm) {
+                renderDefaultSeriesView(seriesData);
+                return;
+            }
+
+            const searchKeywords = searchTerm.split(' ').filter(Boolean);
+            const isPotentiallySpecific = searchKeywords.some(kw => 
+                /\bs\d+e\d+\b/.test(kw) || // s1e1
+                /\bep\d+s\d+\b/.test(kw) || // ep1s1
+                kw === 'episode' ||
+                kw === 'ep' ||
+                kw === 'saison'
+            );
+
+            let episodeResults = [];
+            seriesData.forEach(series => {
+                series.seasons.forEach(season => {
+                    season.episodes.forEach(episode => {
+                        const s = season.season;
+                        const e = episode.number;
+                        const episodeSearchString = `${series.title.toLowerCase()} ${series.abbreviation.toLowerCase()} ${(episode.title || '').toLowerCase()} s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e} ep${e}s${s} saison ${s} episode ${e}`;
+                        
+                        if (searchKeywords.every(keyword => episodeSearchString.includes(keyword))) {
+                            episodeResults.push({
+                                seriesTitle: series.title,
+                                seriesPoster: series.poster,
+                                seasonNumber: s,
+                                episodeNumber: e,
+                                episodeTitle: episode.title || `Épisode ${e}`,
+                                video: episode.video
+                            });
+                        }
+                    });
+                });
+            });
+
+            const seriesResults = seriesData.filter(series => 
+                searchKeywords.every(keyword => series.searchTags.includes(keyword))
+            );
+
+            if (episodeResults.length > 0 && isPotentiallySpecific) {
+                renderEpisodeResultsView(episodeResults, searchTerm);
+            } else if (seriesResults.length > 0) {
+                renderDefaultSeriesView(seriesResults, searchTerm);
+            } else if (episodeResults.length > 0) {
+                 renderEpisodeResultsView(episodeResults, searchTerm);
+            } else {
+                seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucun résultat pour "${searchTerm}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche ou vérifiez l'orthographe.</p></div>`;
+            }
+        }
+
 
         function renderBonusPage() {
              bonusSection.innerHTML = '<p class="text-gray-400 mt-10">Section en construction.</p>';
@@ -813,16 +994,59 @@
             modalActions.innerHTML = firstEpisode ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
 
             const seasonsContainer = document.getElementById('seasons-container');
-            seasonsContainer.innerHTML = series.seasons.map(seasonData => {
-                if (!seasonData.episodes) return '';
-                const episodesHtml = seasonData.episodes.sort((a, b) => a.number - b.number).map(ep => {
-                    const isDisabled = !ep.video;
-                    const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
-                    const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
-                    return `<li ${onClickAction} class="${liClass}"><span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span><p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p><i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i></li>`;
-                }).join('');
-                return `<div class="mb-6"><h3 class="text-lg sm:text-xl font-semibold mb-3 text-gray-200">Saison ${seasonData.season}</h3><ul class="space-y-3">${episodesHtml}</ul></div>`;
-            }).join('');
+            seasonsContainer.innerHTML = ''; // Vider le contenu précédent
+
+            if (!series.seasons || series.seasons.length === 0) {
+                seasonsContainer.innerHTML = '<p class="text-gray-500">Aucun épisode disponible pour le moment.</p>';
+                detailsModal.classList.add('visible');
+                return;
+            }
+
+            const chipsContainer = document.createElement('div');
+            chipsContainer.className = 'season-chips-container flex items-center space-x-2 overflow-x-auto pb-3 mb-4';
+            
+            const episodesContainer = document.createElement('div');
+
+            series.seasons.forEach((seasonData, index) => {
+                const chip = document.createElement('button');
+                chip.className = 'season-chip';
+                chip.textContent = `Saison ${seasonData.season}`;
+                
+                const episodesList = document.createElement('ul');
+                episodesList.className = 'episodes-list space-y-3';
+                
+                if (seasonData.episodes && seasonData.episodes.length > 0) {
+                    const episodesHtml = seasonData.episodes.sort((a, b) => a.number - b.number).map(ep => {
+                        const isDisabled = !ep.video;
+                        const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
+                        const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                        return `<li ${onClickAction} class="${liClass}"><span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span><p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p><i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i></li>`;
+                    }).join('');
+                    episodesList.innerHTML = episodesHtml;
+                } else {
+                    episodesList.innerHTML = '<li class="text-gray-500">Aucun épisode pour cette saison.</li>';
+                }
+
+                if (index === 0) {
+                    chip.classList.add('active');
+                } else {
+                    episodesList.classList.add('hidden');
+                }
+
+                chip.addEventListener('click', () => {
+                    chipsContainer.querySelectorAll('.season-chip').forEach(c => c.classList.remove('active'));
+                    episodesContainer.querySelectorAll('.episodes-list').forEach(l => l.classList.add('hidden'));
+
+                    chip.classList.add('active');
+                    episodesList.classList.remove('hidden');
+                });
+                
+                chipsContainer.appendChild(chip);
+                episodesContainer.appendChild(episodesList);
+            });
+
+            seasonsContainer.appendChild(chipsContainer);
+            seasonsContainer.appendChild(episodesContainer);
 
             detailsModal.classList.add('visible');
         }
