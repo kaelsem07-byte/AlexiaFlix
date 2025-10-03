@@ -833,25 +833,12 @@
 
 
         function enterApp() {
-            const elem = document.documentElement;
             const launchSound = document.getElementById('launch-sound');
             
             if (launchSound) {
                 launchSound.play().catch(error => {
                     console.warn("La lecture audio a été bloquée par le navigateur:", error);
                 });
-            }
-
-            try {
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(err => console.warn(`Erreur lors du passage en plein écran: ${err.message}`));
-                } else if (elem.webkitRequestFullscreen) { // Safari
-                    elem.webkitRequestFullscreen().catch(err => console.warn(`Erreur lors du passage en plein écran: ${err.message}`));
-                } else if (elem.msRequestFullscreen) { // IE11
-                    elem.msRequestFullscreen();
-                }
-            } catch (error) {
-                console.warn("L'API plein écran n'est pas autorisée ou disponible.", error);
             }
             
             const prompt = document.getElementById('fullscreen-prompt');
@@ -1216,4 +1203,3 @@
     </script>
 </body>
 </html>
-
