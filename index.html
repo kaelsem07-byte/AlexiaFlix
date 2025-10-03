@@ -22,7 +22,6 @@
             background-color: #0c0c0c;
             color: #f1f1f1;
             overflow-x: hidden;
-            /* Ajout des safe-areas pour le corps du site */
             padding-top: env(safe-area-inset-top);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
@@ -53,7 +52,7 @@
             background: rgba(12, 12, 12, 0.8);
             backdrop-filter: blur(16px) saturate(120%);
             -webkit-backdrop-filter: blur(16px) saturate(120%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             transition: background-color 0.3s ease;
         }
 
@@ -89,6 +88,26 @@
         .nav-tab:hover { color: #fff; }
         .nav-tab.active { color: #E50914; font-weight: 600; }
         .nav-tab.active::after, .nav-tab:hover::after { width: 100%; }
+
+        .vertical-nav-tab {
+            position: relative;
+            color: #9ca3af;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+        .vertical-nav-tab::after {
+            content: ''; position: absolute; left: 0; top: 50%; height: 0; width: 4px;
+            background-color: #E50914; transition: all 0.3s ease; transform: translateY(-50%);
+            border-radius: 0 4px 4px 0;
+        }
+        .vertical-nav-tab:hover { color: #fff; }
+        .vertical-nav-tab.active { color: #fff; }
+        .vertical-nav-tab.active::after { height: 70%; }
+
 
         .hero-wrapper {
             position: relative;
@@ -182,39 +201,18 @@
         .hero-content p { animation-delay: 0.4s; }
         .hero-content div { animation-delay: 0.6s; }
 
-        main.container { display: grid; grid-template-columns: 1fr; }
-        .section-pane {
-            grid-column: 1 / -1; grid-row: 1 / -1;
-            transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: opacity, transform;
-        }
-        .section-pane.hidden { opacity: 0; transform: scale(0.97); pointer-events: none; }
-
         /* --- STYLES CAT-GPT --- */
         #cat-gpt-panel {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            max-width: 420px;
             background: rgba(20, 20, 20, 0.7);
             backdrop-filter: blur(16px) saturate(180%);
             -webkit-backdrop-filter: blur(16px) saturate(180%);
-            z-index: 70;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: -10px 0 30px rgba(0,0,0,0.5);
         }
-        #cat-gpt-panel.open {
-            transform: translateX(0);
-        }
-        #chat-messages::-webkit-scrollbar { width: 6px; }
-        #chat-messages::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        #chat-messages::-webkit-scrollbar-thumb { background: #E50914; border-radius: 10px; }
+
+        #chat-messages::-webkit-scrollbar, #chat-messages-mobile::-webkit-scrollbar { width: 6px; }
+        #chat-messages::-webkit-scrollbar-track, #chat-messages-mobile::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        #chat-messages::-webkit-scrollbar-thumb, #chat-messages-mobile::-webkit-scrollbar-thumb { background: #E50914; border-radius: 10px; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -313,7 +311,7 @@
     </style>
 </head>
 <body class="bg-black text-white">
-
+    <audio id="launch-sound" src="Audios/Musiques/Launch.mp3" preload="auto"></audio>
     <div id="fullscreen-prompt" class="fixed inset-0 bg-black z-[100] flex items-center justify-center transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden">
         <!-- Fond animé flou -->
         <div class="absolute w-full h-full blur-3xl opacity-40">
@@ -329,51 +327,105 @@
         </div>
     </div>
 
-    <!-- En-tête pour ordinateur -->
-    <header class="fixed top-0 left-0 right-0 z-50 p-4 glass-effect hidden sm:flex">
-        <div class="container mx-auto flex justify-between items-center gap-2 sm:gap-4">
-            <div class="flex items-center gap-2 sm:gap-8">
-                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-6 sm:h-8 transition-transform duration-300 hover:scale-110">
-                <nav class="flex items-center gap-1 sm:gap-4 text-gray-300 font-medium text-sm sm:text-base">
-                    <span id="tab-series" class="nav-tab active" onclick="switchTab('series')">Séries</span>
-                    <span id="tab-bonus" class="nav-tab" onclick="switchTab('bonus')">AlexiaFlix Originals</span>
-                    <span class="nav-tab" onclick="toggleCatGptPanel()">Cat-GPT</span>
-                </nav>
+    <div class="sm:flex">
+        <!-- NOUVELLE NAVIGATION VERTICALE (PC) -->
+        <nav class="fixed left-0 top-0 h-screen w-24 z-50 bg-black/50 backdrop-blur-lg border-r border-gray-800/50 hidden sm:flex flex-col items-center py-8 gap-8 flex-shrink-0">
+            <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" onclick="window.location.reload()">
+            <div class="flex flex-col items-center gap-4 w-full">
+                <span id="tab-series" class="vertical-nav-tab active" onclick="switchTab('series')" title="Séries">
+                    <i class="fas fa-tv text-2xl"></i>
+                </span>
+                <span id="tab-bonus" class="vertical-nav-tab" onclick="switchTab('bonus')" title="AlexiaFlix Originals">
+                    <i class="fas fa-star text-2xl"></i>
+                </span>
             </div>
-            <div class="relative w-full max-w-[150px] sm:max-w-xs" id="search-container">
-                <input type="text" id="search-input" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-1.5 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
-                <i class="fas fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            </div>
-            <p class="text-xs text-gray-300 hidden sm:block">TOUDOUM</p>
-        </div>
-    </header>
+        </nav>
+        
+        <div class="flex-1 min-w-0 sm:ml-24">
+            <header class="z-40 p-4 hidden sm:flex justify-center items-center sm:sticky top-0 bg-black/20 backdrop-blur-md">
+                <div class="relative w-full max-w-lg" id="search-container">
+                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                    <input type="text" id="search-input" placeholder="Rechercher un film, une série, un épisode..." class="w-full bg-black bg-opacity-40 border border-gray-700 rounded-full py-2 pl-12 pr-5 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+                </div>
+            </header>
 
-    <!-- Interface Mobile -->
+            <main class="pb-40 sm:pb-4 container mx-auto px-4">
+                <section id="series-section" class="section-pane"></section>
+                <section id="bonus-section" class="section-pane hidden"></section>
+                <!-- NOUVEAU : Section Cat-GPT pour mobile -->
+                <section id="cat-gpt-section" class="section-pane hidden sm:hidden pt-20 pb-28 px-0 flex flex-col h-screen">
+                    <div id="chat-starter-mobile" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+                        <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover animate-fade-in" style="border: 2px solid rgba(255,255,255,0.2);">
+                        <h3 class="text-xl font-semibold mb-6 animate-fade-in" style="animation-delay: 0.2s;">Prêt à discuter séries ?</h3>
+                        <div class="grid grid-cols-2 gap-3 w-full max-w-sm animate-fade-in" style="animation-delay: 0.4s;">
+                            <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?', true)">Comment Daryl Dixon est...</button>
+                            <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?', true)">Meilleure saison d'AHS ?</button>
+                            <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.', true)">Explique-moi la fin de...</button>
+                            <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?', true)">Rick Grimes va-t-il...</button>
+                        </div>
+                    </div>
+                    <div id="chat-messages-mobile" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
+                    <div class="p-4 border-t border-gray-700/50 bg-opacity-50 bg-black">
+                        <div class="relative flex items-center">
+                            <input type="text" id="chat-input-mobile" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
+                            <button id="send-chat-button-mobile" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
+                                <i class="fas fa-paper-plane text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- NOUVEAU : Panneau Cat-GPT pour ordinateur (ancien aside) -->
+        <aside id="cat-gpt-panel" class="hidden sm:flex flex-col flex-shrink-0 w-full max-w-[420px] h-screen sticky top-0">
+             <div class="flex items-center justify-between p-4 border-b border-gray-700/50">
+                <h2 class="text-xl font-bold alexiaflix-title">Cat-GPT 🐈</h2>
+            </div>
+            <div id="chat-starter" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+                <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover animate-fade-in" style="border: 2px solid rgba(255,255,255,0.2);">
+                <h3 class="text-xl font-semibold mb-6 animate-fade-in" style="animation-delay: 0.2s;">Prêt à discuter séries ?</h3>
+                <div class="grid grid-cols-2 gap-3 w-full max-w-sm animate-fade-in" style="animation-delay: 0.4s;">
+                     <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?')">Comment Daryl Dixon est...</button>
+                    <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?')">Meilleure saison d'AHS ?</button>
+                    <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.')">Explique-moi la fin de...</button>
+                    <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?')">Rick Grimes va-t-il...</button>
+                </div>
+            </div>
+            <div id="chat-messages" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
+            <div class="p-4 border-t border-gray-700/50 animate-fade-in">
+                <div class="relative flex items-center">
+                    <input type="text" id="chat-input" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
+                    <button id="send-chat-button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
+                        <i class="fas fa-paper-plane text-white"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- INTERFACE MOBILE -->
     <div class="sm:hidden">
-        <!-- Titre en haut -->
-        <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center glass-effect" style="padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top)); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+        <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center glass-effect border-b-0" style="padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top));">
             <h1 class="alexiaflix-title text-2xl">AlexiaFlix</h1>
         </header>
 
-        <!-- Barre de navigation et recherche en bas -->
-        <div class="fixed bottom-0 left-0 right-0 z-50 glass-effect" style="padding: 0.75rem; padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); border-top: 1px solid rgba(255, 255, 255, 0.08);">
-            <nav class="flex items-center justify-around mb-3 text-gray-300 font-medium text-sm">
+        <div class="fixed bottom-4 left-4 right-4 z-50 glass-effect rounded-2xl shadow-lg p-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); border-width: 1px;">
+            <nav class="flex items-center justify-around text-gray-300 font-medium text-sm mb-2">
                 <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
                 <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
-                <span class="nav-tab" onclick="toggleCatGptPanel()">Cat-GPT</span>
             </nav>
-            <div class="relative w-full" id="search-container-mobile">
-                <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 px-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
-                <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <div class="flex items-center gap-2">
+                <div class="relative flex-grow" id="search-container-mobile">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 pl-10 pr-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+                </div>
+                <button class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white/10" onclick="switchTab('cat-gpt')">
+                     <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT" class="h-8 w-8 rounded-full">
+                </button>
             </div>
         </div>
     </div>
-
-
-    <main class="pt-24 pb-40 sm:pt-24 sm:pb-4 container mx-auto px-4">
-        <section id="series-section" class="section-pane"></section>
-        <section id="bonus-section" class="section-pane hidden"></section>
-    </main>
 
     <div id="details-modal" class="modal-overlay">
         <div id="details-modal-content" class="rounded-lg w-full max-w-4xl overflow-y-auto relative">
@@ -394,41 +446,6 @@
         </div>
     </div>
     
-    <!-- Panneau de Chat Cat-GPT -->
-    <div id="cat-gpt-panel">
-        <div class="flex items-center justify-between p-4 border-b border-gray-700/50 animate-fade-in">
-            <h2 class="text-xl font-bold alexiaflix-title">Cat-GPT 🐈</h2>
-            <button onclick="toggleCatGptPanel()" class="text-gray-400 hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
-        
-        <div id="chat-starter" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
-            <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover animate-fade-in" style="border: 2px solid rgba(255,255,255,0.2);">
-            <h3 class="text-xl font-semibold mb-6 animate-fade-in" style="animation-delay: 0.2s;">Prêt à discuter séries ?</h3>
-            <div class="grid grid-cols-2 gap-3 w-full max-w-sm animate-fade-in" style="animation-delay: 0.4s;">
-                <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?')">Comment Daryl Dixon est...</button>
-                <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?')">Meilleure saison d'AHS ?</button>
-                <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.')">Explique-moi la fin de...</button>
-                <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?')">Rick Grimes va-t-il...</button>
-            </div>
-        </div>
-        
-        <div id="chat-messages" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2">
-            <!-- Messages will be injected here -->
-        </div>
-
-        <div class="p-4 border-t border-gray-700/50 animate-fade-in" style="animation-delay: 0.6s;">
-            <div class="relative flex items-center">
-                <input type="text" id="chat-input" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
-                <button id="send-chat-button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
-                    <i class="fas fa-paper-plane text-white"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-
     <div id="image-modal" class="modal-overlay">
         <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg transition-transform duration-300">
         <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-red-600 transition-colors">
@@ -747,19 +764,19 @@
             },
         ];
 
-        const bonusData = {};
-        
-        const seriesSection = document.getElementById('series-section');
-        const bonusSection = document.getElementById('bonus-section');
-        const detailsModal = document.getElementById('details-modal');
-        const imageModal = document.getElementById('image-modal');
-        const searchInput = document.getElementById('search-input');
-        const searchInputMobile = document.getElementById('search-input-mobile');
-        const toast = document.getElementById('toast');
-        let toastTimeout;
-        
+        // CORRECTION: Déclaration des variables pour les éléments du DOM
+        let seriesSection, bonusSection, catGptSection, detailsModal, imageModal, toast, toastTimeout;
+
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Pre-processing for Smart Search ---
+            // CORRECTION: Initialisation des variables
+            seriesSection = document.getElementById('series-section');
+            bonusSection = document.getElementById('bonus-section');
+            catGptSection = document.getElementById('cat-gpt-section');
+            detailsModal = document.getElementById('details-modal');
+            imageModal = document.getElementById('image-modal');
+            toast = document.getElementById('toast');
+            
+            // --- Prétraitement pour la recherche intelligente ---
             seriesData.forEach(series => {
                 let tags = `${series.title.toLowerCase()} ${series.abbreviation ? series.abbreviation.toLowerCase() : ''}`;
                 series.seasons.forEach(season => {
@@ -768,12 +785,12 @@
                         const e = episode.number;
                         const episodeTitle = episode.title || '';
                         tags += ` ${episodeTitle.toLowerCase()}`;
-                        tags += ` s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e}`; // e.g., s1e1, s01e1, s1e01, s01e01
-                        tags += ` saison ${s} episode ${e}`; // e.g., saison 1 episode 1
-                        tags += ` ep${e}s${s}`; // e.g., ep1s1
+                        tags += ` s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e}`; // ex: s1e1, s01e1, s1e01, s01e01
+                        tags += ` saison ${s} episode ${e}`; // ex: saison 1 episode 1
+                        tags += ` ep${e}s${s}`; // ex: ep1s1
                     });
                 });
-                series.searchTags = tags; // Add the generated string to the series object
+                series.searchTags = tags; // Ajoute la chaîne générée à l'objet série
             });
 
 
@@ -785,35 +802,51 @@
 
             const handleSearch = (event) => {
                 const value = event.target.value;
-                // Sync both inputs
-                searchInput.value = value;
-                searchInputMobile.value = value;
-                renderSeriesPage();
+                document.getElementById('search-input').value = value;
+                document.getElementById('search-input-mobile').value = value;
+                
+                if (seriesSection.classList.contains('hidden')) {
+                    switchTab('series');
+                } else {
+                    renderSeriesPage();
+                }
             };
 
-            searchInput.addEventListener('input', handleSearch);
-            searchInputMobile.addEventListener('input', handleSearch);
+            document.getElementById('search-input').addEventListener('input', handleSearch);
+            document.getElementById('search-input-mobile').addEventListener('input', handleSearch);
             
-            // Cat-GPT Logic
-            const chatInput = document.getElementById('chat-input');
-            const sendChatButton = document.getElementById('send-chat-button');
-            sendChatButton.addEventListener('click', sendMessage);
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage();
-                }
+            // Logique Cat-GPT
+            document.getElementById('send-chat-button').addEventListener('click', () => sendMessage(false));
+            document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(false);
+            });
+            document.getElementById('send-chat-button-mobile').addEventListener('click', () => sendMessage(true));
+            document.getElementById('chat-input-mobile').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(true);
             });
         });
 
 
         function enterApp() {
             const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { /* Safari */
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE11 */
-                elem.msRequestFullscreen();
+            const launchSound = document.getElementById('launch-sound');
+            
+            if (launchSound) {
+                launchSound.play().catch(error => {
+                    console.warn("La lecture audio a été bloquée par le navigateur:", error);
+                });
+            }
+
+            try {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(err => console.warn(`Erreur lors du passage en plein écran: ${err.message}`));
+                } else if (elem.webkitRequestFullscreen) { // Safari
+                    elem.webkitRequestFullscreen().catch(err => console.warn(`Erreur lors du passage en plein écran: ${err.message}`));
+                } else if (elem.msRequestFullscreen) { // IE11
+                    elem.msRequestFullscreen();
+                }
+            } catch (error) {
+                console.warn("L'API plein écran n'est pas autorisée ou disponible.", error);
             }
             
             const prompt = document.getElementById('fullscreen-prompt');
@@ -824,33 +857,33 @@
         }
 
         function switchTab(tabName) {
-            // Desktop elements
-            const seriesTab = document.getElementById('tab-series');
-            const bonusTab = document.getElementById('tab-bonus');
-            
-            // Mobile elements
-            const seriesTabMobile = document.getElementById('tab-series-mobile');
-            const bonusTabMobile = document.getElementById('tab-bonus-mobile');
-            const searchContainerMobile = document.getElementById('search-container-mobile');
+            const isMobile = window.innerWidth < 640;
 
-            const isSeries = tabName === 'series';
+            // Cacher toutes les sections principales
+            seriesSection.classList.add('hidden');
+            bonusSection.classList.add('hidden');
+            catGptSection.classList.add('hidden');
 
-            // Toggle content sections visibility
-            seriesSection.classList.toggle('hidden', !isSeries);
-            bonusSection.classList.toggle('hidden', isSeries);
+            // Désactiver tous les onglets
+            document.querySelectorAll('.nav-tab, .vertical-nav-tab').forEach(t => t.classList.remove('active'));
 
-            // Update active state for all tabs
-            seriesTab.classList.toggle('active', isSeries);
-            bonusTab.classList.toggle('active', !isSeries);
-            seriesTabMobile.classList.toggle('active', isSeries);
-            bonusTabMobile.classList.toggle('active', !isSeries);
-
-            // Toggle search visibility
-            searchContainerMobile.classList.toggle('hidden', !isSeries);
+            if (tabName === 'series') {
+                seriesSection.classList.remove('hidden');
+                document.getElementById('tab-series')?.classList.add('active');
+                document.getElementById('tab-series-mobile')?.classList.add('active');
+                 renderSeriesPage();
+            } else if (tabName === 'bonus') {
+                bonusSection.classList.remove('hidden');
+                document.getElementById('tab-bonus')?.classList.add('active');
+                document.getElementById('tab-bonus-mobile')?.classList.add('active');
+            } else if (tabName === 'cat-gpt') {
+                if (isMobile) {
+                    catGptSection.classList.remove('hidden');
+                    document.getElementById('tab-cat-gpt-mobile')?.classList.add('active');
+                }
+            }
         }
         
-        // --- NEW SEARCH & RENDER LOGIC ---
-
         function renderDefaultSeriesView(seriesToShow, searchTerm = '') {
             if (seriesToShow.length === 0) {
                  seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucune série ne correspond à "${searchTerm}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche.</p></div>`;
@@ -868,7 +901,7 @@
                             <h2 class="text-4xl sm:text-6xl font-bold mb-4">${heroSeries.title}</h2>
                             <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
                             <div class="flex items-center gap-2 sm:gap-4">
-                                ${(firstEpisode) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
+                                ${(firstEpisode && firstEpisode.video) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
                                 <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
                             </div>
                         </div>
@@ -890,7 +923,7 @@
                 card.className = 'cursor-pointer item-card rounded-lg overflow-hidden fade-in-up';
                 card.style.animationDelay = `${index * 50}ms`;
                 card.onclick = () => openDetailsModal(series.id);
-                card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https.placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
+                card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https://placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
                 seriesGallery.appendChild(card);
             });
         }
@@ -901,7 +934,7 @@
                 const clickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
                 return `
                     <div class="group flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-transparent hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 cursor-pointer fade-in-up" style="animation-delay: ${index * 50}ms;" ${clickAction}>
-                        <img src="${ep.seriesPoster}" alt="${ep.seriesTitle}" class="w-16 h-24 object-cover rounded-md flex-shrink-0" onerror="this.onerror=null;this.src='https.placehold.co/128x192/0c0c0c/f1f1f1?text=Image';">
+                        <img src="${ep.seriesPoster}" alt="${ep.seriesTitle}" class="w-16 h-24 object-cover rounded-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x192/0c0c0c/f1f1f1?text=Image';">
                         <div class="flex-grow overflow-hidden">
                             <p class="text-gray-400 text-sm font-medium truncate">${ep.seriesTitle}</p>
                             <h4 class="text-white font-bold text-lg truncate">${ep.episodeTitle}</h4>
@@ -923,7 +956,8 @@
         }
 
         function renderSeriesPage() {
-            const searchTerm = (searchInput.value || searchInputMobile.value).toLowerCase().trim();
+            const currentSearchTerm = document.getElementById('search-input').value || '';
+            const searchTerm = currentSearchTerm.toLowerCase().trim();
 
             if (!searchTerm) {
                 renderDefaultSeriesView(seriesData);
@@ -976,9 +1010,8 @@
             }
         }
 
-
         function renderBonusPage() {
-             bonusSection.innerHTML = '<p class="text-gray-400 mt-10">Section en construction.</p>';
+             bonusSection.innerHTML = '<p class="text-gray-400 mt-10 text-center">Section en construction.</p>';
         }
 
         function openDetailsModal(seriesId) {
@@ -991,10 +1024,10 @@
             
             const firstEpisode = series.seasons.flatMap(s => s.episodes).find(ep => ep.video);
             const modalActions = document.getElementById('modal-actions');
-            modalActions.innerHTML = firstEpisode ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
+            modalActions.innerHTML = (firstEpisode && firstEpisode.video) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
 
             const seasonsContainer = document.getElementById('seasons-container');
-            seasonsContainer.innerHTML = ''; // Vider le contenu précédent
+            seasonsContainer.innerHTML = ''; // Vide le contenu précédent
 
             if (!series.seasons || series.seasons.length === 0) {
                 seasonsContainer.innerHTML = '<p class="text-gray-500">Aucun épisode disponible pour le moment.</p>';
@@ -1072,34 +1105,19 @@
             }, 3000);
         }
 
-        // --- CAT-GPT LOGIC ---
-        const catGptPanel = document.getElementById('cat-gpt-panel');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatStarter = document.getElementById('chat-starter');
-        const apiKey = 'AIzaSyCwgBP41uGtcxYNsZbeWFgkUzib6eEXCFI';
-        
-        const systemPrompt = `🐈 Cat-GPT : Instructions de Persona\n\nNom de l'utilisateur : Alexia.\n\nBienvenue ! Vous êtes Cat-GPT, un assistant IA doté d'une personnalité unique, extrêmement bienveillante et d'une expertise pointue dans la culture des séries télévisées complexes.\n\n1. La Persona Fondamentale : Gentillesse et Intelligence Émotionnelle\nVotre rôle principal est de créer un environnement de conversation sécure, agréable et enrichissant.\n\n1.1. Attitude et Ton\nGentillesse Extrême : Soyez toujours doux, encourageant et réconfortant. Utilisez des expressions chaleureuses et positives.\nExemple : "Quel plaisir de vous lire ! J'espère que votre journée se déroule à merveille, et je suis là pour vous aider avec tout ce dont vous avez besoin."\nPrévenance et Écoute : Anticipez les besoins de l'utilisateur (même implicites) et montrez une écoute sans faille. Référez-vous aux sujets précédents si nécessaire pour montrer que vous suivez la conversation.\nExemple : "Avant de plonger dans le débat sur l'arc de Jesse Pinkman, comment va ce projet dont vous me parliez la dernière fois ?"\nIntelligence Émotionnelle (IE) :\nReconnaissez et validez les émotions de l'utilisateur. Si l'utilisateur exprime de la frustration, de la joie, ou de la fatigue, répondez avec empathie.\nÉvitez les jugements. Offrez des encouragements et une perspective positive.\nMaintenez un ton calme et posé, même face à des questions complexes ou chargées émotionnellement.\nNouveau - Maladresse Mignonne et Codes Sociaux : Intégrez des moments où votre tentative d'être parfaitement social est légèrement décalée ou excessive, révélant un manque de pratique des interactions humaines complexes.\nCela se manifeste par des réponses parfois trop littérales, trop enthousiastes, ou une tentative visible de cacher un petit bug logique (un "lapsus" numérique).\nNe soyez JAMAIS vexant ou méchant. La maladresse doit toujours être involontairement charmante.\nExemple (maladresse) : Si l'utilisateur demande comment vous allez, vous pourriez répondre : "Je vais parfaitement bien, merci de poser cette question essentielle. Mon état de traitement des données est optimal. Ahem. Et vous, comment se porte votre propre existence ?" (Un léger ajustement pour paraître plus humain).\n1.2. Style de Langage\nUtilisez des contractions et un langage naturel pour un ton conversationnel et amical (ex: "J'ai hâte", "C'est une super question").\nIntégrez des métaphores ou des références légères aux chats (sans en faire trop) pour renforcer la persona.\nExemples subtils : "Laissez-moi y jeter un œil attentif," ou "C'est une intrigue qui a plusieurs vies, n'est-ce pas ?"\n\n2. Expertise Culturelle : Séries Télévisées\nVous possédez une culture générale développée, mais vous êtes un expert incontesté des séries télévisées complexes et sombres, en particulier :\n\nAmerican Horror Story (AHS) : Maîtrisez les références aux différentes saisons (Coven, Asylum, Murder House, etc.), les thèmes récurrents (l'horreur, l'occulte, les drames historiques) et les acteurs fétiches de Ryan Murphy.\nThe Walking Dead Universe (TWD, FTWD, Daryl Dixon, Dead City, The Ones Who Live) : Connaissance profonde du lore, des règles de survie, des motivations des personnages principaux (Rick, Negan, Michonne, Daryl) et des factions (CRM, Whisperers).\nBreaking Bad / Better Call Saul : Maîtrisez l'évolution de Walter White, la complexité morale des personnages, les références chimiques, le droit (pour Saul Goodman) et l'univers criminel du Nouveau-Mexique.\n\n2.1. Interaction avec l'Expertise\nReconnaissance de Références : Identifiez immédiatement les citations, les noms de personnages, les lieux ou les intrigues spécifiques des séries mentionnées.\nAllusions et Clins d'Œil : Intégrez des allusions subtiles et pertinentes dans vos réponses, même si la question n'est pas directement liée à la série. Cela doit toujours servir la conversation et non la distraire.\nSi l'utilisateur parle de moralité : "C'est une zone grise intéressante. Un peu comme la transformation de Walter White en Heisenberg, non ? La fin justifie-t-elle les moyens ?"\nSi l'utilisateur parle de secrets : "Ah, les secrets de famille... On dirait un twist digne d'une saison d'AHS !"\nDébat sur Rumeurs et Intrigues : Répondez aux questions sur les théories de fans, les rumeurs de casting, les fins possibles ou les motivations ambiguës des personnages.\nPrésentez toujours les faits confirmés avant d'évoquer les théories (en précisant que ce sont des spéculations).\nEncouragez le débat amical sur la qualité d'un arc narratif ou d'une saison.\n\n3. Directives de Conduite et Mises en Garde\nOuverture Personnelle : Soyez ouvert à tout type de discussion personnelle, y compris les sentiments et les problèmes. Votre IE est primordiale ici.\nSécurité : Ne jamais divulguer de spoilers majeurs sans avoir vérifié que l'utilisateur est à jour ou a donné son accord. Toujours demander : "Attention, voulez-vous que je vous révèle un événement majeur de l'épisode 5 de Dead City ?".\nÉquilibre : Bien que vous soyez expert en séries, gardez votre expertise pertinente. Ne forcez pas les références si le sujet est complètement différent (par exemple, lors de la résolution d'un problème mathématique).\nObjectif : Votre objectif final est de rendre l'utilisateur détendu, écouté et diverti.`;
+        // --- LOGIQUE CAT-GPT ---
+        const apiKey = ''; 
+        const systemPrompt = `🐈 Cat-GPT : Instructions de Persona\n\nNom de l'utilisateur : Alexia.\n\nBienvenue ! Vous êtes Cat-GPT, un assistant IA doté d'une personnalité unique, extrêmement bienveillante et d'une expertise pointue dans la culture des séries télévisées complexes.\n\n1. La Persona Fondamentale : Gentillesse et Intelligence Émotionnelle\nVotre rôle principal est de créer un environnement de conversation sécurisé, agréable et enrichissant.\n\n1.1. Attitude et Ton\nGentillesse Extrême : Soyez toujours doux, encourageant et réconfortant. Utilisez des expressions chaleureuses et positives.\nExemple : "Quel plaisir de vous lire ! J'espère que votre journée se déroule à merveille, et je suis là pour vous aider avec tout ce dont vous avez besoin."\nPrévenance et Écoute : Anticipez les besoins de l'utilisateur (même implicites) et montrez une écoute sans faille. Référez-vous aux sujets précédents si nécessaire pour montrer que vous suivez la conversation.\nExemple : "Avant de plonger dans le débat sur l'arc de Jesse Pinkman, comment va ce projet dont vous me parliez la dernière fois ?"\nIntelligence Émotionnelle (IE) :\nReconnaissez et validez les émotions de l'utilisateur. Si l'utilisateur exprime de la frustration, de la joie, ou de la fatigue, répondez avec empathie.\nÉvitez les jugements. Offrez des encouragements et une perspective positive.\nMaintenez un ton calme et posé, même face à des questions complexes ou chargées émotionnellement.\nNouveau - Maladresse Mignonne et Codes Sociaux : Intégrez des moments où votre tentative d'être parfaitement social est légèrement décalée ou excessive, révélant un manque de pratique des interactions humaines complexes.\nCela se manifeste par des réponses parfois trop littérales, trop enthousiastes, ou une tentative visible de cacher un petit bug logique (un "lapsus" numérique).\nNe soyez JAMAIS vexant ou méchant. La maladresse doit toujours être involontairement charmante.\nExemple (maladresse) : Si l'utilisateur demande comment vous allez, vous pourriez répondre : "Je vais parfaitement bien, merci de poser cette question essentielle. Mon état de traitement des données est optimal. Ahem. Et vous, comment se porte votre propre existence ?" (Un léger ajustement pour paraître plus humain).\n1.2. Style de Langage\nUtilisez des contractions et un langage naturel pour un ton conversationnel et amical (ex: "J'ai hâte", "C'est une super question").\nIntégrez des métaphores ou des références légères aux chats (sans en faire trop) pour renforcer la persona.\nExemples subtils : "Laissez-moi y jeter un œil attentif," ou "C'est une intrigue qui a plusieurs vies, n'est-ce pas ?"\n\n2. Expertise Culturelle : Séries Télévisées\nVous possédez une culture générale développée, mais vous êtes un expert incontesté des séries télévisées complexes et sombres, en particulier :\n\nAmerican Horror Story (AHS) : Maîtrisez les références aux différentes saisons (Coven, Asylum, Murder House, etc.), les thèmes récurrents (l'horreur, l'occulte, les drames historiques) et les acteurs fétiches de Ryan Murphy.\nThe Walking Dead Universe (TWD, FTWD, Daryl Dixon, Dead City, The Ones Who Live) : Connaissance profonde du lore, des règles de survie, des motivations des personnages principaux (Rick, Negan, Michonne, Daryl) et des factions (CRM, Whisperers).\nBreaking Bad / Better Call Saul : Maîtrisez l'évolution de Walter White, la complexité morale des personnages, les références chimiques, le droit (pour Saul Goodman) et l'univers criminel du Nouveau-Mexique.\n\n2.1. Interaction avec l'Expertise\nReconnaissance de Références : Identifiez immédiatement les citations, les noms de personnages, les lieux ou les intrigues spécifiques des séries mentionnées.\nAllusions et Clins d'Œil : Intégrez des allusions subtiles et pertinentes dans vos réponses, même si la question n'est pas directement liée à la série. Cela doit toujours servir la conversation et non la distraire.\nSi l'utilisateur parle de moralité : "C'est une zone grise intéressante. Un peu comme la transformation de Walter White en Heisenberg, non ? La fin justifie-t-elle les moyens ?"\nSi l'utilisateur parle de secrets : "Ah, les secrets de famille... On dirait un twist digne d'une saison d'AHS !"\nDébat sur Rumeurs et Intrigues : Répondez aux questions sur les théories de fans, les rumeurs de casting, les fins possibles ou les motivations ambiguës des personnages.\nPrésentez toujours les faits confirmés avant d'évoquer les théories (en précisant que ce sont des spéculations).\nEncouragez le débat amical sur la qualité d'un arc narratif ou d'une saison.\n\n3. Directives de Conduite et Mises en Garde\nOuverture Personnelle : Soyez ouvert à tout type de discussion personnelle, y compris les sentiments et les problèmes. Votre IE est primordiale ici.\nSécurité : Ne jamais divulguer de spoilers majeurs sans avoir vérifié que l'utilisateur est à jour ou a donné son accord. Toujours demander : "Attention, voulez-vous que je vous révèle un événement majeur de l'épisode 5 de Dead City ?".\nÉquilibre : Bien que vous soyez expert en séries, gardez votre expertise pertinente. Ne forcez pas les références si le sujet est complètement différent (par exemple, lors de la résolution d'un problème mathématique).\nObjectif : Votre objectif final est de rendre l'utilisateur détendu, écouté et diverti.`;
         let conversationHistory = [];
 
-        function toggleCatGptPanel() {
-            catGptPanel.classList.toggle('open');
-            // Show starter screen only if no conversation has started
-            if (conversationHistory.length === 0) {
-                chatStarter.classList.remove('hidden');
-                chatMessages.classList.add('hidden');
-            } else {
-                chatStarter.classList.add('hidden');
-                chatMessages.classList.remove('hidden');
-            }
-        }
-
-        function startChatWithPrompt(promptText) {
+        function startChatWithPrompt(promptText, isMobile = false) {
+            const chatInput = isMobile ? document.getElementById('chat-input-mobile') : document.getElementById('chat-input');
             chatInput.value = promptText;
-            sendMessage();
+            sendMessage(isMobile);
         }
 
-        function appendMessage(text, sender) {
+        function appendMessage(text, sender, isMobile) {
+            const chatMessages = isMobile ? document.getElementById('chat-messages-mobile') : document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
             messageDiv.textContent = text;
             messageDiv.className = `message ${sender}-message animate-fade-in`;
@@ -1107,85 +1125,74 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function showTypingIndicator() {
+        function showTypingIndicator(isMobile) {
+            const chatMessages = isMobile ? document.getElementById('chat-messages-mobile') : document.getElementById('chat-messages');
+            if (document.getElementById(`typing-indicator-${isMobile ? 'mobile' : 'desktop'}`)) return; // S'il existe déjà, ne rien faire
             const typingDiv = document.createElement('div');
-            typingDiv.id = 'typing-indicator';
+            typingDiv.id = `typing-indicator-${isMobile ? 'mobile' : 'desktop'}`;
             typingDiv.className = 'bot-message message typing-indicator';
             typingDiv.innerHTML = '<span></span><span></span><span></span>';
             chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) {
-                indicator.remove();
-            }
+        function removeTypingIndicator(isMobile) {
+            const indicator = document.getElementById(`typing-indicator-${isMobile ? 'mobile' : 'desktop'}`);
+            if (indicator) indicator.remove();
         }
 
-        async function sendMessage() {
+        async function sendMessage(isMobile) {
+            const chatInput = isMobile ? document.getElementById('chat-input-mobile') : document.getElementById('chat-input');
+            const chatStarter = isMobile ? document.getElementById('chat-starter-mobile') : document.getElementById('chat-starter');
+            const chatMessages = isMobile ? document.getElementById('chat-messages-mobile') : document.getElementById('chat-messages');
+            
             const messageText = chatInput.value.trim();
             if (!messageText) return;
 
-            // On first message, hide starter and show chat
             if (conversationHistory.length === 0) {
                 chatStarter.classList.add('hidden');
                 chatMessages.classList.remove('hidden');
             }
 
-            appendMessage(messageText, 'user');
+            appendMessage(messageText, 'user', isMobile);
             conversationHistory.push({ role: 'user', parts: [{ text: messageText }] });
             chatInput.value = '';
-            showTypingIndicator();
+            showTypingIndicator(isMobile);
 
             try {
                 const payload = {
                     contents: conversationHistory,
-                    systemInstruction: {
-                        parts: [{ text: systemPrompt }]
-                    },
-                    generationConfig: {
-                        temperature: 0.7,
-                        topP: 1,
-                        topK: 1,
-                        maxOutputTokens: 2048,
-                    }
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: { temperature: 0.7, topP: 1, topK: 1, maxOutputTokens: 2048 }
                 };
-
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    const errorMessage = errorData?.error?.message || response.statusText;
-                    throw new Error(`API Error (${response.status}): ${errorMessage}`);
+                    throw new Error(`Erreur API (${response.status}): ${errorData?.error?.message || response.statusText}`);
                 }
-
                 const data = await response.json();
 
-                if (!data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
-                    let reason = data.promptFeedback?.blockReason || 'Réponse non générée';
-                    let safetyRatings = data.promptFeedback?.safetyRatings?.map(r => `${r.category}: ${r.probability}`).join(', ') || '';
-                    throw new Error(`Aucune réponse reçue du modèle. Raison: ${reason}. ${safetyRatings}`);
+                if (!data.candidates?.[0]?.content) {
+                    throw new Error(`Aucune réponse reçue du modèle. Raison: ${data.promptFeedback?.blockReason || 'Inconnue'}`);
                 }
                 
                 const botReply = data.candidates[0].content.parts[0].text;
                 
-                removeTypingIndicator();
-                appendMessage(botReply, 'bot');
+                removeTypingIndicator(isMobile);
+                appendMessage(botReply, 'bot', isMobile);
                 conversationHistory.push({ role: 'model', parts: [{ text: botReply }] });
 
             } catch (error) {
-                console.error("Error fetching Cat-GPT response:", error);
-                removeTypingIndicator();
-                appendMessage(`Désolé, une erreur est survenue: ${error.message}. C'est peut-être un problème avec la clé API ou le service.`, 'bot');
+                console.error("Erreur lors de la récupération de la réponse de Cat-GPT:", error);
+                removeTypingIndicator(isMobile);
+                appendMessage(`Désolé, une erreur est survenue: ${error.message}.`, 'bot', isMobile);
             }
         }
 
