@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AlexiaFlix</title>
     <link rel="icon" href="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.ico" type="image/x-icon">
+    
+    <!-- PWA Tags -->
+    <meta name="theme-color" content="#E50914">
+    <link rel="manifest" href="manifest.json">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Police Google Fonts -->
@@ -879,7 +884,9 @@
             } else if (tabName === 'cat-gpt') {
                 if (isMobile) {
                     catGptSection.classList.remove('hidden');
-                    document.getElementById('tab-cat-gpt-mobile')?.classList.add('active');
+                    // Gérer l'onglet actif pour Cat-GPT sur mobile, s'il existe
+                    const catGptTab = document.getElementById('tab-cat-gpt-mobile');
+                    if (catGptTab) catGptTab.classList.add('active');
                 }
             }
         }
@@ -1195,7 +1202,18 @@
                 appendMessage(`Désolé, une erreur est survenue: ${error.message}.`, 'bot', isMobile);
             }
         }
-
+        
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(registration => {
+              console.log('Service Worker enregistré avec succès :', registration);
+            }).catch(registrationError => {
+              console.log('Échec de l\'enregistrement du Service Worker :', registrationError);
+            });
+          });
+        }
     </script>
 </body>
 </html>
+

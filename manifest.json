@@ -1,0 +1,24 @@
+{
+  "name": "AlexiaFlix",
+  "short_name": "AlexiaFlix",
+  "description": "Une application de streaming personnelle pour regarder les séries préférées d'Alexia, incluant des classiques comme American Horror Story et l'univers The Walking Dead.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0c0c0c",
+  "theme_color": "#E50914",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
