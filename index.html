@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>AlexiaFlix</title>
+    <title>AlexiaFlix 🎀</title>
     <link rel="icon" href="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.ico" type="image/x-icon">
     
     <!-- PWA Tags -->
-    <meta name="theme-color" content="#E50914">
+    <meta name="theme-color" content="#d946ef">
     <link rel="manifest" href="manifest.json">
 
     <!-- Tailwind CSS -->
@@ -21,115 +21,124 @@
 
     <style>
         /* --- CONFIGURATION GÉNÉRALE --- */
+        :root {
+            --cursor-x: 50vw;
+            --cursor-y: 50vh;
+            --theme-color: #d946ef; /* Fuchsia */
+            --theme-color-dark: #a21caf;
+            --theme-shadow: rgba(217, 70, 239, 0.7);
+        }
+
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #0c0c0c;
+            background-color: #050508;
             color: #f1f1f1;
             overflow-x: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
         }
+        
+        /* --- Arrière-plan "Aurora" et Spotlight --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at center, rgba(168, 85, 247, 0.15) 0%, transparent 20%),
+                radial-gradient(800px circle at var(--cursor-x) var(--cursor-y), var(--theme-shadow), transparent 40%);
+            z-index: -2;
+            will-change: background;
+            transition: background 0.2s linear;
+        }
+
+        #aurora-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: -3;
+        }
+        .aurora-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.4;
+            will-change: transform, opacity;
+        }
+        .blob1 { background: #8b5cf6; width: 600px; height: 600px; top: -150px; left: -200px; animation: move-blob1 25s infinite alternate; }
+        .blob2 { background: var(--theme-color); width: 500px; height: 500px; top: 10vh; right: -150px; animation: move-blob2 30s infinite alternate; }
+        .blob3 { background: #ec4899; width: 400px; height: 400px; bottom: -100px; left: 20vw; animation: move-blob3 20s infinite alternate; }
+        
+        @keyframes move-blob1 { from { transform: translate(0, 0) rotate(0deg); } to { transform: translate(100px, 50px) rotate(180deg); } }
+        @keyframes move-blob2 { from { transform: translate(0, 0) scale(1); } to { transform: translate(-80px, 40px) scale(1.2); } }
+        @keyframes move-blob3 { from { transform: scale(1) rotate(0deg); } to { transform: scale(0.8) rotate(-120deg); } }
+
 
         .alexiaflix-title {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            color: #E50914;
+            color: var(--theme-color);
+            text-shadow: 0 0 10px var(--theme-shadow);
         }
 
         /* --- ÉCRAN D'ACCUEIL --- */
-        @keyframes blob {
+        @keyframes blob-accueil {
           0% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(30px, -50px) scale(1.1); }
           66% { transform: translate(-20px, 20px) scale(0.9); }
           100% { transform: translate(0px, 0px) scale(1); }
         }
-        .animate-blob {
-            animation: blob 8s infinite ease-in-out;
-        }
-        .animation-delay-2000 { animation-delay: -2s; }
-        .animation-delay-4000 { animation-delay: -4s; }
-
+        .animate-blob-accueil { animation: blob-accueil 8s infinite ease-in-out; }
 
         /* --- EFFETS VISUELS & STYLES --- */
         .glass-effect {
-            background: rgba(12, 12, 12, 0.8);
-            backdrop-filter: blur(16px) saturate(120%);
-            -webkit-backdrop-filter: blur(16px) saturate(120%);
+            background: rgba(18, 18, 22, 0.5);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            backdrop-filter: blur(20px) saturate(150%);
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: background-color 0.3s ease;
         }
 
-        .carousel::-webkit-scrollbar { height: 8px; }
-        .carousel::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        .carousel::-webkit-scrollbar-thumb { background: rgba(229, 9, 20, 0.7); border-radius: 10px; }
-        .carousel::-webkit-scrollbar-thumb:hover { background: #E50914; }
-
         .item-card {
             transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
             will-change: transform;
+            position: relative;
+            overflow: visible; /* Pour la lueur */
         }
+        
+        .item-card::after {
+            content: '';
+            position: absolute;
+            top: -5%; left: -5%;
+            width: 110%; height: 110%;
+            background: radial-gradient(circle, var(--tint-color, var(--theme-color)) 0%, transparent 70%);
+            filter: blur(25px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
         @media (hover: hover) {
-            .item-card:hover {
-                transform: scale(1.06) translateY(-8px);
-                box-shadow: 0 15px 40px rgba(229, 9, 20, 0.5);
-            }
+            .item-card:hover { transform: scale(1.06) translateY(-8px); }
+            .item-card:hover::after { opacity: 0.7; }
         }
-        .item-card:active {
-            transform: scale(1.02) translateY(0);
-            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
-            transition-duration: 0.1s;
-        }
+        .item-card:active { transform: scale(1.02) translateY(0); transition-duration: 0.1s; }
         .item-card img { border-radius: 0.5rem; }
 
         .nav-tab {
-            cursor: pointer; padding: 0.5rem 1rem; position: relative; transition: color 0.3s ease;
+            cursor: pointer; padding: 0.5rem 1rem; position: relative; transition: color 0.3s ease, text-shadow 0.3s ease;
         }
         .nav-tab::after {
             content: ''; position: absolute; bottom: -2px; left: 50%; width: 0; height: 2px;
-            background-color: #E50914; transition: all 0.3s ease; transform: translateX(-50%);
+            background-color: var(--theme-color); transition: all 0.3s ease; transform: translateX(-50%);
+            box-shadow: 0 0 8px var(--theme-color);
         }
-        .nav-tab:hover { color: #fff; }
-        .nav-tab.active { color: #E50914; font-weight: 600; }
+        .nav-tab:hover { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .nav-tab.active { color: var(--theme-color); font-weight: 600; text-shadow: 0 0 8px var(--theme-shadow); }
         .nav-tab.active::after, .nav-tab:hover::after { width: 100%; }
 
-        .vertical-nav-tab {
-            position: relative;
-            color: #9ca3af;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            padding: 1rem 0;
-            display: flex;
-            justify-content: center;
-        }
         .vertical-nav-tab::after {
-            content: ''; position: absolute; left: 0; top: 50%; height: 0; width: 4px;
-            background-color: #E50914; transition: all 0.3s ease; transform: translateY(-50%);
-            border-radius: 0 4px 4px 0;
-        }
-        .vertical-nav-tab:hover { color: #fff; }
-        .vertical-nav-tab.active { color: #fff; }
-        .vertical-nav-tab.active::after { height: 70%; }
-
-
-        .hero-wrapper {
-            position: relative;
-            z-index: 1;
-        }
-        .hero-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 110%; height: 110%;
-            background: radial-gradient(circle at center, var(--hero-tint-color, transparent) 0%, transparent 70%);
-            transform: translate(-50%, -50%);
-            filter: blur(80px);
-            opacity: 0.5;
-            z-index: -1;
-            transition: background 0.5s ease-in-out;
-            will-change: background;
+            background-color: var(--theme-color); box-shadow: 0 0 10px var(--theme-color);
         }
 
         .hero-section {
@@ -142,323 +151,173 @@
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover; background-position: center top;
             transition: transform 0.4s ease-out;
+            will-change: transform;
         }
         .hero-section:hover .hero-background { transform: scale(1.03); }
-        
         .hero-background::after {
             content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 100%;
-            background: linear-gradient(to top, #0c0c0c 15%, rgba(12, 12, 12, 0.7) 40%, transparent 70%);
+            background: linear-gradient(to top, #050508 15%, rgba(5, 5, 8, 0.7) 40%, transparent 70%);
         }
         
-        .hero-content { position: relative; z-index: 3; }
-        
-        .action-button {
-            display: inline-flex; align-items: center; justify-content: center;
-            border-radius: 0.375rem; font-weight: 600;
-            transform: scale(1); transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .action-button:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .action-button:active { transform: scale(0.98); }
-        .play-button { background-color: #fff; color: #000; }
-        .play-button:hover { background-color: rgba(255,255,255,0.9); }
-        .info-button { background-color: rgba(109, 109, 110, 0.7); color: white; }
-        .info-button:hover { background-color: rgba(109, 109, 110, 0.6); }
+        .hero-content h2 { text-shadow: 0 2px 20px rgba(0,0,0,0.8); }
 
-        /* --- MODALES AMÉLIORÉES --- */
-        .modal-overlay {
-            position: fixed; inset: 0; z-index: 60;
-            display: flex; align-items: center; justify-content: center;
-            background-color: rgba(0,0,0,0.8);
-            padding: 1rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease-in-out;
-        }
-        .modal-overlay.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #details-modal-content {
-            background: rgba(20, 20, 20, 0.75);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            max-height: 90vh;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
-            transform: scale(0.95);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .modal-overlay.visible #details-modal-content {
-            transform: scale(1);
-        }
-        
         #toast { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .reveal-on-scroll {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .fade-in-up { opacity: 0; animation: fadeInUp 0.8s ease forwards; }
-        .hero-content > * { opacity: 0; animation: fadeInUp 0.8s ease forwards; }
-        .hero-content h2 { animation-delay: 0.2s; }
-        .hero-content p { animation-delay: 0.4s; }
-        .hero-content div { animation-delay: 0.6s; }
-
-        /* --- STYLES CAT-GPT --- */
-        #cat-gpt-panel {
-            background: rgba(20, 20, 20, 0.7);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-        }
+        .reveal-on-scroll.revealed { opacity: 1; transform: translateY(0); }
 
         #chat-messages::-webkit-scrollbar, #chat-messages-mobile::-webkit-scrollbar { width: 6px; }
         #chat-messages::-webkit-scrollbar-track, #chat-messages-mobile::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        #chat-messages::-webkit-scrollbar-thumb, #chat-messages-mobile::-webkit-scrollbar-thumb { background: #E50914; border-radius: 10px; }
+        #chat-messages::-webkit-scrollbar-thumb, #chat-messages-mobile::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 10px; }
+
+        .message { transition: transform 0.3s ease, opacity 0.3s ease; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .prompt-brick {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            text-align: left;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #f1f1f1;
-            transition: all 0.2s ease-in-out;
-        }
-        .prompt-brick:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .message {
-            max-width: 85%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        .user-message {
-            background-color: #E50914;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-        .bot-message {
-            background-color: #333;
-            color: #f1f1f1;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-        .typing-indicator span {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #888;
-            margin: 0 2px;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
-
-        /* --- Nouveaux styles pour les saisons dans la modale --- */
-        .season-chips-container::-webkit-scrollbar { height: 4px; }
-        .season-chips-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
-        .season-chips-container::-webkit-scrollbar-thumb { background: rgba(229, 9, 20, 0.7); border-radius: 10px; }
-
         .season-chip {
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #e5e7eb; /* text-gray-200 */
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.2s ease-in-out;
-            border: 1px solid transparent;
+            padding: 0.5rem 1rem; border-radius: 9999px;
+            background-color: rgba(41, 41, 45, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #e5e7eb; font-weight: 600;
+            white-space: nowrap; transition: all 0.2s ease-in-out;
             cursor: pointer;
         }
-        .season-chip:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
+        .season-chip:hover { background-color: rgba(55, 55, 60, 0.8); color: #fff; }
         .season-chip.active {
-            background-color: #E50914;
-            color: #fff;
-            box-shadow: 0 0 15px rgba(229, 9, 20, 0.5);
-        }
-
-        @keyframes fadeInList {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .episodes-list {
-            animation: fadeInList 0.4s ease;
+            background-color: var(--theme-color); color: #fff;
+            box-shadow: 0 0 15px var(--theme-shadow);
+            border-color: transparent;
         }
     </style>
 </head>
 <body class="bg-black text-white">
+    <div id="aurora-bg">
+        <div class="aurora-blob blob1"></div>
+        <div class="aurora-blob blob2"></div>
+        <div class="aurora-blob blob3"></div>
+    </div>
     <audio id="launch-sound" src="Audios/Musiques/Launch.mp3" preload="auto"></audio>
     <div id="fullscreen-prompt" class="fixed inset-0 bg-black z-[100] flex items-center justify-center transition-opacity duration-500 ease-in-out cursor-pointer overflow-hidden">
-        <!-- Fond animé flou -->
         <div class="absolute w-full h-full blur-3xl opacity-40">
-            <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-screen animate-blob"></div>
-            <div class="absolute top-0 -right-4 w-72 h-72 bg-red-500 rounded-full mix-blend-screen animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen animate-blob animation-delay-4000"></div>
+            <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-screen animate-blob-accueil"></div>
+            <div class="absolute top-0 -right-4 w-72 h-72 bg-red-500 rounded-full mix-blend-screen animate-blob-accueil animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen animate-blob-accueil animation-delay-4000"></div>
         </div>
-    
-        <!-- Contenu -->
         <div class="relative text-center">
             <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-12 sm:h-16 mx-auto mb-6">
             <p class="text-lg sm:text-xl text-white/80 animate-pulse">Appuyez n'importe où</p>
         </div>
     </div>
 
-    <div class="sm:flex">
-        <!-- NOUVELLE NAVIGATION VERTICALE (PC) -->
-        <nav class="fixed left-0 top-0 h-screen w-24 z-50 bg-black/50 backdrop-blur-lg border-r border-gray-800/50 hidden sm:flex flex-col items-center py-8 gap-8 flex-shrink-0">
-            <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" onclick="window.location.reload()">
-            <div class="flex flex-col items-center gap-4 w-full">
-                <span id="tab-series" class="vertical-nav-tab active" onclick="switchTab('series')" title="Séries">
-                    <i class="fas fa-tv text-2xl"></i>
-                </span>
-                <span id="tab-bonus" class="vertical-nav-tab" onclick="switchTab('bonus')" title="AlexiaFlix Originals">
-                    <i class="fas fa-star text-2xl"></i>
-                </span>
-            </div>
-        </nav>
-        
-        <div class="flex-1 min-w-0 sm:ml-24">
-            <header class="z-40 p-4 hidden sm:flex justify-center items-center sm:sticky top-0 bg-black/20 backdrop-blur-md">
-                <div class="relative w-full max-w-lg" id="search-container">
-                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
-                    <input type="text" id="search-input" placeholder="Rechercher un film, une série, un épisode..." class="w-full bg-black bg-opacity-40 border border-gray-700 rounded-full py-2 pl-12 pr-5 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
+    <div id="app-container" class="relative z-1">
+        <div class="sm:flex">
+            <nav class="fixed left-0 top-0 h-screen w-24 z-40 glass-effect hidden sm:flex flex-col items-center py-8 gap-8 flex-shrink-0">
+                <img src="Web/Images/AlexiaFlix - Logo/AlexiaFlix - Logo 2.png" alt="AlexiaFlix Logo" class="h-8 transition-transform duration-300 hover:scale-110 cursor-pointer" onclick="window.location.reload()">
+                <div class="flex flex-col items-center gap-4 w-full">
+                    <span id="tab-series" class="vertical-nav-tab active" onclick="switchTab('series')" title="Séries">
+                        <i class="fas fa-tv text-2xl"></i>
+                    </span>
+                    <span id="tab-bonus" class="vertical-nav-tab" onclick="switchTab('bonus')" title="AlexiaFlix Originals">
+                        <i class="fas fa-star text-2xl"></i>
+                    </span>
                 </div>
+            </nav>
+            
+            <div class="flex-1 min-w-0 sm:ml-24">
+                <header class="z-30 p-4 hidden sm:flex justify-center items-center sm:sticky top-0 bg-black/20 backdrop-blur-md">
+                    <div class="relative w-full max-w-lg" id="search-container">
+                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                        <input type="text" id="search-input" placeholder="Rechercher un film, une série, un épisode..." class="w-full bg-black bg-opacity-40 border border-gray-700 rounded-full py-2 pl-12 pr-5 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                    </div>
+                </header>
+
+                <main class="pb-40 sm:pb-4 container mx-auto px-4">
+                    <section id="series-section" class="section-pane"></section>
+                    <section id="bonus-section" class="section-pane hidden"></section>
+                    <section id="series-details-section" class="section-pane hidden"></section>
+                    <section id="cat-gpt-section" class="section-pane hidden sm:hidden pt-20 pb-28 px-0 flex flex-col h-screen">
+                        <div id="chat-starter-mobile" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+                            <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover reveal-on-scroll" style="border: 2px solid rgba(255,255,255,0.2);">
+                            <h3 class="text-xl font-semibold mb-6 reveal-on-scroll" style="transition-delay: 0.2s;">Prêt à discuter séries ? 🎀</h3>
+                            <div class="grid grid-cols-2 gap-3 w-full max-w-sm reveal-on-scroll" style="transition-delay: 0.4s;">
+                                <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?', true)">Comment Daryl Dixon est...</button>
+                                <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?', true)">Meilleure saison d'AHS ?</button>
+                                <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.', true)">Explique-moi la fin de...</button>
+                                <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?', true)">Rick Grimes va-t-il...</button>
+                            </div>
+                        </div>
+                        <div id="chat-messages-mobile" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
+                        <div class="p-4 border-t border-gray-700/50 bg-opacity-50 bg-black">
+                            <div class="relative flex items-center">
+                                <input type="text" id="chat-input-mobile" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Envoyer un message...">
+                                <button id="send-chat-button-mobile" class="absolute right-2 top-1/2 -translate-y-1/2 bg-purple-600 hover:bg-purple-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
+                                    <i class="fas fa-paper-plane text-white"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+
+            <aside id="cat-gpt-panel" class="hidden sm:flex flex-col flex-shrink-0 w-full max-w-[420px] h-screen sticky top-0">
+                 <div class="flex items-center justify-between p-4 border-b border-gray-700/50">
+                    <h2 class="text-xl font-bold alexiaflix-title">Cat-GPT 🐈🎀</h2>
+                </div>
+                <div id="chat-starter" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+                    <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover reveal-on-scroll" style="border: 2px solid rgba(255,255,255,0.2);">
+                    <h3 class="text-xl font-semibold mb-6 reveal-on-scroll" style="transition-delay: 0.2s;">Prêt à discuter séries ? 🎀</h3>
+                    <div class="grid grid-cols-2 gap-3 w-full max-w-sm reveal-on-scroll" style="transition-delay: 0.4s;">
+                         <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?')">Comment Daryl Dixon est...</button>
+                        <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?')">Meilleure saison d'AHS ?</button>
+                        <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.')">Explique-moi la fin de...</button>
+                        <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?')">Rick Grimes va-t-il...</button>
+                    </div>
+                </div>
+                <div id="chat-messages" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
+                <div class="p-4 border-t border-gray-700/50">
+                    <div class="relative flex items-center">
+                        <input type="text" id="chat-input" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Envoyer un message...">
+                        <button id="send-chat-button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-purple-600 hover:bg-purple-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
+                            <i class="fas fa-paper-plane text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <div class="sm:hidden">
+            <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center glass-effect" style="padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top));">
+                <h1 class="alexiaflix-title text-2xl">AlexiaFlix 🎀</h1>
             </header>
 
-            <main class="pb-40 sm:pb-4 container mx-auto px-4">
-                <section id="series-section" class="section-pane"></section>
-                <section id="bonus-section" class="section-pane hidden"></section>
-                <!-- NOUVEAU : Section Cat-GPT pour mobile -->
-                <section id="cat-gpt-section" class="section-pane hidden sm:hidden pt-20 pb-28 px-0 flex flex-col h-screen">
-                    <div id="chat-starter-mobile" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
-                        <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover animate-fade-in" style="border: 2px solid rgba(255,255,255,0.2);">
-                        <h3 class="text-xl font-semibold mb-6 animate-fade-in" style="animation-delay: 0.2s;">Prêt à discuter séries ?</h3>
-                        <div class="grid grid-cols-2 gap-3 w-full max-w-sm animate-fade-in" style="animation-delay: 0.4s;">
-                            <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?', true)">Comment Daryl Dixon est...</button>
-                            <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?', true)">Meilleure saison d'AHS ?</button>
-                            <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.', true)">Explique-moi la fin de...</button>
-                            <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?', true)">Rick Grimes va-t-il...</button>
-                        </div>
+            <div class="fixed bottom-4 left-4 right-4 z-50 glass-effect rounded-2xl shadow-lg p-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));">
+                <nav class="flex items-center justify-around text-gray-300 font-medium text-sm mb-2">
+                    <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
+                    <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
+                </nav>
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-grow" id="search-container-mobile">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 pl-10 pr-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
                     </div>
-                    <div id="chat-messages-mobile" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
-                    <div class="p-4 border-t border-gray-700/50 bg-opacity-50 bg-black">
-                        <div class="relative flex items-center">
-                            <input type="text" id="chat-input-mobile" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
-                            <button id="send-chat-button-mobile" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
-                                <i class="fas fa-paper-plane text-white"></i>
-                            </button>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </div>
-
-        <!-- NOUVEAU : Panneau Cat-GPT pour ordinateur (ancien aside) -->
-        <aside id="cat-gpt-panel" class="hidden sm:flex flex-col flex-shrink-0 w-full max-w-[420px] h-screen sticky top-0">
-             <div class="flex items-center justify-between p-4 border-b border-gray-700/50">
-                <h2 class="text-xl font-bold alexiaflix-title">Cat-GPT 🐈</h2>
-            </div>
-            <div id="chat-starter" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
-                <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover animate-fade-in" style="border: 2px solid rgba(255,255,255,0.2);">
-                <h3 class="text-xl font-semibold mb-6 animate-fade-in" style="animation-delay: 0.2s;">Prêt à discuter séries ?</h3>
-                <div class="grid grid-cols-2 gap-3 w-full max-w-sm animate-fade-in" style="animation-delay: 0.4s;">
-                     <button class="prompt-brick" onclick="startChatWithPrompt('Comment Daryl Dixon est-il arrivé en France ?')">Comment Daryl Dixon est...</button>
-                    <button class="prompt-brick" onclick="startChatWithPrompt('Quelle est la meilleure saison d\'American Horror Story ?')">Meilleure saison d'AHS ?</button>
-                    <button class="prompt-brick" onclick="startChatWithPrompt('Explique-moi la fin de Breaking Bad.')">Explique-moi la fin de...</button>
-                    <button class="prompt-brick" onclick="startChatWithPrompt('Rick Grimes va-t-il revenir ?')">Rick Grimes va-t-il...</button>
-                </div>
-            </div>
-            <div id="chat-messages" class="hidden flex-1 p-4 overflow-y-auto flex flex-col space-y-2"></div>
-            <div class="p-4 border-t border-gray-700/50 animate-fade-in">
-                <div class="relative flex items-center">
-                    <input type="text" id="chat-input" class="w-full bg-gray-800/50 border border-gray-600/50 rounded-full py-3 pl-5 pr-14 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600" placeholder="Envoyer un message...">
-                    <button id="send-chat-button" class="absolute right-2 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center transition-transform duration-200 active:scale-90">
-                        <i class="fas fa-paper-plane text-white"></i>
+                    <button class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white/10" onclick="switchTab('cat-gpt')">
+                         <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT" class="h-8 w-8 rounded-full">
                     </button>
                 </div>
-            </div>
-        </aside>
-    </div>
-
-    <!-- INTERFACE MOBILE -->
-    <div class="sm:hidden">
-        <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-center glass-effect border-b-0" style="padding: 1rem; padding-top: calc(1rem + env(safe-area-inset-top));">
-            <h1 class="alexiaflix-title text-2xl">AlexiaFlix</h1>
-        </header>
-
-        <div class="fixed bottom-4 left-4 right-4 z-50 glass-effect rounded-2xl shadow-lg p-2" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom)); border-width: 1px;">
-            <nav class="flex items-center justify-around text-gray-300 font-medium text-sm mb-2">
-                <span id="tab-series-mobile" class="nav-tab active" onclick="switchTab('series')">Séries</span>
-                <span id="tab-bonus-mobile" class="nav-tab" onclick="switchTab('bonus')">Originals</span>
-            </nav>
-            <div class="flex items-center gap-2">
-                <div class="relative flex-grow" id="search-container-mobile">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input-mobile" placeholder="Rechercher..." class="w-full bg-black bg-opacity-20 border border-gray-600 rounded-full py-2 pl-10 pr-4 text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-600 transition-all">
-                </div>
-                <button class="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white/10" onclick="switchTab('cat-gpt')">
-                     <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT" class="h-8 w-8 rounded-full">
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="details-modal" class="modal-overlay">
-        <div id="details-modal-content" class="rounded-lg w-full max-w-4xl overflow-y-auto relative">
-             <button onclick="closeDetailsModal()" class="absolute top-3 right-3 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-red-600 transition-all duration-300 hover:scale-110 z-20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <div id="details-hero" class="hero-section h-[40vh] sm:h-[50vh] md:h-[60vh]">
-                <div id="modal-bg" class="hero-background"></div>
-                <div class="hero-content p-4 sm:p-8">
-                    <h2 id="modal-title" class="text-3xl sm:text-5xl font-bold mb-4"></h2>
-                    <div id="modal-actions" class="flex items-center gap-4"></div>
-                </div>
-            </div>
-            <div class="p-4 sm:p-8">
-                 <p id="modal-description" class="text-gray-300 mb-6 text-sm sm:text-base"></p>
-                 <div id="seasons-container"></div>
             </div>
         </div>
     </div>
     
-    <div id="image-modal" class="modal-overlay">
-        <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg transition-transform duration-300">
-        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-red-600 transition-colors">
+    <div id="image-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <img id="image-viewer" src="" alt="Image en grand" class="max-w-full max-h-full object-contain rounded-lg transition-transform duration-300 scale-95">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-purple-400 transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
     </div>
     
-    <div id="toast" class="fixed bottom-5 right-5 bg-red-700 text-white py-3 px-5 rounded-lg shadow-2xl z-[80] hidden opacity-0 translate-y-4 font-semibold"></div>
+    <div id="toast" class="fixed bottom-20 sm:bottom-5 right-5 bg-purple-600 text-white py-3 px-5 rounded-lg shadow-2xl z-[80] hidden opacity-0 translate-y-4 font-semibold"></div>
 
     <script>
         // --- BASE DE DONNÉES ---
@@ -769,19 +628,16 @@
             },
         ];
 
-        // CORRECTION: Déclaration des variables pour les éléments du DOM
-        let seriesSection, bonusSection, catGptSection, detailsModal, imageModal, toast, toastTimeout;
+        let seriesSection, bonusSection, catGptSection, seriesDetailsSection, imageModal, toast, toastTimeout;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // CORRECTION: Initialisation des variables
             seriesSection = document.getElementById('series-section');
             bonusSection = document.getElementById('bonus-section');
             catGptSection = document.getElementById('cat-gpt-section');
-            detailsModal = document.getElementById('details-modal');
+            seriesDetailsSection = document.getElementById('series-details-section');
             imageModal = document.getElementById('image-modal');
             toast = document.getElementById('toast');
             
-            // --- Prétraitement pour la recherche intelligente ---
             seriesData.forEach(series => {
                 let tags = `${series.title.toLowerCase()} ${series.abbreviation ? series.abbreviation.toLowerCase() : ''}`;
                 series.seasons.forEach(season => {
@@ -790,14 +646,13 @@
                         const e = episode.number;
                         const episodeTitle = episode.title || '';
                         tags += ` ${episodeTitle.toLowerCase()}`;
-                        tags += ` s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e}`; // ex: s1e1, s01e1, s1e01, s01e01
-                        tags += ` saison ${s} episode ${e}`; // ex: saison 1 episode 1
-                        tags += ` ep${e}s${s}`; // ex: ep1s1
+                        tags += ` s${s}e${e} s0${s}e${e} s${s}e0${e} s0${s}e0${e}`;
+                        tags += ` saison ${s} episode ${e}`;
+                        tags += ` ep${e}s${s}`;
                     });
                 });
-                series.searchTags = tags; // Ajoute la chaîne générée à l'objet série
+                series.searchTags = tags;
             });
-
 
             renderSeriesPage();
             renderBonusPage();
@@ -809,18 +664,13 @@
                 const value = event.target.value;
                 document.getElementById('search-input').value = value;
                 document.getElementById('search-input-mobile').value = value;
-                
-                if (seriesSection.classList.contains('hidden')) {
-                    switchTab('series');
-                } else {
-                    renderSeriesPage();
-                }
+                switchTab('series');
+                renderSeriesPage();
             };
 
             document.getElementById('search-input').addEventListener('input', handleSearch);
             document.getElementById('search-input-mobile').addEventListener('input', handleSearch);
             
-            // Logique Cat-GPT
             document.getElementById('send-chat-button').addEventListener('click', () => sendMessage(false));
             document.getElementById('chat-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage(false);
@@ -829,18 +679,22 @@
             document.getElementById('chat-input-mobile').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessage(true);
             });
+            
+            setupScrollAnimations();
+            
+            document.body.addEventListener('mousemove', (e) => {
+                document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+                document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+            });
         });
-
 
         function enterApp() {
             const launchSound = document.getElementById('launch-sound');
-            
             if (launchSound) {
                 launchSound.play().catch(error => {
                     console.warn("La lecture audio a été bloquée par le navigateur:", error);
                 });
             }
-            
             const prompt = document.getElementById('fullscreen-prompt');
             prompt.style.opacity = '0';
             setTimeout(() => {
@@ -851,30 +705,23 @@
         function switchTab(tabName) {
             const isMobile = window.innerWidth < 640;
 
-            // Cacher toutes les sections principales
-            seriesSection.classList.add('hidden');
-            bonusSection.classList.add('hidden');
-            catGptSection.classList.add('hidden');
-
-            // Désactiver tous les onglets
+            document.querySelectorAll('.section-pane').forEach(s => s.classList.add('hidden'));
             document.querySelectorAll('.nav-tab, .vertical-nav-tab').forEach(t => t.classList.remove('active'));
 
             if (tabName === 'series') {
                 seriesSection.classList.remove('hidden');
                 document.getElementById('tab-series')?.classList.add('active');
                 document.getElementById('tab-series-mobile')?.classList.add('active');
-                 renderSeriesPage();
+                renderSeriesPage();
             } else if (tabName === 'bonus') {
                 bonusSection.classList.remove('hidden');
                 document.getElementById('tab-bonus')?.classList.add('active');
                 document.getElementById('tab-bonus-mobile')?.classList.add('active');
-            } else if (tabName === 'cat-gpt') {
-                if (isMobile) {
-                    catGptSection.classList.remove('hidden');
-                    // Gérer l'onglet actif pour Cat-GPT sur mobile, s'il existe
-                    const catGptTab = document.getElementById('tab-cat-gpt-mobile');
-                    if (catGptTab) catGptTab.classList.add('active');
-                }
+            } else if (tabName === 'cat-gpt' && isMobile) {
+                catGptSection.classList.remove('hidden');
+                const catGptTab = document.getElementById('tab-cat-gpt-mobile');
+                if (catGptTab) catGptTab.classList.add('active');
+                setTimeout(() => setupScrollAnimations('#cat-gpt-section'), 10);
             }
         }
         
@@ -888,7 +735,7 @@
             const firstEpisode = heroSeries.seasons.flatMap(s => s.episodes).find(ep => ep.video); 
             
             let heroHtml = `
-                <div class="hero-wrapper mb-10">
+                <div class="hero-wrapper mb-10 reveal-on-scroll">
                     <div class="hero-section h-[60vh] sm:h-[70vh] md:h-[80vh] p-4 sm:p-8">
                         <div class="hero-background" style="background-image: url('${heroSeries.landscape}')"></div>
                         <div class="hero-content max-w-2xl">
@@ -896,16 +743,16 @@
                             <p class="text-gray-200 mb-6 text-sm sm:text-base">${heroSeries.description}</p>
                             <div class="flex items-center gap-2 sm:gap-4">
                                 ${(firstEpisode && firstEpisode.video) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : ''}
-                                <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsModal('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos</button>
+                                <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openDetailsPage('${heroSeries.id}')"><i class="fas fa-info-circle mr-2"></i> Plus d'infos 🎀</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
             
-            const title = searchTerm ? `Séries correspondantes à "${searchTerm}"` : 'Toutes les séries';
+            const title = searchTerm ? `Séries correspondantes à "${searchTerm}"` : 'Toutes les séries 🎀';
             seriesSection.innerHTML = heroHtml + `
-                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">${title}</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 reveal-on-scroll" style="transition-delay: 150ms;">${title}</h2>
                 <div id="series-gallery" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6"></div>
             `;
             
@@ -914,12 +761,14 @@
             const seriesGallery = document.getElementById('series-gallery');
             seriesToShow.forEach((series, index) => {
                 const card = document.createElement('div');
-                card.className = 'cursor-pointer item-card rounded-lg overflow-hidden fade-in-up';
-                card.style.animationDelay = `${index * 50}ms`;
-                card.onclick = () => openDetailsModal(series.id);
+                card.className = 'cursor-pointer item-card rounded-lg overflow-hidden reveal-on-scroll';
+                card.style.setProperty('--tint-color', series.tintColor);
+                card.onclick = () => openDetailsPage(series.id);
                 card.innerHTML = `<img src="${series.poster}" alt="${series.title}" class="w-full h-auto object-cover aspect-[2/3]" onerror="this.onerror=null;this.src='https://placehold.co/400x600/0c0c0c/f1f1f1?text=${encodeURIComponent(series.title)}';">`;
                 seriesGallery.appendChild(card);
             });
+            
+            setTimeout(() => setupScrollAnimations(), 10);
         }
 
         function renderEpisodeResultsView(episodes, searchTerm) {
@@ -927,7 +776,7 @@
                 const isDisabled = !ep.video;
                 const clickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
                 return `
-                    <div class="group flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-transparent hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 cursor-pointer fade-in-up" style="animation-delay: ${index * 50}ms;" ${clickAction}>
+                    <div class="group flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-transparent hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 cursor-pointer reveal-on-scroll" ${clickAction}>
                         <img src="${ep.seriesPoster}" alt="${ep.seriesTitle}" class="w-16 h-24 object-cover rounded-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x192/0c0c0c/f1f1f1?text=Image';">
                         <div class="flex-grow overflow-hidden">
                             <p class="text-gray-400 text-sm font-medium truncate">${ep.seriesTitle}</p>
@@ -942,11 +791,93 @@
             }).join('');
 
             seriesSection.innerHTML = `
-                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 fade-in-up">Épisodes pour "${searchTerm}"</h2>
+                <h2 class="text-2xl sm:text-3xl font-bold mb-6 text-gray-100 reveal-on-scroll">${'Épisodes pour "' + searchTerm + '" 🎀'}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     ${resultsHtml}
                 </div>
             `;
+            setTimeout(() => setupScrollAnimations(), 10);
+        }
+        
+        function openDetailsPage(seriesId) {
+            const series = seriesData.find(s => s.id === seriesId);
+            if (!series) return;
+
+            document.querySelectorAll('.section-pane').forEach(s => s.classList.add('hidden'));
+            seriesDetailsSection.classList.remove('hidden');
+            seriesDetailsSection.innerHTML = ''; // Clear previous content
+            window.scrollTo(0, 0);
+
+            const firstEpisode = series.seasons.flatMap(s => s.episodes).find(ep => ep.video);
+
+            const detailsHtml = `
+                <div class="pt-10 sm:pt-0">
+                    <button onclick="switchTab('series')" class="glass-effect rounded-full px-4 py-2 text-sm font-semibold mb-8 hover:bg-white/10 transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Retour aux séries
+                    </button>
+                    <div class="hero-wrapper mb-10 reveal-on-scroll">
+                        <div class="hero-section h-[60vh] sm:h-[70vh] md:h-[80vh] p-4 sm:p-8">
+                            <div class="hero-background" style="background-image: url('${series.landscape}')"></div>
+                            <div class="hero-content max-w-2xl">
+                                <h2 class="text-4xl sm:text-6xl font-bold mb-4">${series.title}</h2>
+                                <p class="text-gray-200 mb-6 text-sm sm:text-base">${series.description}</p>
+                                ${ (firstEpisode && firstEpisode.video) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Commencer la lecture</button>` : '' }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-0">
+                        <div id="seasons-container"></div>
+                    </div>
+                </div>
+            `;
+            seriesDetailsSection.innerHTML = detailsHtml;
+            seriesDetailsSection.querySelector('.hero-wrapper').style.setProperty('--hero-tint-color', series.tintColor || 'transparent');
+
+            const seasonsContainer = document.getElementById('seasons-container');
+            if (!series.seasons || series.seasons.length === 0) {
+                seasonsContainer.innerHTML = '<p class="text-gray-500">Aucun épisode disponible pour le moment. 🎀</p>';
+            } else {
+                const chipsContainer = document.createElement('div');
+                chipsContainer.className = 'season-chips-container flex items-center space-x-2 overflow-x-auto pb-3 mb-4';
+                const episodesContainer = document.createElement('div');
+                
+                series.seasons.forEach((seasonData, index) => {
+                    const chip = document.createElement('button');
+                    chip.className = 'season-chip';
+                    chip.textContent = `Saison ${seasonData.season}`;
+                    
+                    const episodesList = document.createElement('ul');
+                    episodesList.className = 'episodes-list space-y-3';
+                    
+                    if (seasonData.episodes && seasonData.episodes.length > 0) {
+                        episodesList.innerHTML = seasonData.episodes.sort((a, b) => a.number - b.number).map(ep => {
+                            const isDisabled = !ep.video;
+                            const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
+                            const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                            return `<li ${onClickAction} class="${liClass}"><span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span><p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p><i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i></li>`;
+                        }).join('');
+                    } else {
+                        episodesList.innerHTML = '<li class="text-gray-500">Aucun épisode pour cette saison. 🎀</li>';
+                    }
+
+                    if (index === 0) chip.classList.add('active');
+                    else episodesList.classList.add('hidden');
+
+                    chip.addEventListener('click', () => {
+                        chipsContainer.querySelectorAll('.season-chip').forEach(c => c.classList.remove('active'));
+                        episodesContainer.querySelectorAll('.episodes-list').forEach(l => l.classList.add('hidden'));
+                        chip.classList.add('active');
+                        episodesList.classList.remove('hidden');
+                    });
+                    
+                    chipsContainer.appendChild(chip);
+                    episodesContainer.appendChild(episodesList);
+                });
+
+                seasonsContainer.appendChild(chipsContainer);
+                seasonsContainer.appendChild(episodesContainer);
+            }
+            setTimeout(() => setupScrollAnimations('#series-details-section'), 10);
         }
 
         function renderSeriesPage() {
@@ -962,9 +893,7 @@
             const isPotentiallySpecific = searchKeywords.some(kw => 
                 /\bs\d+e\d+\b/.test(kw) || // s1e1
                 /\bep\d+s\d+\b/.test(kw) || // ep1s1
-                kw === 'episode' ||
-                kw === 'ep' ||
-                kw === 'saison'
+                kw === 'episode' || kw === 'ep' || kw === 'saison'
             );
 
             let episodeResults = [];
@@ -1000,93 +929,27 @@
             } else if (episodeResults.length > 0) {
                  renderEpisodeResultsView(episodeResults, searchTerm);
             } else {
-                seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucun résultat pour "${searchTerm}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche ou vérifiez l'orthographe.</p></div>`;
+                seriesSection.innerHTML = `<div class="text-center mt-10"><p class="text-gray-400 text-lg">Aucun résultat pour "${searchTerm}"</p><p class="text-gray-500 text-sm">Essayez une autre recherche.</p></div>`;
             }
         }
 
         function renderBonusPage() {
-             bonusSection.innerHTML = '<p class="text-gray-400 mt-10 text-center">Section en construction.</p>';
+             bonusSection.innerHTML = '<p class="text-gray-400 mt-10 text-center">Section en construction. 🎀</p>';
         }
 
-        function openDetailsModal(seriesId) {
-            const series = seriesData.find(s => s.id === seriesId);
-            if (!series) return;
-
-            document.getElementById('modal-bg').style.backgroundImage = `url('${series.landscape}')`;
-            document.getElementById('modal-title').textContent = series.title;
-            document.getElementById('modal-description').textContent = series.description;
-            
-            const firstEpisode = series.seasons.flatMap(s => s.episodes).find(ep => ep.video);
-            const modalActions = document.getElementById('modal-actions');
-            modalActions.innerHTML = (firstEpisode && firstEpisode.video) ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${firstEpisode.video}')"><i class="fas fa-play mr-2"></i> Lecture</button>` : '';
-
-            const seasonsContainer = document.getElementById('seasons-container');
-            seasonsContainer.innerHTML = ''; // Vide le contenu précédent
-
-            if (!series.seasons || series.seasons.length === 0) {
-                seasonsContainer.innerHTML = '<p class="text-gray-500">Aucun épisode disponible pour le moment.</p>';
-                detailsModal.classList.add('visible');
-                return;
-            }
-
-            const chipsContainer = document.createElement('div');
-            chipsContainer.className = 'season-chips-container flex items-center space-x-2 overflow-x-auto pb-3 mb-4';
-            
-            const episodesContainer = document.createElement('div');
-
-            series.seasons.forEach((seasonData, index) => {
-                const chip = document.createElement('button');
-                chip.className = 'season-chip';
-                chip.textContent = `Saison ${seasonData.season}`;
-                
-                const episodesList = document.createElement('ul');
-                episodesList.className = 'episodes-list space-y-3';
-                
-                if (seasonData.episodes && seasonData.episodes.length > 0) {
-                    const episodesHtml = seasonData.episodes.sort((a, b) => a.number - b.number).map(ep => {
-                        const isDisabled = !ep.video;
-                        const liClass = isDisabled ? "p-3 bg-gray-900/50 rounded-md opacity-60 flex items-center gap-4 cursor-not-allowed" : "p-3 bg-gray-900/50 rounded-md hover:bg-gray-800/70 cursor-pointer transition-all duration-300 flex items-center gap-4 hover:scale-[1.02]";
-                        const onClickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
-                        return `<li ${onClickAction} class="${liClass}"><span class="text-lg sm:text-xl font-bold text-gray-500 w-8 text-center">${ep.number}</span><p class="flex-grow font-semibold text-sm sm:text-base">${ep.title || `Épisode ${ep.number}`}</p><i class="fas ${isDisabled ? 'fa-lock' : 'fa-play'} text-gray-400 mr-2"></i></li>`;
-                    }).join('');
-                    episodesList.innerHTML = episodesHtml;
-                } else {
-                    episodesList.innerHTML = '<li class="text-gray-500">Aucun épisode pour cette saison.</li>';
-                }
-
-                if (index === 0) {
-                    chip.classList.add('active');
-                } else {
-                    episodesList.classList.add('hidden');
-                }
-
-                chip.addEventListener('click', () => {
-                    chipsContainer.querySelectorAll('.season-chip').forEach(c => c.classList.remove('active'));
-                    episodesContainer.querySelectorAll('.episodes-list').forEach(l => l.classList.add('hidden'));
-
-                    chip.classList.add('active');
-                    episodesList.classList.remove('hidden');
-                });
-                
-                chipsContainer.appendChild(chip);
-                episodesContainer.appendChild(episodesList);
-            });
-
-            seasonsContainer.appendChild(chipsContainer);
-            seasonsContainer.appendChild(episodesContainer);
-
-            detailsModal.classList.add('visible');
-        }
-
-        function closeDetailsModal() { detailsModal.classList.remove('visible'); }
         function openVideoLink(url) { if (url) window.open(url, '_blank'); }
         function openImageModal(src) {
-            document.getElementById('image-viewer').src = src;
-            imageModal.classList.add('visible');
+            const viewer = document.getElementById('image-viewer');
+            const modal = document.getElementById('image-modal');
+            viewer.src = src;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => viewer.classList.remove('scale-95'), 10);
         }
         function closeImageModal() {
-            imageModal.classList.remove('visible');
-            document.getElementById('image-viewer').src = '';
+            const viewer = document.getElementById('image-viewer');
+            const modal = document.getElementById('image-modal');
+            viewer.classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none');
         }
         function showToast(message) {
             clearTimeout(toastTimeout);
@@ -1113,8 +976,8 @@
         function appendMessage(text, sender, isMobile) {
             const chatMessages = isMobile ? document.getElementById('chat-messages-mobile') : document.getElementById('chat-messages');
             const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
             messageDiv.textContent = text;
-            messageDiv.className = `message ${sender}-message animate-fade-in`;
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
@@ -1190,6 +1053,28 @@
             }
         }
         
+        // --- Logique pour les animations au scroll ---
+        function setupScrollAnimations(containerSelector = 'body') {
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            const elementsToReveal = document.querySelectorAll(`${containerSelector} .reveal-on-scroll`);
+            elementsToReveal.forEach((el, index) => {
+                el.style.transitionDelay = `${Math.min(index * 100, 500)}ms`;
+                observer.observe(el);
+            });
+        }
+        
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
@@ -1203,3 +1088,4 @@
     </script>
 </body>
 </html>
+
