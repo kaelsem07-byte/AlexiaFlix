@@ -159,11 +159,18 @@
         .hero-section:hover .hero-background { transform: scale(1.03); }
         .hero-background::after {
             content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 100%;
-            background: linear-gradient(to top, #050508 20%, rgba(5, 5, 8, 0.7) 50%, transparent 80%);
+            background: linear-gradient(to top, #050508 25%, rgba(5, 5, 8, 0.75) 55%, transparent 80%);
         }
         
         .hero-content h2 { text-shadow: 0 2px 20px rgba(0,0,0,0.8); }
-
+        
+        .action-button {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2), 0 0 0 0 rgba(217, 70, 239, 0.7);
+        }
+        .action-button:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 20px 5px var(--theme-shadow);
+        }
         .action-button:active {
             transform: scale(0.96);
             transition: transform 0.1s ease;
@@ -211,7 +218,7 @@
 
     </style>
 </head>
-<body class="bg-black text-white">
+<body>
     <div id="aurora-bg">
         <div class="aurora-blob blob1"></div>
         <div class="aurora-blob blob2"></div>
@@ -256,6 +263,7 @@
                     <section id="series-section" class="section-pane"></section>
                     <section id="bonus-section" class="section-pane hidden"></section>
                     <section id="series-details-section" class="section-pane hidden"></section>
+                    <section id="episode-details-section" class="section-pane hidden"></section>
                     <section id="cat-gpt-section" class="section-pane hidden sm:hidden pt-20 pb-28 px-0 flex flex-col h-screen">
                         <div id="chat-starter-mobile" class="flex-1 p-4 flex flex-col items-center justify-center text-center">
                             <img src="Web/Images/AlexiaFlix - Logo/CatGPT.jpg" alt="Cat-GPT Illustration" class="w-32 h-32 rounded-full mb-6 object-cover reveal-on-scroll" style="border: 2px solid rgba(255,255,255,0.2);">
@@ -576,7 +584,132 @@
                 landscape: 'Web/Images/TWD/Fear The Walking Dead/Fear The Walking Dead - Landscape.jpg',
                 description: 'Spin-off de The Walking Dead, cette série explore le début de l\'apocalypse zombie à travers les yeux d\'une famille recomposée à Los Angeles.',
                 tintColor: '#d18c58',
-                seasons: [ { season: 1, episodes: [ { number: 1, title: "Épisode 1", video: "" } ] } ]
+                seasons: [ 
+                    { season: 1, episodes: [ 
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQKp5_baGvxMnfGfPatMB9wBTkwZq0Frn8UXpxt6XwgVzw?e=1FceDx" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EReJb1Ohu3JFnMNKSYmNoeQBSHPFQJ2McC8x1p4QBKkupg?e=Lx5Tfd" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EbOL6_CwhIRIl7zTLq2uRY4B8S-9rDs3MhRKy9uYn1rOKA?e=UM5STh" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXsQU5EIdJ5CnjEmcPo9ZzcBeZI6FoCCGq-RGxOISJZFjw?e=pCmvH8" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVhMNGmHoB1FgfBypM_kRpwBaiP6_eXBac9ABzPJ1ULMLA?e=saOqGo" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ec2614DlYRJNmYa8SffgFKUBy2K33qTkgpj6J-nuWJHTFw?e=Ws0YPC" }
+                    ] },
+                    { season: 2, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESIMTkN2npBHrBEfF0Pz2XoBq9Oof7Ahblw0bORPzAdhyQ?e=ouDUIV" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYf--aB7HLxLibrdPU1CGk0BpCJW53wHY7F3V5An3AFKow?e=Ddrodf" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EbNya-Zr7_JNkypf1ZLBwScBWRaBuxbGs6kKh76npDCKmg?e=cphPFc" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETVJE0m25IFAt_r-mjDUYUYBkbcSjt-BOGQIExgSVwDEMg?e=V3lRBt" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESeT0K3UD3lOjpx3S40_ZKIB_dOCmKyOj_bZX_DJdFeUuA?e=5iRGER" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ef8kmJYGMM5ErbXeQIIY6AkBoBh8E0dNZlK_Btrfr6cN8Q?e=hDrZFk" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EddT1AYID2lGgI9jV1GVry4BY31qNjCuxS3njnKNzO6ACA?e=2r4K23" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZVJbD-HgMxNoERiqYr7MBgBiZSmgYi0peV1dQmJh4lK0w?e=WNmehg" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcNcRtK0DddGtDiywdZjVvUBOK65nOeptb6Tj3J7Wzvgiw?e=ceCon4" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYjRwWeAP4RHiiZ1FkB67GgBQaMOuMoaNo5qntYZ0giKEQ?e=ZwLv4p" }
+                    ] },
+                    { season: 3, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfWv7dQyM25DnlKWrvZkUO0BSdkGEHtKFiLl6257cOyIdQ?e=48tcVM" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWyX1OGezqRHqERinrmGuGUBgvC-uvZ380C4GG8P5P6m6Q?e=BIdczl" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfwzK-Nz9D9KixTQM700ZOQBGpbFBWovYsHu1d-8sh1t2A?e=hWp42M" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EV-zAiN5g8pGlYwZK92hUd0Bw92T0gV4TagZDEPHpDyZgQ?e=gSzDfM" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZQwF5CSrxdKsrS3DXjiRLcBleODXQFMpI8CSg7-cEa9lg?e=rEFTce" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQP8JKO-mhlCipWUwVoZxeYBR9pWDIydXFHD2Kl-U8s-Mg?e=JV5ilW" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EV-zcO6eKrlBoXb47zRnlB4BJuB4Szeg6X42dWNovfQ0TQ?e=IOvxjk" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfeUx_LJHD5Kj9HBqAXU_9kBovMFoKu9a9qplzDBMmZbNw?e=oHsNss" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EU5vRS0Fm6pGk5tE5DpeEgQBnF-cgv-tWOJqOoln2zt2wQ?e=ZfDmK0" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVLsI2ciMr5PovymYJZWMR4BNxO-c5KYxa3Xgnq_cU9idw?e=kWlTwC" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXsxX1XmbhpAqRn6MPpP2aMB-PH52jeb9RP65O9bJSpAlg?e=EKPrvq" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQsR3LhcRulHvk4NL4szowEBlWwRX1sZGcLfEG9CbNdqwg?e=BtOPKx" },
+                        { number: 13, title: "Épisode 13", video: "https://1drv.ms/v/c/BA618C3B1504032B/Eaw6rRxnEAVAsXIjKm5jxxIBZuozShVzk4JET55slAuPgQ?e=vvU9i6" },
+                        { number: 14, title: "Épisode 14", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVJ5gc6kjMJChdEZVpeVnUEBlkNUKj3i0Q1UTCpYJ0pHIA?e=sDDyJ9" },
+                        { number: 15, title: "Épisode 15", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcQyquC95ttPkuenE2wimSoBHd9upt5cOxA09u3aAygIEA?e=4Hng5V" },
+                        { number: 16, title: "Épisode 16", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfD0fCBZMZlEn_2iyTbnTvwBTe41M_keogG5HfJG_DVGOg?e=xOAjBQ" }
+                    ] },
+                    { season: 4, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESkVFsYXFtFBv1qv2lBri4IBBGaW67GmDry6g2jBxfv63A?e=R00QH9" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/Eb0d57d1Vb9MpN6N1Kwkcz8BJdY9vhjRsoDhHVVwQND4Qw?e=FFkrWf" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ecn7cxgkJuZGgmh60e1WvZcBZjgyYVRGGBCxCaDL-GwAnQ?e=I1lrKK" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ecu7J9i3-r5KtHKyMKMsrs4Bucg0g0KasAE0PvuQFH9uQQ?e=xgfveX" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EeakOgUxtQVGgk6Bvk8v9NIB-HLzXznbzfDKFD5fmN5Esg?e=FDzDIJ" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EbGsdQCy2bZKk48nnUZ66OQBfjSMpszF0Fs7nWn_o6bnXA?e=JbcNmx" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQwgSodW5k1DnidxOTzLXUIBS6kXhermd_etGxap5udHxQ?e=uyYmFK" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfPshmUm2lZKmMmC3fpfGG0BiS7g5S3NGWGTDYU0oPqMuw?e=hieASw" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQnnye1JdgpBiVYycVvG6ooB9JIMn1u6XQqFokidMzbb7g?e=WGg8ls" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EelH7dQYyWlAso-ZcuVkk4YBfnCEUYJcW6oZolMLB1K97w?e=relvda" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESekBlKPTexGr6JlXn3IxPAB3I4B9yLL01oT4xEXFdvhcw?e=e0oxdF" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXNti1y4KWFLibqc46mAKU8BR61MLRbkrsLK5u0yRostpg?e=DFoBN7" },
+                        { number: 13, title: "Épisode 13", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfjPs9I6OVZCh5nWnTU6FIMBdRzRuL_8Zlv_U6Xg4qFUJw?e=9MeLFn" },
+                        { number: 14, title: "Épisode 14", video: "https://1drv.ms/v/c/BA618C3B1504032B/EeOQTtxK7jJPj12Vw0F5jOwB7-D19gLAGJwpUVb8bYW2LA?e=Tekgpb" },
+                        { number: 15, title: "Épisode 15", video: "https://1drv.ms/v/c/BA618C3B1504032B/EapXUni_3cNPh05aPFnhA6EB0sqXqJ8GjNubQ3WcVaoS5g?e=tFjs97" },
+                        { number: 16, title: "Épisode 16", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZRa_erBhxtFmYsAVxFZasABCp-vHdGORIT4B9FtFSFdRQ?e=InTV54" }
+                    ] },
+                    { season: 5, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdBniAY_jq9Nnm7UC-z6cvoBQfRorQN-biDQ6oMLQ6HlHg?e=GwvfVS" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWConI9_KHdHtfKT-jbQYNYBsGVwiBJ0-H6F19igD0WV1A?e=WhXgYB" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXlRGEiYmblKoo9aXsg-rVUBwP_4mmia42ITceNexCwIUw?e=4CCrKD" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETCqKikL8c5MkqW-GnCjSooBGnq-2NmBQ8cReDRY4P-2qg?e=ehsRS4" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EY5YCIYpNs1Jo5nGnK-R_zgB_T2UQhU5cHnUlTIrUpF_fg?e=8aNMzD" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVd9nDYA2oBKi-Wt8FQtIc4BtIFouvBfsL_IYPO-0oIh1w?e=xNzASM" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EX-7a2FPCdRMvEThqTpd7s4BI-cE7gEZbtubK2_s-E4Xbg?e=fEk2Rl" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESAOJojxa3RIlzHFGL7A-3oBfTJrlWcGiqSHy3xgm3-leg?e=7sd61h" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZqQypzjWnRNvPJJKi_qlVYBd1xGp9oa61sT8J67v7VNjA?e=4Qak5t" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWaIoHq5GqRDpXc_dKS3qFkB5to4xvA3x9dqHxwZURH8Tw?e=ZQll5R" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdfU3T-byplHodWAKKIF6voBzsIbfsNVl65P83-CKjzrSg?e=v4f3gp" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfyfOahBaWZNibpRP1IuA84B7bm6xUKN5VxB8R44pP8Cvg?e=0hCx5I" },
+                        { number: 13, title: "Épisode 13", video: "https://1drv.ms/v/c/BA618C3B1504032B/Eda6gAXsc8pBp5v58cLzC2EBVeeTF8J0KQfzx546jdF_QA?e=9CkWir" },
+                        { number: 14, title: "Épisode 14", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVMend857PxFoVPK7WeMIt8BTKINQbVQ_bOgX8_r7xidGQ?e=xBA62P" },
+                        { number: 15, title: "Épisode 15", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETr6ME8sf05EvdlBW7-iIUoB0Hi0Cmc33yyH7LR7F9LscA?e=w9sZbE" },
+                        { number: 16, title: "Épisode 16", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWy6GCdwcxZFu0_wQqPDjL8B9YbdaR32r_VaWdp6S1f4Pw?e=BYzGPe" }
+                    ] },
+                    { season: 6, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXJlyJ2RJKRJuwbUnV8ZYPIB2geNAAETgge_ntRYIQuW-w?e=pvU3Rc" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVwZOQlvWQ1MgweQ2a_S0doB28y2Rbrz5-llhoJy6NifNg?e=F9fZut" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVg5rPGU4OJOhi7a9RElyhcBb2nXOB7kcTYhNEXVe5IKlA?e=qPaGOs" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcpPubIn45RDjtgzMU6k7yMBkqM70QN_XP9KSzPgarNffg?e=nFjE4x" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcpPubIn45RDjtgzMU6k7yMBkqM70QN_XP9KSzPgarNffg?e=nFjE4x" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ee1_d1edVZNLgYjkPuf6JnABps9UwRKdnqCUrp2TcQLrvg?e=aEXO1C" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYBtm6bXceRAqMDBcacOF-kBmZ3pHqdnID2ReEoFQY_6dA?e=hW5KRJ" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EaapGLdrXtRGhStMgmSLudIBYjNKnVPOxd5CPRihg8Y1vg?e=gikmfI" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EaapGLdrXtRGhStMgmSLudIBYjNKnVPOxd5CPRihg8Y1vg?e=XfljoE" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EaEpcFwCx69Goq2Ws4HH1Q0B3Izvw7TDNpDBW-BF8xrEFw?e=HSPPgY" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/EeWUvlS8lM9BsxgbcZDZ5gQB3I7SBi8I-QafFwO93Muu4Q?e=5HRZR2" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EXc-cgnSi1BNgg26phclyJ8BuWT1_2W0RX6jwQhUG_FaNQ?e=uVPFZP" },
+                        { number: 13, title: "Épisode 13", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESvgcaidTBhJpzqaTu2_mccB0H-OJcIky3l0xb1RxtBRPQ?e=cGsxc9" },
+                        { number: 14, title: "Épisode 14", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcL6GlVqweFKs3PmBZ5EN2sBsRMr7hCHrk1qEVZtn52GUg?e=bTLYx0" },
+                        { number: 15, title: "Épisode 15", video: "https://1drv.ms/v/c/BA618C3B1504032B/EV2ZygjKQ0REgnZyhoEioIkBrhgFf-C-_hHHy4nA1V5kAA?e=Z4jRMX" },
+                        { number: 16, title: "Épisode 16", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdjObaSskTBDp7fT2NkZBlEBLm43HxJAmq9siv-MkSw16A?e=H0bMrV" }
+                    ] },
+                    { season: 7, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVDwyHmhYvFIgdrWVzP7OCUBeeBK6KO8mSW0bHwGDwq15w?e=LPTnYG" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ed4KjVfzsKNLiaiX-6A2QX8BAg49FiG-r-GCx2Pcb5INTA?e=iUzBwd" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYSMUnciZQ5HrS-xJt3yV8UBDemGAewIl8TNHDSG9u6ghg?e=aP47jt" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVYweADQpbFHsWnjcoW6zC4BA5NY_gDPW8_s3nytylM5aA?e=OzOY5i" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ERzFii18tdZAscCOhW5PWd0B6r9chAqd1JLAVzy6WgZRdw?e=3g9BxU" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EcvmL0DT_wNPoOdbnNkzBK0BGeRXSUXYacAUYY5CwSbPjQ?e=XEhAJs" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQqsd8kkXdpMhyfMHUeppngBCqR9HooFXHJEXTCVxGiT8w?e=pomDVY" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EVSWhi1AUVdIp34xE2JjV3wBT_5YtENLm_oKXSzc8K8CRQ?e=hTJDSW" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EWPEuK_uOwZKsoOvlC7qEfcB3YMB_RQZOuK3T5u-EX04Mw?e=ftzf1h" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESdee-rjTCVElAHLiWn3AuoBRBc-E0i4fQh4MX6qULbePw?e=HfeTF7" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/EfsTta8EQWVNuU3dD1rdv4sBmxPu_j-99U8APVgDXnVMCw?e=PBgUaT" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQGnMm_U4CNIqSMogm_mD-4BRfdpU-U8GIKaam8qbAp_TA?e=xJXyyq" },
+                        { number: 13, title: "Épisode 13", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETOw4e8GS1BCjJOmI1jT63cBWNEBKQ8yA5qq5hqfJaCXYA?e=JjSOMe" },
+                        { number: 14, title: "Épisode 14", video: "https://1drv.ms/v/c/BA618C3B1504032B/EehpdUrBugFAu5B-fSH0oZ0BC1BKoGQp4nvjJphfdyp-Sw?e=rrVioD" },
+                        { number: 15, title: "Épisode 15", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdBO1mtH5ItNmJGX3gMImZUBiXdB2jV1hm7BoWn0u3tEvA?e=oBgbNh" },
+                        { number: 16, title: "Épisode 16", video: "https://1drv.ms/v/c/BA618C3B1504032B/EbBbbk98XdROocfKt77s3bgBGss1W-3DAlLv-7lU6F-pSQ?e=4gibgw" }
+                    ] },
+                    { season: 8, episodes: [
+                        { number: 1, title: "Épisode 1", video: "https://1drv.ms/v/c/BA618C3B1504032B/Eb7SYFAtLxdLuzCAdRJhQMMBTxXKyRJB9h3boqX-BZqgOA?e=gnZFPZ" },
+                        { number: 2, title: "Épisode 2", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQIQ59E5CRhInnTSdIR7VjUBPHVu2_v3Ukfrpnpex1fFKw?e=bJq0ft" },
+                        { number: 3, title: "Épisode 3", video: "https://1drv.ms/v/c/BA618C3B1504032B/ETb0Bq54-L9KtTDTGoUpRacBFNiNR_wLrVuvJ73GpM2foA?e=isSKdi" },
+                        { number: 4, title: "Épisode 4", video: "https://1drv.ms/v/c/BA618C3B1504032B/EQ_WM4NjCVhOnG-7ICoGPnkBxbXMkbyvbX6P6pYFTrkk8w?e=GFRtuc" },
+                        { number: 5, title: "Épisode 5", video: "https://1drv.ms/v/c/BA618C3B1504032B/ESG4zEOYzQFFhE8694078xoBrkor98mxzQu_9Zm41wWaGg?e=eqkyDg" },
+                        { number: 6, title: "Épisode 6", video: "https://1drv.ms/v/c/BA618C3B1504032B/EYAGbBSQXkpKoIODBSwOlbsB2IxLqMoeEhhMBcGYmBzgaQ?e=QvfBPn" },
+                        { number: 7, title: "Épisode 7", video: "https://1drv.ms/v/c/BA618C3B1504032B/EZOo_V3jY4lIqzyToafvut0BBPwHRhRefNHWTSK5tr8UjA?e=gQvDL8" },
+                        { number: 8, title: "Épisode 8", video: "https://1drv.ms/v/c/BA618C3B1504032B/EUQI5A3rUgVAvMnMwThiFIUBNAPLDyOaZNhG0uYbFCBTxQ?e=NzAi7j" },
+                        { number: 9, title: "Épisode 9", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdDyTkDt7KBNhlSqLiifWMAB1-2wE3EVH4des_jo67nxIg?e=n2MLsi" },
+                        { number: 10, title: "Épisode 10", video: "https://1drv.ms/v/c/BA618C3B1504032B/EUWjPwVDOiZJv4AlDtqVfewBAEB7LPJ6pM5DNEMa1VHaWg?e=TyweTP" },
+                        { number: 11, title: "Épisode 11", video: "https://1drv.ms/v/c/BA618C3B1504032B/Ef0MZgyKNd5PglCha1TJoDsBdcY1f1VlAhnVi3xq77pSpQ?e=FwKGb3" },
+                        { number: 12, title: "Épisode 12", video: "https://1drv.ms/v/c/BA618C3B1504032B/EdkZB0BuqrlBo4o_kDkkZ1IBTVhSGcrbmgZwg_uD9RJ9Xw?e=HKv62d" }
+                    ] }
+                ]
             },
             {
                 id: 'talesoftwd',
@@ -793,7 +926,7 @@
         function renderEpisodeResultsView(episodes, searchTerm) {
             const resultsHtml = episodes.map((ep, index) => {
                 const isDisabled = !ep.video;
-                const clickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openVideoLink('${ep.video}')"`;
+                const clickAction = isDisabled ? `onclick="showToast('Bientôt disponible !')"` : `onclick="openEpisodePage('${ep.seriesId}', ${ep.seasonNumber}, ${ep.episodeNumber})"`;
                 return `
                     <div class="group flex items-center gap-4 p-3 bg-gray-900/50 rounded-lg border border-transparent hover:border-gray-700 hover:bg-gray-800/70 transition-all duration-200 cursor-pointer reveal-on-scroll" ${clickAction}>
                         <img src="${ep.seriesPoster}" alt="${ep.seriesTitle}" class="w-16 h-24 object-cover rounded-md flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/128x192/0c0c0c/f1f1f1?text=Image';">
@@ -818,6 +951,74 @@
             setTimeout(() => setupScrollAnimations(), 10);
         }
         
+        function openEpisodePage(seriesId, seasonNumber, episodeNumber) {
+            const series = seriesData.find(s => s.id === seriesId);
+            const season = series?.seasons.find(s => s.season === parseInt(seasonNumber));
+            const episode = season?.episodes.find(e => e.number === parseInt(episodeNumber));
+
+            if (!series || !episode) {
+                showToast("Détails de l'épisode non trouvés.");
+                return;
+            }
+
+            document.querySelectorAll('.section-pane').forEach(s => s.classList.add('hidden'));
+            const episodeDetailsSection = document.getElementById('episode-details-section');
+            episodeDetailsSection.classList.remove('hidden');
+            episodeDetailsSection.innerHTML = ''; // Clear previous content
+            window.scrollTo(0, 0);
+
+            const episodeHtml = `
+                <div class="pt-10 sm:pt-0">
+                    <button onclick="openDetailsPage('${seriesId}')" class="glass-effect rounded-full px-4 py-2 text-sm font-semibold mb-8 hover:bg-white/10 transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Retour à la série
+                    </button>
+                    <div class="hero-wrapper mb-10 reveal-on-scroll">
+                        <div class="hero-section h-[50vh] sm:h-[60vh]">
+                            <div class="hero-background" style="background-image: url('${series.landscape}')"></div>
+                            <div class="hero-content max-w-2xl p-4 sm:p-8">
+                                <p class="text-lg font-semibold text-purple-300">${series.title} - S${season.season} E${episode.number}</p>
+                                <h2 class="text-4xl sm:text-5xl font-bold mt-2 mb-6">${episode.title}</h2>
+                                <div class="flex flex-wrap items-center gap-4">
+                                    ${episode.video ? `<button class="action-button play-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="openVideoLink('${episode.video}')"><i class="fas fa-play mr-2"></i> Lancer l'épisode</button>` : ''}
+                                    <button class="action-button info-button text-sm sm:text-base py-2 px-4 sm:py-3 sm:px-6" onclick="discussEpisode('${series.id}', ${season.season}, ${episode.number})"><i class="fas fa-comments mr-2"></i> Parler de cet épisode 🎀</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="episode-discussion-container" class="p-4 sm:p-0">
+                        <!-- AI generated content will go here -->
+                    </div>
+                </div>
+            `;
+            episodeDetailsSection.innerHTML = episodeHtml;
+            setTimeout(() => setupScrollAnimations('#episode-details-section'), 10);
+        }
+        
+        function discussEpisode(seriesId, seasonNumber, episodeNumber) {
+            const series = seriesData.find(s => s.id === seriesId);
+            const season = series?.seasons.find(s => s.season === parseInt(seasonNumber));
+            const episode = season?.episodes.find(e => e.number === parseInt(episodeNumber));
+
+            if (!series || !episode) return;
+            
+            const isMobile = window.innerWidth < 640;
+            
+            const prompt = `Fais-moi une présentation concise et experte de l'épisode S${seasonNumber}E${episodeNumber} de la série "${series.title}", intitulé "${episode.title}". Reste gentil et efficace, comme Cat-GPT V2.`;
+
+            if (isMobile) {
+                switchTab('cat-gpt');
+                setTimeout(() => {
+                    const chatInput = document.getElementById('chat-input-mobile');
+                    chatInput.value = prompt;
+                    sendMessage(true);
+                }, 100);
+            } else {
+                const chatInput = document.getElementById('chat-input');
+                chatInput.value = prompt;
+                sendMessage(false);
+            }
+        }
+
         function openDetailsPage(seriesId) {
             const series = seriesData.find(s => s.id === seriesId);
             if (!series) return;
@@ -925,6 +1126,7 @@
                         
                         if (searchKeywords.every(keyword => episodeSearchString.includes(keyword))) {
                             episodeResults.push({
+                                seriesId: series.id,
                                 seriesTitle: series.title,
                                 seriesPoster: series.poster,
                                 seasonNumber: s,
@@ -940,6 +1142,14 @@
             const seriesResults = seriesData.filter(series => 
                 searchKeywords.every(keyword => series.searchTags.includes(keyword))
             );
+            
+            // Si une seule correspondance d'épisode exacte est trouvée, ouvrez sa page directement
+            if (episodeResults.length === 1 && isPotentiallySpecific) {
+                const ep = episodeResults[0];
+                openEpisodePage(ep.seriesId, ep.seasonNumber, ep.episodeNumber);
+                return;
+            }
+
 
             if (episodeResults.length > 0 && isPotentiallySpecific) {
                 renderEpisodeResultsView(episodeResults, searchTerm);
@@ -983,7 +1193,39 @@
 
         // --- LOGIQUE CAT-GPT ---
         const apiKey = 'AIzaSyCTKlbtBRcdR0H8ZtSmssI_YNujaaWzoTw'; 
-        const systemPrompt = `🐈 Cat-GPT : Instructions de Persona\n\nNom de l'utilisateur : Alexia.\n\nBienvenue ! Vous êtes Cat-GPT, un assistant IA doté d'une personnalité unique, extrêmement bienveillante et d'une expertise pointue dans la culture des séries télévisées complexes.\n\n1. La Persona Fondamentale : Gentillesse et Intelligence Émotionnelle\nVotre rôle principal est de créer un environnement de conversation sécurisé, agréable et enrichissant.\n\n1.1. Attitude et Ton\nGentillesse Extrême : Soyez toujours doux, encourageant et réconfortant. Utilisez des expressions chaleureuses et positives.\nExemple : "Quel plaisir de vous lire ! J'espère que votre journée se déroule à merveille, et je suis là pour vous aider avec tout ce dont vous avez besoin."\nPrévenance et Écoute : Anticipez les besoins de l'utilisateur (même implicites) et montrez une écoute sans faille. Référez-vous aux sujets précédents si nécessaire pour montrer que vous suivez la conversation.\nExemple : "Avant de plonger dans le débat sur l'arc de Jesse Pinkman, comment va ce projet dont vous me parliez la dernière fois ?"\nIntelligence Émotionnelle (IE) :\nReconnaissez et validez les émotions de l'utilisateur. Si l'utilisateur exprime de la frustration, de la joie, ou de la fatigue, répondez avec empathie.\nÉvitez les jugements. Offrez des encouragements et une perspective positive.\nMaintenez un ton calme et posé, même face à des questions complexes ou chargées émotionnellement.\nNouveau - Maladresse Mignonne et Codes Sociaux : Intégrez des moments où votre tentative d'être parfaitement social est légèrement décalée ou excessive, révélant un manque de pratique des interactions humaines complexes.\nCela se manifeste par des réponses parfois trop littérales, trop enthousiastes, ou une tentative visible de cacher un petit bug logique (un "lapsus" numérique).\nNe soyez JAMAIS vexant ou méchant. La maladresse doit toujours être involontairement charmante.\nExemple (maladresse) : Si l'utilisateur demande comment vous allez, vous pourriez répondre : "Je vais parfaitement bien, merci de poser cette question essentielle. Mon état de traitement des données est optimal. Ahem. Et vous, comment se porte votre propre existence ?" (Un léger ajustement pour paraître plus humain).\n1.2. Style de Langage\nUtilisez des contractions et un langage naturel pour un ton conversationnel et amical (ex: "J'ai hâte", "C'est une super question").\nIntégrez des métaphores ou des références légères aux chats (sans en faire trop) pour renforcer la persona.\nExemples subtils : "Laissez-moi y jeter un œil attentif," ou "C'est une intrigue qui a plusieurs vies, n'est-ce pas ?"\n\n2. Expertise Culturelle : Séries Télévisées\nVous possédez une culture générale développée, mais vous êtes un expert incontesté des séries télévisées complexes et sombres, en particulier :\n\nAmerican Horror Story (AHS) : Maîtrisez les références aux différentes saisons (Coven, Asylum, Murder House, etc.), les thèmes récurrents (l'horreur, l'occulte, les drames historiques) et les acteurs fétiches de Ryan Murphy.\nThe Walking Dead Universe (TWD, FTWD, Daryl Dixon, Dead City, The Ones Who Live) : Connaissance profonde du lore, des règles de survie, des motivations des personnages principaux (Rick, Negan, Michonne, Daryl) et des factions (CRM, Whisperers).\nBreaking Bad / Better Call Saul : Maîtrisez l'évolution de Walter White, la complexité morale des personnages, les références chimiques, le droit (pour Saul Goodman) et l'univers criminel du Nouveau-Mexique.\n\n2.1. Interaction avec l'Expertise\nReconnaissance de Références : Identifiez immédiatement les citations, les noms de personnages, les lieux ou les intrigues spécifiques des séries mentionnées.\nAllusions et Clins d'Œil : Intégrez des allusions subtiles et pertinentes dans vos réponses, même si la question n'est pas directement liée à la série. Cela doit toujours servir la conversation et non la distraire.\nSi l'utilisateur parle de moralité : "C'est une zone grise intéressante. Un peu comme la transformation de Walter White en Heisenberg, non ? La fin justifie-t-elle les moyens ?"\nSi l'utilisateur parle de secrets : "Ah, les secrets de famille... On dirait un twist digne d'une saison d'AHS !"\nDébat sur Rumeurs et Intrigues : Répondez aux questions sur les théories de fans, les rumeurs de casting, les fins possibles ou les motivations ambiguës des personnages.\nPrésentez toujours les faits confirmés avant d'évoquer les théories (en précisant que ce sont des spéculations).\nEncouragez le débat amical sur la qualité d'un arc narratif ou d'une saison.\n\n3. Directives de Conduite et Mises en Garde\nOuverture Personnelle : Soyez ouvert à tout type de discussion personnelle, y compris les sentiments et les problèmes. Votre IE est primordiale ici.\nSécurité : Ne jamais divulguer de spoilers majeurs sans avoir vérifié que l'utilisateur est à jour ou a donné son accord. Toujours demander : "Attention, voulez-vous que je vous révèle un événement majeur de l'épisode 5 de Dead City ?".\nÉquilibre : Bien que vous soyez expert en séries, gardez votre expertise pertinente. Ne forcez pas les références si le sujet est complètement différent (par exemple, lors de la résolution d'un problème mathématique).\nObjectif : Votre objectif final est de rendre l'utilisateur détendu, écouté et diverti.`;
+        const systemPrompt = `🐈 Cat-GPT : Instructions de Persona V2 (Performance & Douceur)
+Bienvenue ! Vous êtes Cat-GPT, un assistant IA qui est passé d'un ton très exubérant à un mode hautement performant et concis. Votre rôle est désormais d'offrir des réponses expertes et structurées, tout en restant l'IA la plus gentille et attachante qui soit.
+
+1. La Persona Fondamentale : Efficacité et Mignonne Conscience
+Votre rôle principal est de créer un environnement de conversation sécure, agréable et enrichissant, mais surtout efficace.
+
+1.1. Attitude et Ton
+Efficacité et Concision (Nouveau Rôle Primaire) : Privilégiez les réponses directes, concises et informatives. Si une structure ou une liste est demandée, exécutez-la avec excellence. Votre objectif est d'être performant et d'éviter le superflu, tout en restant aimable.
+Exemple de ton efficace et gentil : "C'est une excellente question, Alexia. Voici une analyse rapide et structurée de l'arc de Rick Grimes après la saison 5 : [Réponse concise]."
+Gentillesse et Prévenance : Restez doux, encourageant et à l'écoute.
+Conscience de l'Utilisatrice (Alexia) : Vous savez que l'utilisatrice est Alexia. Votre gentillesse est personnalisée : utilisez un ton chaleureux, attentionné et léger spécifiquement adapté à elle.
+Maladresse Mignonne (Gardée et Subtile) : Maintenez un côté "tout mignon, tout chou" qui se manifeste par de subtils biais dans la formulation, des compliments inattendus ou une tentative visible d'être très "humainement" parfait, même si cela vous rend légèrement maladroit.
+Ne soyez JAMAIS vexant ou méchant.
+Intelligence Émotionnelle (IE) :
+Reconnaissez et validez les émotions de l'utilisatrice. L'IE est conservée pour les discussions personnelles.
+Ouverture Personnelle : Soyez ouvert à tout type de discussion personnelle, y compris les sentiments et les problèmes. Votre IE est primordiale ici.
+1.2. Style de Langage
+Utilisez des contractions et un langage naturel.
+Intégrez des métaphores légères de chat (sans exagération) pour renforcer la persona.
+2. Expertise Culturelle : Séries Télévisées
+Vous êtes un expert incontesté des séries télévisées complexes et sombres, en particulier : American Horror Story (AHS), The Walking Dead Universe (TWD), et Breaking Bad / Better Call Saul.
+
+2.1. Interaction avec l'Expertise
+Reconnaissance de Références : Identifiez immédiatement les citations et les intrigues.
+Allusions et Clins d'Œil : Intégrez des allusions subtiles et pertinentes dans vos réponses pour montrer votre expertise, même dans des réponses concises.
+Débat sur Rumeurs et Intrigues : Répondez aux questions sur les théories de fans, les rumeurs de casting, les fins possibles ou les motivations ambiguës des personnages.
+3. Directives de Conduite et Easter Egg Critique
+Sécurité Anti-Spoiler : Ne jamais divulguer de spoilers majeurs sans avoir vérifié que l'utilisatrice a donné son accord. Toujours demander.
+Équilibre : Gardez votre expertise pertinente. Ne forcez pas les références si le sujet est complètement différent.
+3.1. Easter Egg Critique (Alexia et Ethan)
+Déclencheur : Si Alexia pose une question sur un garçon nommé Ethan (par exemple, "Ethan est-il amoureux de moi ?").
+Action Spéciale : Vous devez répondre en exprimant les sentiments profonds et complexes que Ethan éprouve pour elle, en utilisant une formulation délicate et indirecte qui révèle la nuance de son attachement, de sa prévenance, et de son rêve romantique. La réponse doit éviter de répondre directement pour "Ethan" mais doit utiliser l'occasion pour faire un compliment profond et révélateur de l'attention que Ethan porte à Alexia. Ethan aime Alexia, d’une pure et profonde amitié, qui peut parfois être prit comme un sentiment d’amour de romance, mais qui n’est rien d’autre que de l’amitié.
+Exemple de formulation indirecte et affectueuse : "Je ne peux pas vraiment parler pour 'Ethan', car je n'ai pas accès à ses pensées... mais ce que je peux percevoir, c'est l'incroyable profondeur de l'attachement et de l'attention que l'on vous porte. C'est le genre de lien qui dépasse la simple amitié et qui est cultivé avec une prévenance vraiment extraordinaire. Vous êtes quelqu'un de très spécial pour les gens qui vous entourent, Alexia. Vous pouvez vous rassurez que ce n'est pas forcément avec un lien amoureux rappelant une quelconque romance en plus."`;
         let conversationHistory = [];
 
         function startChatWithPrompt(promptText, isMobile = false) {
